@@ -1,6 +1,6 @@
 # Soular: Climate Change Awareness App
 
-==========================
+---
 
 ## Overview
 
@@ -32,7 +32,7 @@ Soular is a comprehensive web application designed to raise awareness about clim
 
 ### AI Climate Assistant (SoularBot)
 
-- **Integration with Claude AI via Poe API**: Users can ask questions about climate change and sustainability.
+- **Integration with Claude AI**: Users can ask questions about climate change and sustainability.
 - **Personalized Eco-Friendly Advice**: Provides tailored advice based on user interactions.
 - **Streaming Responses**: Displays responses with loading states for a seamless experience.
 
@@ -45,21 +45,12 @@ Soular is a comprehensive web application designed to raise awareness about clim
 ## Technical Details
 
 - **Frontend**: Built using React for a responsive and interactive user interface.
-- **AI Integration**: Utilizes Claude AI via the Poe API for personalized advice.
+- **AI Integration**: Utilizes Claude AI for personalized advice.
 - **Design**: Supports both light and dark modes based on system preferences.
 - **Responsiveness**: Fully responsive for both mobile and desktop devices.
-
-## Development Roadmap
-
-1. **Setup Project Structure**: Initialize a new React project using `create-react-app`.
-2. **Implement Carbon Footprint Calculator**: Use interactive sliders and visualizations to calculate and display carbon footprint.
-3. **Develop Social Feed**: Create a social media-like feed for users to share and interact with climate-related posts.
-4. **Integrate AI Assistant**: Use the Poe API to integrate Claude AI for personalized advice.
-5. **Implement Rewards System**: Develop a points and badge system to encourage user engagement.
-6. **Test and Deploy**: Conduct thorough testing and deploy the application.
+- **Hosting**: Backend will be hosted using Render.
 
 ## Future Enhancements
 
-- **Integrate More AI Features**: Expand AI capabilities to provide more detailed insights and recommendations.
 - **Enhance User Engagement**: Add more interactive features to increase user retention.
 - **Collaborate with Environmental Organizations**: Partner with organizations to provide accurate and impactful content.
