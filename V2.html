@@ -1,0 +1,2237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoConnect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#5D5CDE',
+                        secondary: '#30D158',
+                        tertiary: '#00C2B8',
+                        accent: '#64D2FF',
+                        warning: '#FFD60A',
+                        error: '#FF453A',
+                        darkbg: '#181818',
+                        darkcard: '#1C1C1E'
+                    }
+                }
+            }
+        };
+
+        // Dark mode detection
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+    </script>
+    <style>
+        .loader {
+            border-top-color: #5D5CDE;
+            animation: spinner 1.5s linear infinite;
+        }
+        @keyframes spinner {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .carbon-gauge {
+            transition: width 1s ease-in-out;
+        }
+        /* iOS-style UI */
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+        input[type="range"] {
+            -webkit-appearance: none;
+            height: 4px;
+            background: #E0E0E0;
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #5D5CDE;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .dark input[type="range"] {
+            background: #333;
+        }
+        .custom-number-input::-webkit-inner-spin-button,
+        .custom-number-input::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .transport-option.selected {
+            border-color: #5D5CDE;
+            background-color: rgba(93, 92, 222, 0.1);
+        }
+        .dark .transport-option.selected {
+            background-color: rgba(93, 92, 222, 0.25);
+        }
+        .apple-switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 24px;
+        }
+        .apple-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .apple-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 12px;
+        }
+        .apple-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .apple-slider {
+            background-color: #5D5CDE;
+        }
+        input:checked + .apple-slider:before {
+            transform: translateX(16px);
+        }
+        .dark .apple-slider {
+            background-color: #333;
+        }
+        .dark .apple-slider:before {
+            background-color: #767676;
+        }
+        .dark input:checked + .apple-slider:before {
+            background-color: white;
+        }
+        .weather-report {
+            background-image: linear-gradient(to right, #64D2FF, #5D5CDE);
+            color: white;
+            border-radius: 12px;
+        }
+        .dark .weather-report {
+            background-image: linear-gradient(to right, #5D5CDE, #005CB8);
+        }
+        .tab-btn {
+            position: relative;
+        }
+        .tab-btn::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #5D5CDE;
+            transition: width 0.3s;
+        }
+        .tab-btn.active::after {
+            width: 100%;
+        }
+        
+        /* Bottom navigation bar styles */
+        .bottom-tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: white;
+            display: flex;
+            height: 60px;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+            z-index: 50;
+        }
+        .dark .bottom-tab-bar {
+            background-color: #1C1C1E;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+        }
+        .tab-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #6B7280;
+            font-size: 10px;
+            padding: 8px 0;
+            transition: all 0.2s;
+        }
+        .dark .tab-item {
+            color: #9CA3AF;
+        }
+        .tab-item.active {
+            color: #5D5CDE;
+        }
+        .tab-item-icon {
+            font-size: 20px;
+            margin-bottom: 2px;
+        }
+        
+        /* Segmented control styles */
+        .segmented-control {
+            display: flex;
+            background-color: #F3F4F6;
+            border-radius: 8px;
+            padding: 2px;
+            margin: 12px 0;
+        }
+        .dark .segmented-control {
+            background-color: #2D2D2D;
+        }
+        .segment {
+            flex: 1;
+            text-align: center;
+            padding: 8px 0;
+            font-size: 14px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        .segment.active {
+            background-color: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            color: #5D5CDE;
+            font-weight: 500;
+        }
+        .dark .segment.active {
+            background-color: #1C1C1E;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Safe area for bottom navigation */
+        .safe-area-bottom {
+            padding-bottom: 80px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-darkbg text-gray-900 dark:text-gray-100">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // Sample user data
+        const initialUser = {
+            name: "Alex Lee",
+            points: 240,
+            level: 3,
+            footprint: 8.2, // tons of CO2 per year
+            actions: 12,
+            avatar: "https://i.imgur.com/HYsTHOF.png", // placeholder avatar
+            location: "San Francisco",
+            goal: "Reduce carbon footprint by 30% this year",
+            joined: "March 2023"
+        };
+
+        // Sample posts data
+        const initialPosts = [
+            {
+                id: 1,
+                user: "Sarah Chen",
+                avatar: "https://i.imgur.com/J56ehDF.png",
+                content: "Just installed solar panels on my roof! Estimated to reduce my carbon footprint by 3 tons annually. #RenewableEnergy",
+                image: "https://i.imgur.com/YsXZH7q.jpg",
+                likes: 42,
+                comments: 8,
+                timeAgo: "2h",
+                liked: false,
+                badges: ["Solar Champion"]
+            },
+            {
+                id: 2,
+                user: "Mike Rodriguez",
+                avatar: "https://i.imgur.com/K28CNDE.png",
+                content: "Organized a beach cleanup today. We collected over 200 pounds of plastic! Every bit helps. #OceanPlastic #ClimateAction",
+                image: "https://i.imgur.com/W4S2L3M.jpg",
+                likes: 87,
+                comments: 12,
+                timeAgo: "5h",
+                liked: true,
+                badges: ["Community Leader"]
+            },
+            {
+                id: 3,
+                user: "Climate Research Center",
+                avatar: "https://i.imgur.com/a8RLrVZ.png",
+                content: "New study: Global temperatures reached highest level ever recorded last month. We need immediate action. Read our full report: https://example.com/climate-report",
+                image: "",
+                likes: 156,
+                comments: 34,
+                timeAgo: "1d",
+                liked: false,
+                badges: ["Verified Source"]
+            }
+        ];
+
+        // Sample achievements data
+        const achievements = [
+            { id: 1, name: "Carbon Reducer", icon: "🌱", description: "Reduce your carbon footprint by 10%", completed: true, points: 100 },
+            { id: 2, name: "Eco Influencer", icon: "🌍", description: "Get 50 likes on a climate post", completed: true, points: 75 },
+            { id: 3, name: "Renewable Explorer", icon: "☀️", description: "Switch to a renewable energy provider", completed: false, points: 150 },
+            { id: 4, name: "Zero Waste Hero", icon: "♻️", description: "Go one week producing zero waste", completed: false, points: 200 },
+            { id: 5, name: "Tree Champion", icon: "🌳", description: "Plant 10 trees", completed: false, points: 125 },
+            { id: 6, name: "Water Warrior", icon: "💧", description: "Reduce water usage by 20%", completed: false, points: 100 },
+            { id: 7, name: "Public Transit Pro", icon: "🚆", description: "Use public transportation for a month", completed: false, points: 100 },
+            { id: 8, name: "Local Food Supporter", icon: "🥕", description: "Buy locally sourced food for a week", completed: false, points: 75 }
+        ];
+
+        // Sample carbon offset projects
+        const offsetProjects = [
+            {
+                id: 1, 
+                title: "Reforestation in Amazon", 
+                impact: "1 ton CO₂ = $12",
+                description: "Plant trees in deforested areas of the Amazon rainforest.",
+                image: "https://i.imgur.com/gKUdB7Q.jpg",
+                rating: 4.8,
+                verified: true
+            },
+            {
+                id: 2, 
+                title: "Wind Farm Development", 
+                impact: "1 ton CO₂ = $15",
+                description: "Support construction of wind turbines in rural communities.",
+                image: "https://i.imgur.com/3WcYGjL.jpg",
+                rating: 4.6,
+                verified: true
+            },
+            {
+                id: 3, 
+                title: "Solar Energy Access", 
+                impact: "1 ton CO₂ = $18",
+                description: "Provide solar panels to communities without electricity.",
+                image: "https://i.imgur.com/7W1i3Lm.jpg",
+                rating: 4.9,
+                verified: true
+            }
+        ];
+
+        // Transport emission factors (kg CO2 per mile/km)
+        const transportEmissionFactors = {
+            car: {
+                gasoline: 0.404, // kg CO2 per mile
+                diesel: 0.429,
+                hybrid: 0.226,
+                electric: 0.101
+            },
+            public: {
+                bus: 0.160,
+                train: 0.120,
+                subway: 0.065
+            },
+            active: {
+                bike: 0,
+                walk: 0
+            },
+            air: 0.257 // kg CO2 per mile
+        };
+
+        // Food emission factors (kg CO2 per serving)
+        const foodEmissionFactors = {
+            meat: {
+                beef: 6.61,
+                pork: 1.72,
+                chicken: 0.88,
+                lamb: 5.45
+            },
+            dairy: {
+                milk: 0.72, // per liter
+                cheese: 2.45, // per kg
+                yogurt: 0.36 // per 150g
+            },
+            plant: {
+                vegetables: 0.37,
+                fruits: 0.43,
+                grains: 0.51,
+                legumes: 0.25
+            }
+        };
+
+        // Sample recommendations based on footprint calculation
+        const generateRecommendations = (footprint, data) => {
+            const recommendations = [];
+            
+            // Transportation recommendations
+            if (data.transportType === 'car' && data.carType === 'gasoline') {
+                recommendations.push({
+                    title: "Switch to a more efficient vehicle",
+                    description: "Consider a hybrid or electric vehicle for your next purchase to reduce emissions by up to 75%.",
+                    impact: "High Impact",
+                    category: "Transport",
+                    icon: "🚗"
+                });
+            }
+            
+            if (data.publicTransport === 'never') {
+                recommendations.push({
+                    title: "Try public transportation",
+                    description: "Using public transit just once a week can reduce your transportation footprint by 15%.",
+                    impact: "Medium Impact",
+                    category: "Transport",
+                    icon: "🚆"
+                });
+            }
+            
+            // Diet recommendations
+            if (data.dietType === 'highMeat') {
+                recommendations.push({
+                    title: "Reduce meat consumption",
+                    description: "Try having 2-3 meat-free days per week to reduce your food footprint significantly.",
+                    impact: "High Impact",
+                    category: "Food",
+                    icon: "🥗"
+                });
+            }
+            
+            // Energy recommendations
+            if (data.renewableEnergy === 'none') {
+                recommendations.push({
+                    title: "Explore renewable energy options",
+                    description: "Check if your utility company offers renewable energy programs or consider installing solar panels.",
+                    impact: "High Impact",
+                    category: "Energy",
+                    icon: "☀️"
+                });
+            }
+            
+            if (data.energyEfficiency < 50) {
+                recommendations.push({
+                    title: "Improve home energy efficiency",
+                    description: "Upgrade to LED bulbs, improve insulation, and use a programmable thermostat.",
+                    impact: "Medium Impact",
+                    category: "Energy",
+                    icon: "💡"
+                });
+            }
+            
+            // General recommendations
+            recommendations.push({
+                title: "Track and reduce waste",
+                description: "Start composting food waste and aim to reduce single-use plastics.",
+                impact: "Medium Impact",
+                category: "Lifestyle",
+                icon: "♻️"
+            });
+            
+            if (footprint > 5) {
+                recommendations.push({
+                    title: "Consider carbon offsets",
+                    description: "Offset your unavoidable emissions by supporting verified carbon reduction projects.",
+                    impact: "Complementary",
+                    category: "Offset",
+                    icon: "🌎"
+                });
+            }
+            
+            return recommendations;
+        };
+
+        function App() {
+            const [activeTab, setActiveTab] = useState("home");
+            const [activeSideNav, setActiveSideNav] = useState("dashboard");
+            const [user, setUser] = useState(initialUser);
+            const [posts, setPosts] = useState(initialPosts);
+            const [showModal, setShowModal] = useState(false);
+            const [modalContent, setModalContent] = useState("");
+            const [footprintData, setFootprintData] = useState({
+                transport: 3,
+                food: 2.5,
+                energy: 1.7,
+                goods: 1,
+                // Advanced footprint data
+                transportType: 'car',
+                carType: 'gasoline',
+                milesDriven: 10000,
+                publicTransport: 'sometimes',
+                flightsPerYear: 2,
+                dietType: 'mediumMeat',
+                localFood: 'sometimes',
+                foodWaste: 'medium',
+                householdSize: 2,
+                homeSize: 'medium',
+                renewableEnergy: 'partial',
+                energyEfficiency: 60
+            });
+            const [newPost, setNewPost] = useState("");
+            const [aiMessage, setAiMessage] = useState("");
+            const [aiResponses, setAiResponses] = useState([]);
+            const [isLoading, setIsLoading] = useState(false);
+            const [showOffsetOptions, setShowOffsetOptions] = useState(false);
+            const [compareMode, setCompareMode] = useState(false);
+            const [goalSettings, setGoalSettings] = useState({
+                targetFootprint: 5.0,
+                deadline: "2023-12-31",
+                categories: {
+                    transport: true,
+                    food: true,
+                    energy: true,
+                    goods: false
+                }
+            });
+            const [newsArticles, setNewsArticles] = useState([
+                {
+                    id: 1,
+                    title: "New Study Shows Hope for Climate Action",
+                    summary: "Renewable energy adoption is accelerating faster than predicted",
+                    category: "Research",
+                    date: "2 days ago",
+                    source: "Climate Science Journal",
+                    important: true
+                },
+                {
+                    id: 2,
+                    title: "Climate Summit Approaching",
+                    summary: "World leaders will meet next month to discuss emission targets",
+                    category: "Policy",
+                    date: "5 days ago",
+                    source: "Global News Network",
+                    important: false
+                },
+                {
+                    id: 3,
+                    title: "Innovative Carbon Capture Technology Unveiled",
+                    summary: "New technology could remove 1000 tons of CO2 per day",
+                    category: "Technology",
+                    date: "1 week ago",
+                    source: "Tech Insights",
+                    important: true
+                }
+            ]);
+            
+            const messageEndRef = useRef(null);
+            const chartRef = useRef(null);
+            const comparisonChartRef = useRef(null);
+
+            // Initialize charts
+            useEffect(() => {
+                if (activeTab === 'footprint' && activeSideNav === 'analytics') {
+                    if (chartRef.current) {
+                        const ctx = chartRef.current.getContext('2d');
+                        const chart = new Chart(ctx, {
+                            type: 'pie',
+                            data: {
+                                labels: ['Transport', 'Food & Diet', 'Home Energy', 'Goods & Services'],
+                                datasets: [{
+                                    data: [footprintData.transport, footprintData.food, footprintData.energy, footprintData.goods],
+                                    backgroundColor: ['#5D5CDE', '#30D158', '#64D2FF', '#00C2B8'],
+                                    borderWidth: 0
+                                }]
+                            },
+                            options: {
+                                plugins: {
+                                    legend: {
+                                        position: 'bottom',
+                                        labels: {
+                                            font: {
+                                                size: 10
+                                            }
+                                        }
+                                    }
+                                },
+                                maintainAspectRatio: false
+                            }
+                        });
+                        
+                        return () => {
+                            chart.destroy();
+                        };
+                    }
+                    
+                    if (compareMode && comparisonChartRef.current) {
+                        const ctx = comparisonChartRef.current.getContext('2d');
+                        const chart = new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: ['Your Footprint', 'Country Average', 'World Average', 'Sustainable Level'],
+                                datasets: [{
+                                    data: [calculateFootprint(), 11.7, 4.8, 2.0],
+                                    backgroundColor: ['#5D5CDE', '#64D2FF', '#30D158', '#FFD60A'],
+                                    borderWidth: 0
+                                }]
+                            },
+                            options: {
+                                plugins: {
+                                    legend: {
+                                        display: false
+                                    }
+                                },
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        title: {
+                                            display: true,
+                                            text: 'Tons CO₂e per year',
+                                            font: {
+                                                size: 10
+                                            }
+                                        },
+                                        ticks: {
+                                            font: {
+                                                size: 10
+                                            }
+                                        }
+                                    },
+                                    x: {
+                                        ticks: {
+                                            font: {
+                                                size: 9
+                                            }
+                                        }
+                                    }
+                                },
+                                maintainAspectRatio: false
+                            }
+                        });
+                        
+                        return () => {
+                            chart.destroy();
+                        };
+                    }
+                }
+            }, [activeTab, activeSideNav, compareMode, footprintData]);
+
+            // Scroll to bottom of messages
+            useEffect(() => {
+                if (messageEndRef.current) {
+                    messageEndRef.current.scrollIntoView({ behavior: 'smooth' });
+                }
+            }, [aiResponses]);
+
+            const calculateFootprint = () => {
+                return Object.values({
+                    transport: footprintData.transport,
+                    food: footprintData.food,
+                    energy: footprintData.energy,
+                    goods: footprintData.goods
+                }).reduce((a, b) => a + b, 0);
+            };
+
+            const updateFootprint = (category, value) => {
+                setFootprintData(prev => {
+                    const newData = {...prev, [category]: parseFloat(value)};
+                    const total = Object.values({
+                        transport: newData.transport,
+                        food: newData.food,
+                        energy: newData.energy,
+                        goods: newData.goods
+                    }).reduce((a, b) => a + b, 0);
+                    setUser(prev => ({...prev, footprint: total}));
+                    return newData;
+                });
+            };
+
+            const updateFootprintData = (field, value) => {
+                setFootprintData(prev => {
+                    const newData = {...prev, [field]: value};
+                    
+                    // Recalculate transport emissions if relevant fields change
+                    if (['transportType', 'carType', 'milesDriven', 'publicTransport', 'flightsPerYear'].includes(field)) {
+                        let transportEmissions = 0;
+                        
+                        if (newData.transportType === 'car') {
+                            transportEmissions += (newData.milesDriven / 1000) * transportEmissionFactors.car[newData.carType];
+                        }
+                        
+                        if (newData.publicTransport === 'often') {
+                            transportEmissions += 0.5; // Baseline for frequent public transit
+                        } else if (newData.publicTransport === 'sometimes') {
+                            transportEmissions += 1.2;
+                        } else {
+                            transportEmissions += 0;
+                        }
+                        
+                        transportEmissions += newData.flightsPerYear * 1.2; // Rough estimate per flight
+                        
+                        newData.transport = parseFloat(transportEmissions.toFixed(1));
+                    }
+                    
+                    // Recalculate food emissions if relevant fields change
+                    if (['dietType', 'localFood', 'foodWaste'].includes(field)) {
+                        let foodEmissions = 0;
+                        
+                        if (newData.dietType === 'vegan') {
+                            foodEmissions = 1.0;
+                        } else if (newData.dietType === 'vegetarian') {
+                            foodEmissions = 1.5;
+                        } else if (newData.dietType === 'lowMeat') {
+                            foodEmissions = 2.0;
+                        } else if (newData.dietType === 'mediumMeat') {
+                            foodEmissions = 2.5;
+                        } else {
+                            foodEmissions = 3.5;
+                        }
+                        
+                        if (newData.localFood === 'mostly') {
+                            foodEmissions *= 0.8; // 20% reduction for local food
+                        }
+                        
+                        if (newData.foodWaste === 'low') {
+                            foodEmissions *= 0.9; // 10% reduction for low food waste
+                        } else if (newData.foodWaste === 'high') {
+                            foodEmissions *= 1.2; // 20% increase for high food waste
+                        }
+                        
+                        newData.food = parseFloat(foodEmissions.toFixed(1));
+                    }
+                    
+                    // Recalculate energy emissions if relevant fields change
+                    if (['householdSize', 'homeSize', 'renewableEnergy', 'energyEfficiency'].includes(field)) {
+                        let energyEmissions = 0;
+                        
+                        // Base value based on home size
+                        if (newData.homeSize === 'small') {
+                            energyEmissions = 1.2;
+                        } else if (newData.homeSize === 'medium') {
+                            energyEmissions = 1.7;
+                        } else {
+                            energyEmissions = 2.5;
+                        }
+                        
+                        // Adjust for household size
+                        energyEmissions = energyEmissions * Math.sqrt(newData.householdSize) / Math.sqrt(2);
+                        
+                        // Adjust for renewable energy
+                        if (newData.renewableEnergy === 'full') {
+                            energyEmissions *= 0.2; // 80% reduction for full renewable
+                        } else if (newData.renewableEnergy === 'partial') {
+                            energyEmissions *= 0.6; // 40% reduction for partial renewable
+                        }
+                        
+                        // Adjust for energy efficiency (100 = max efficiency)
+                        energyEmissions *= (1 - (newData.energyEfficiency / 200)); // Max 50% reduction
+                        
+                        newData.energy = parseFloat(energyEmissions.toFixed(1));
+                    }
+                    
+                    const total = Object.values({
+                        transport: newData.transport,
+                        food: newData.food,
+                        energy: newData.energy,
+                        goods: newData.goods
+                    }).reduce((a, b) => a + b, 0);
+                    
+                    setUser(prev => ({...prev, footprint: total}));
+                    return newData;
+                });
+            };
+
+            const handlePostSubmit = (e) => {
+                e.preventDefault();
+                if (!newPost.trim()) return;
+                
+                const newPostObj = {
+                    id: posts.length + 1,
+                    user: user.name,
+                    avatar: user.avatar,
+                    content: newPost,
+                    image: "",
+                    likes: 0,
+                    comments: 0,
+                    timeAgo: "Just now",
+                    liked: false,
+                    badges: []
+                };
+                
+                setPosts([newPostObj, ...posts]);
+                setNewPost("");
+                
+                // Award points for posting
+                setUser(prev => ({
+                    ...prev, 
+                    points: prev.points + 10,
+                    actions: prev.actions + 1
+                }));
+                
+                setModalContent("Post shared! +10 points for climate awareness");
+                setShowModal(true);
+                setTimeout(() => setShowModal(false), 2000);
+            };
+
+            const toggleLike = (postId) => {
+                setPosts(posts.map(post => {
+                    if (post.id === postId) {
+                        if (!post.liked) {
+                            // Award points for first like
+                            setUser(prev => ({
+                                ...prev, 
+                                points: prev.points + 2
+                            }));
+                        }
+                        return {
+                            ...post, 
+                            liked: !post.liked, 
+                            likes: post.liked ? post.likes - 1 : post.likes + 1
+                        };
+                    }
+                    return post;
+                }));
+            };
+
+            const handleAIChat = async () => {
+                if (!aiMessage.trim()) return;
+                
+                // Add user message to chat
+                setAiResponses(prev => [...prev, { 
+                    sender: "user", 
+                    content: aiMessage 
+                }]);
+                
+                const userMsg = aiMessage;
+                setAiMessage("");
+                setIsLoading(true);
+                
+                try {
+                    // Register handler for AI response
+                    window.Poe.registerHandler("eco-assistant", (result) => {
+                        const msg = result.responses[0];
+                        
+                        if (msg.status === "error") {
+                            setAiResponses(prev => [...prev, { 
+                                sender: "ai", 
+                                content: "Sorry, I encountered an error. Please try again." 
+                            }]);
+                            setIsLoading(false);
+                        } else if (msg.status === "complete") {
+                            setAiResponses(prev => [...prev, { 
+                                sender: "ai", 
+                                content: msg.content
+                            }]);
+                            setIsLoading(false);
+                        }
+                    });
+                    
+                    // Send message to Claude
+                    await window.Poe.sendUserMessage(
+                        "@Claude-3.7-Sonnet You are EcoBot, an AI assistant specialized in climate change and sustainability. Respond to this user query about climate or sustainable living: " + userMsg,
+                        {
+                            handler: "eco-assistant",
+                            stream: false,
+                            openChat: false
+                        }
+                    );
+                } catch (err) {
+                    console.error("Error:", err);
+                    setAiResponses(prev => [...prev, { 
+                        sender: "ai", 
+                        content: "Sorry, I couldn't connect to the assistant. Please try again later." 
+                    }]);
+                    setIsLoading(false);
+                }
+            };
+
+            // Renders the main tab content based on activeTab
+            const renderMainContent = () => {
+                switch(activeTab) {
+                    case "home":
+                        return renderHomeContent();
+                    case "footprint":
+                        return renderFootprintContent();
+                    case "social":
+                        return renderSocialContent();
+                    case "ai":
+                        return renderAIContent();
+                    default:
+                        return <div>Content not found</div>;
+                }
+            };
+
+            // Home tab content
+            const renderHomeContent = () => {
+                switch(activeSideNav) {
+                    case "dashboard":
+                        return (
+                            <div className="space-y-4">
+                                <div className="bg-white dark:bg-darkcard shadow rounded-lg p-4">
+                                    <div className="flex items-center justify-between mb-3">
+                                        <h2 className="text-lg font-semibold">Your Climate Impact</h2>
+                                        <span className="text-xs bg-primary bg-opacity-10 text-primary px-2 py-1 rounded-full">Level {user.level}</span>
+                                    </div>
+                                    <div className="mt-3 grid grid-cols-3 gap-2">
+                                        <div className="bg-gray-50 dark:bg-gray-800 p-2 text-center rounded-lg">
+                                            <p className="text-xs text-gray-500 dark:text-gray-400">Carbon Footprint</p>
+                                            <p className="text-lg font-bold">{user.footprint.toFixed(1)}</p>
+                                            <p className="text-[10px] text-gray-500 dark:text-gray-400">tons CO₂/yr</p>
+                                        </div>
+                                        <div className="bg-gray-50 dark:bg-gray-800 p-2 text-center rounded-lg">
+                                            <p className="text-xs text-gray-500 dark:text-gray-400">Eco Points</p>
+                                            <p className="text-lg font-bold">{user.points}</p>
+                                            <p className="text-[10px] text-gray-500 dark:text-gray-400">{user.actions} actions</p>
+                                        </div>
+                                        <div className="bg-gray-50 dark:bg-gray-800 p-2 text-center rounded-lg">
+                                            <p className="text-xs text-gray-500 dark:text-gray-400">Next Level</p>
+                                            <div className="w-full bg-gray-300 dark:bg-gray-700 h-2 mt-2 rounded-full">
+                                                <div className="bg-primary h-2 rounded-full" style={{width: `${(user.points % 100) / 100 * 100}%`}}></div>
+                                            </div>
+                                            <p className="text-[10px] text-gray-500 dark:text-gray-400 mt-1">{user.points % 100}/100</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div className="bg-white dark:bg-darkcard shadow rounded-lg p-4">
+                                        <h3 className="font-semibold mb-2 text-base">CO₂ Breakdown</h3>
+                                        <div className="space-y-2.5">
+                                            <div>
+                                                <div className="flex justify-between text-sm">
+                                                    <span>Transport</span>
+                                                    <span>{footprintData.transport} tons</span>
+                                                </div>
+                                                <div className="w-full bg-gray-200 dark:bg-gray-700 h-1.5 mt-1 rounded-full">
+                                                    <div className="bg-primary h-1.5 rounded-full" style={{width: `${(footprintData.transport / 5) * 100}%`}}></div>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div className="flex justify-between text-sm">
+                                                    <span>Food</span>
+                                                    <span>{footprintData.food} tons</span>
+                                                </div>
+                                                <div className="w-full bg-gray-200 dark:bg-gray-700 h-1.5 mt-1 rounded-full">
+                                                    <div className="bg-secondary h-1.5 rounded-full" style={{width: `${(footprintData.food / 5) * 100}%`}}></div>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div className="flex justify-between text-sm">
+                                                    <span>Energy</span>
+                                                    <span>{footprintData.energy} tons</span>
+                                                </div>
+                                                <div className="w-full bg-gray-200 dark:bg-gray-700 h-1.5 mt-1 rounded-full">
+                                                    <div className="bg-accent h-1.5 rounded-full" style={{width: `${(footprintData.energy / 5) * 100}%`}}></div>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div className="flex justify-between text-sm">
+                                                    <span>Goods</span>
+                                                    <span>{footprintData.goods} tons</span>
+                                                </div>
+                                                <div className="w-full bg-gray-200 dark:bg-gray-700 h-1.5 mt-1 rounded-full">
+                                                    <div className="bg-tertiary h-1.5 rounded-full" style={{width: `${(footprintData.goods / 5) * 100}%`}}></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button 
+                                            className="mt-3 text-primary text-sm font-medium"
+                                            onClick={() => {
+                                                setActiveTab("footprint");
+                                                setActiveSideNav("calculator");
+                                            }}
+                                        >
+                                            Update calculation →
+                                        </button>
+                                    </div>
+                                    
+                                    <div className="weather-report p-4">
+                                        <div className="flex items-center">
+                                            <div className="text-2xl mr-3">☀️</div>
+                                            <div>
+                                                <h3 className="font-semibold">San Francisco</h3>
+                                                <p className="text-xs opacity-90">Monday, May 15</p>
+                                            </div>
+                                        </div>
+                                        <div className="mt-3">
+                                            <p className="text-2xl font-light">72°F</p>
+                                            <p className="text-xs opacity-90">Air Quality: Good (32 AQI)</p>
+                                        </div>
+                                        <div className="mt-3 text-sm">
+                                            <p>Carbon Intensity: <span className="font-medium">Low</span></p>
+                                            <p className="text-xs mt-1 opacity-90">Great time to charge electric devices</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div className="bg-white dark:bg-darkcard shadow rounded-lg p-4">
+                                    <h3 className="font-semibold mb-2 text-base">Your Goals</h3>
+                                    <div className="space-y-3">
+                                        <div>
+                                            <div className="flex justify-between items-center text-sm">
+                                                <span>Footprint target</span>
+                                                <span className="font-medium">{goalSettings.targetFootprint} tons</span>
+                                            </div>
+                                            <div className="w-full bg-gray-200 dark:bg-gray-700 h-1.5 mt-1 rounded-full">
+                                                <div className="bg-secondary h-1.5 rounded-full" style={{width: `${Math.min(100, (calculateFootprint() / goalSettings.targetFootprint) * 100)}%`}}></div>
+                                            </div>
+                                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                                {calculateFootprint() > goalSettings.targetFootprint 
+                                                    ? `${(calculateFootprint() - goalSettings.targetFootprint).toFixed(1)} tons to go` 
+                                                    : 'Target reached!'}
+                                            </p>
+                                        </div>
+                                        <div className="pt-2">
+                                            <p className="text-sm mb-1">Focus areas:</p>
+                                            <div className="flex flex-wrap gap-1">
+                                                {goalSettings.categories.transport && (
+                                                    <span className="text-xs bg-primary bg-opacity-10 text-primary px-2 py-0.5 rounded-full">Transport</span>
+                                                )}
+                                                {goalSettings.categories.food && (
+                                                    <span className="text-xs bg-secondary bg-opacity-10 text-secondary px-2 py-0.5 rounded-full">Food</span>
+                                                )}
+                                                {goalSettings.categories.energy && (
+                                                    <span className="text-xs bg-accent bg-opacity-10 text-accent px-2 py-0.5 rounded-full">Energy</span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div className="bg-white dark:bg-darkcard shadow rounded-lg p-4">
+                                    <div className="flex justify-between items-center mb-3">
+                                        <h3 className="font-semibold">Climate Feed</h3>
+                                        <span className="text-xs bg-secondary px-2 py-0.5 rounded-full text-white">LIVE</span>
+                                    </div>
+                                    <div className="space-y-3 max-h-64 overflow-y-auto">
+                                        {newsArticles.map(article => (
+                                            <div 
+                                                key={article.id} 
+                                                className={`p-3 border-l-4 ${
+                                                    article.important 
+                                                        ? 'border-secondary bg-green-50 dark:bg-green-900 dark:bg-opacity-20' 
+                                                        : 'border-gray-300 bg-gray-50 dark:bg-gray-800'
+                                                } rounded-r-md`}
+                                            >
+                                                <div className="flex justify-between">
+                                                    <span className="text-xs text-gray-500 dark:text-gray-400">{article.category}</span>
+                                                    <span className="text-xs text-gray-500 dark:text-gray-400">{article.date}</span>
+                                                </div>
+                                                <h4 className="font-medium mt-1 text-sm">{article.title}</h4>
+                                                <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">{article.summary}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                                
+                                <div className="bg-white dark:bg-darkcard shadow rounded-lg p-4 mb-16">
+                                    <div className="flex justify-between items-center mb-3">
+                                        <h3 className="font-semibold">Achievements</h3>
+                                        <span className="text-sm text-primary">{achievements.filter(a => a.completed).length}/{achievements.length}</span>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        {achievements.slice(0, 4).map(achievement => (
+                                            <div 
+                                                key={achievement.id} 
+                                                className={`p-3 border rounded-lg ${
+                                                    achievement.completed 
+                                                        ? 'border-secondary bg-green-50 dark:bg-green-900 dark:bg-opacity-20 dark:border-green-700' 
+                                                        : 'border-gray-200 dark:border-gray-700'
+                                                }`}
+                                            >
+                                                <div className="flex items-center gap-3">
+                                                    <span className="text-2xl">{achievement.icon}</span>
+                                                    <div>
+                                                        <h4 className="font-medium text-sm">{achievement.name}</h4>
+                                                        <p className="text-xs text-gray-500 dark:text-gray-400">{achievement.points} pts</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <button 
+                                        className="mt-3 text-primary text-sm font-medium"
+                                        onClick={() => setActiveSideNav("achievements")}
+                                    >
+                                        View all achievements →
+                                    </button>
+                                </div>
+                            </div>
+                        );
+                        
+                    case "achievements":
+                        return (
+                            <div className="space-y-4">
+                                <div className="bg-white dark:bg-darkcard shadow rounded-lg p-4 mb-16">
+                                    <div className="flex justify-between items-center mb-3">
+                                        <h2 className="text-lg font-semibold">Your Achievements</h2>
+                                        <span className="text-xs bg-primary bg-opacity-10 text-primary px-2 py-1 rounded-full">
+                                            {achievements.filter(a => a.completed).length}/{achievements.length}
+                                        </span>
+                                    </div>
+                                    
+                                    <div className="grid grid-cols-1 gap-3">
+                                        {achievements.map(achievement => (
+                                            <div 
+                                                key={achievement.id} 
+                                                className={`p-3 border rounded-lg ${
+                                                    achievement.completed 
+                                                        ? 'border-secondary bg-green-50 dark:bg-green-900 dark:bg-opacity-20 dark:border-green-700' 
+                                                        : 'border-gray-200 dark:border-gray-700'
+                                                }`}
+                                            >
+                                                <div className="flex">
+                                                    <div className="text-3xl mr-4">{achievement.icon}</div>
+                                                    <div>
+                                                        <h3 className="font-semibold text-base">{achievement.name}</h3>
+                                                        <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">{achievement.description}</p>
+                                                        <div className="flex justify-between items-center mt-2">
+                                                            <span className="text-xs bg-blue-100 dark:bg-blue-900 dark:bg-opacity-20 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded-full">
+                                                                {achievement.points} points
+                                                            </span>
+                                                            {achievement.completed ? (
+                                                                <span className="text-xs text-secondary">✓ Completed</span>
+                                                            ) : (
+                                                                <span className="text-xs text-gray-500 dark:text-gray-400">In progress</span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                        
+                    case "stats":
+                        return (
+                            <div className="space-y-4">
+                                <div className="bg-white dark:bg-darkcard shadow rounded-lg p-4">
+                                    <h2 className="text-lg font-semibold mb-3">Your Climate Stats</h2>
+                                    
+                                    <div className="grid grid-cols-3 gap-2 mb-4">
+                                        <div className="bg-gray-50 dark:bg-gray-800 p-3 text-center rounded-lg">
+                                            <p className="text-xs text-gray-500 dark:text-gray-400">Carbon Saved</p>
+                                            <p className="text-lg font-bold">4.8 tons</p>
+                                            <p className="text-xs text-secondary">↓ 22% from last year</p>
+                                        </div>
+                                        <div className="bg-gray-50 dark:bg-gray-800 p-3 text-center rounded-lg">
+                                            <p className="text-xs text-gray-500 dark:text-gray-400">Streak</p>
+                                            <p className="text-lg font-bold">43 days</p>
+                                            <p className="text-xs text-gray-500 dark:text-gray-400">of eco actions</p>
+                                        </div>
+                                        <div className="bg-gray-50 dark:bg-gray-800 p-3 text-center rounded-lg">
+                                            <p className="text-xs text-gray-500 dark:text-gray-400">Rank</p>
+                                            <p className="text-lg font-bold">#328</p>
+                                            <p className="text-xs text-primary">↑ 52 places</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <h3 className="font-semibold mb-2 text-base">Carbon Footprint History</h3>
+                                    <div className="h-40 bg-gray-50 dark:bg-gray-800 p-3 flex items-end rounded-lg">
+                                        {/* Simple bar chart representation */}
+                                        <div className="flex items-end justify-between w-full h-full">
+                                            {[12.4, 11.8, 10.5, 9.2, 8.5, 8.2].map((value, i) => (
+                                                <div key={i} className="flex flex-col items-center">
+                                                    <div 
+                                                        className={`w-8 ${i === 5 ? 'bg-primary' : 'bg-gray-300 dark:bg-gray-600'} rounded-t-lg`} 
+                                                        style={{height: `${(value / 14) * 100}%`}}
+                                                    ></div>
+                                                    <p className="text-xs mt-1">{2018 + i}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div className="bg-white dark:bg-darkcard shadow rounded-lg p-4 mb-16">
+                                    <h3 className="font-semibold mb-3 text-base">Impact Breakdown</h3>
+                                    <div className="space-y-4">
+                                        <div>
+                                            <p className="font-medium text-sm mb-1">Trees equivalent saved</p>
+                                            <div className="flex flex-wrap">
+                                                {Array(12).fill().map((_, i) => (
+                                                    <div key={i} className="text-lg mr-1">🌳</div>
+                                                ))}
+                                            </div>
+                                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                                Your carbon reduction is equivalent to planting 12 trees
+                                            </p>
+                                        </div>
+                                        
+                                        <div>
+                                            <p className="font-medium text-sm mb-1">Car miles not driven</p>
+                                            <p className="text-lg font-bold">4,830 miles</p>
+                                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                                                That's about 1.5 times across the US!
+                                            </p>
+                                        </div>
+                                        
+                                        <div>
+                                            <p className="font-medium text-sm mb-1">Energy saved</p>
+                                            <p className="text-lg font-bold">1,240 kWh</p>
+                                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                                                Enough to power your home for 2 months
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                        
+                    default:
+                        return null;
+                }
+            };
+
+            // Footprint tab content
+            const renderFootprintContent = () => {
+                switch(activeSideNav) {
+                    case "calculator":
+                        return (
+                            <div className="space-y-4">
+                                <div className="bg-white dark:bg-darkcard shadow rounded-lg p-4 mb-16">
+                                    <h2 className="text-lg font-semibold mb-3">Carbon Footprint Calculator</h2>
+                                    
+                                    <div className="mt-4">
+                                        <h3 className="font-medium border-b border-gray-200 dark:border-gray-700 pb-2 mb-3 text-base">Transportation</h3>
+                                        
+                                        <div className="mb-4">
+                                            <p className="text-sm font-medium mb-2">Primary mode of transportation:</p>
+                                            <div className="grid grid-cols-2 gap-2">
+                                                <div 
+                                                    className={`transport-option border p-3 cursor-pointer rounded-lg ${footprintData.transportType === 'car' ? 'selected' : ''}`}
+                                                    onClick={() => updateFootprintData('transportType', 'car')}
+                                                >
+                                                    <div className="text-xl mb-1">🚗</div>
+                                                    <p className="text-sm font-medium">Car</p>
+                                                </div>
+                                                <div 
+                                                    className={`transport-option border p-3 cursor-pointer rounded-lg ${footprintData.transportType === 'public' ? 'selected' : ''}`}
+                                                    onClick={() => updateFootprintData('transportType', 'public')}
+                                                >
+                                                    <div className="text-xl mb-1">🚆</div>
+                                                    <p className="text-sm font-medium">Public Transit</p>
+                                                </div>
+                                                <div 
+                                                    className={`transport-option border p-3 cursor-pointer rounded-lg ${footprintData.transportType === 'active' ? 'selected' : ''}`}
+                                                    onClick={() => updateFootprintData('transportType', 'active')}
+                                                >
+                                                    <div className="text-xl mb-1">🚲</div>
+                                                    <p className="text-sm font-medium">Bike/Walk</p>
+                                                </div>
+                                                <div 
+                                                    className={`transport-option border p-3 cursor-pointer rounded-lg ${footprintData.transportType === 'mixed' ? 'selected' : ''}`}
+                                                    onClick={() => updateFootprintData('transportType', 'mixed')}
+                                                >
+                                                    <div className="text-xl mb-1">🔄</div>
+                                                    <p className="text-sm font-medium">Mixed</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        {footprintData.transportType === 'car' && (
+                                            <div className="mb-4">
+                                                <p className="text-sm font-medium mb-2">Car type:</p>
+                                                <div className="grid grid-cols-2 gap-2">
+                                                    <div 
+                                                        className={`transport-option border p-2 cursor-pointer text-center rounded-lg ${footprintData.carType === 'gasoline' ? 'selected' : ''}`}
+                                                        onClick={() => updateFootprintData('carType', 'gasoline')}
+                                                    >
+                                                        <p className="text-sm">Gasoline</p>
+                                                    </div>
+                                                    <div 
+                                                        className={`transport-option border p-2 cursor-pointer text-center rounded-lg ${footprintData.carType === 'diesel' ? 'selected' : ''}`}
+                                                        onClick={() => updateFootprintData('carType', 'diesel')}
+                                                    >
+                                                        <p className="text-sm">Diesel</p>
+                                                    </div>
+                                                    <div 
+                                                        className={`transport-option border p-2 cursor-pointer text-center rounded-lg ${footprintData.carType === 'hybrid' ? 'selected' : ''}`}
+                                                        onClick={() => updateFootprintData('carType', 'hybrid')}
+                                                    >
+                                                        <p className="text-sm">Hybrid</p>
+                                                    </div>
+                                                    <div 
+                                                        className={`transport-option border p-2 cursor-pointer text-center rounded-lg ${footprintData.carType === 'electric' ? 'selected' : ''}`}
+                                                        onClick={() => updateFootprintData('carType', 'electric')}
+                                                    >
+                                                        <p className="text-sm">Electric</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+                                        
+                                        {(footprintData.transportType === 'car' || footprintData.transportType === 'mixed') && (
+                                            <div className="mb-4">
+                                                <div className="flex justify-between mb-1">
+                                                    <p className="text-sm font-medium">Miles driven per year:</p>
+                                                    <p className="text-sm">{footprintData.milesDriven}</p>
+                                                </div>
+                                                <input 
+                                                    type="range" 
+                                                    min="0" 
+                                                    max="20000" 
+                                                    step="500" 
+                                                    value={footprintData.milesDriven} 
+                                                    onChange={(e) => updateFootprintData("milesDriven", parseInt(e.target.value))}
+                                                    className="w-full"
+                                                />
+                                                <div className="flex justify-between mt-1 text-xs text-gray-500">
+                                                    <span>0</span>
+                                                    <span>10,000</span>
+                                                    <span>20,000+</span>
+                                                </div>
+                                            </div>
+                                        )}
+                                        
+                                        <div className="mb-4">
+                                            <p className="text-sm font-medium mb-2">Public transportation use:</p>
+                                            <div className="grid grid-cols-3 gap-2">
+                                                <div 
+                                                    className={`transport-option border p-2 cursor-pointer text-center rounded-lg ${footprintData.publicTransport === 'often' ? 'selected' : ''}`}
+                                                    onClick={() => updateFootprintData('publicTransport', 'often')}
+                                                >
+                                                    <p className="text-sm">Often</p>
+                                                </div>
+                                                <div 
+                                                    className={`transport-option border p-2 cursor-pointer text-center rounded-lg ${footprintData.publicTransport === 'sometimes' ? 'selected' : ''}`}
+                                                    onClick={() => updateFootprintData('publicTransport', 'sometimes')}
+                                                >
+                                                    <p className="text-sm">Sometimes</p>
+                                                </div>
+                                                <div 
+                                                    className={`transport-option border p-2 cursor-pointer text-center rounded-lg ${footprintData.publicTransport === 'never' ? 'selected' : ''}`}
+                                                    onClick={() => updateFootprintData('publicTransport', 'never')}
+                                                >
+                                                    <p className="text-sm">Never</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="mb-5">
+                                            <div className="flex justify-between mb-1">
+                                                <p className="text-sm font-medium">Flights per year:</p>
+                                                <p className="text-sm">{footprintData.flightsPerYear}</p>
+                                            </div>
+                                            <div className="flex items-center">
+                                                <button 
+                                                    className="border h-8 w-8 flex items-center justify-center text-gray-500 rounded-l-lg"
+                                                    onClick={() => updateFootprintData('flightsPerYear', Math.max(0, footprintData.flightsPerYear - 1))}
+                                                >
+                                                    -
+                                                </button>
+                                                <input 
+                                                    type="number" 
+                                                    min="0" 
+                                                    value={footprintData.flightsPerYear} 
+                                                    onChange={(e) => updateFootprintData('flightsPerYear', parseInt(e.target.value) || 0)}
+                                                    className="h-8 w-12 text-center border-t border-b custom-number-input"
+                                                />
+                                                <button 
+                                                    className="border h-8 w-8 flex items-center justify-center text-gray-500 rounded-r-lg"
+                                                    onClick={() => updateFootprintData('flightsPerYear', footprintData.flightsPerYear + 1)}
+                                                >
+                                                    +
+                                                </button>
+                                            </div>
+                                        </div>
+                                        
+                                        <h3 className="font-medium border-b border-gray-200 dark:border-gray-700 pb-2 mb-3 text-base">Food & Diet</h3>
+                                        
+                                        <div className="mb-4">
+                                            <p className="text-sm font-medium mb-2">Your typical diet:</p>
+                                            <div className="grid grid-cols-2 gap-2">
+                                                <div 
+                                                    className={`transport-option border p-3 cursor-pointer text-center rounded-lg ${footprintData.dietType === 'vegan' ? 'selected' : ''}`}
+                                                    onClick={() => updateFootprintData('dietType', 'vegan')}
+                                                >
+                                                    <div className="text-xl mb-1">🥗</div>
+                                                    <p className="text-sm">Vegan</p>
+                                                </div>
+                                                <div 
+                                                    className={`transport-option border p-3 cursor-pointer text-center rounded-lg ${footprintData.dietType === 'vegetarian' ? 'selected' : ''}`}
+                                                    onClick={() => updateFootprintData('dietType', 'vegetarian')}
+                                                >
+                                                    <div className="text-xl mb-1">🧀</div>
+                                                    <p className="text-sm">Vegetarian</p>
+                                                </div>
+                                                <div 
+                                                    className={`transport-option border p-3 cursor-pointer text-center rounded-lg ${footprintData.dietType === 'lowMeat' ? 'selected' : ''}`}
+                                                    onClick={() => updateFootprintData('dietType', 'lowMeat')}
+                                                >
+                                                    <div className="text-xl mb-1">🐔</div>
+                                                    <p className="text-sm">Low Meat</p>
+                                                </div>
+                                                <div 
+                                                    className={`transport-option border p-3 cursor-pointer text-center rounded-lg ${footprintData.dietType === 'mediumMeat' ? 'selected' : ''}`}
+                                                    onClick={() => updateFootprintData('dietType', 'mediumMeat')}
+                                                >
+                                                    <div className="text-xl mb-1">🍗</div>
+                                                    <p className="text-sm">Medium Meat</p>
+                                                </div>
+                                                <div 
+                                                    className={`transport-option border p-3 cursor-pointer text-center rounded-lg ${footprintData.dietType === 'highMeat' ? 'selected' : ''}`}
+                                                    onClick={() => updateFootprintData('dietType', 'highMeat')}
+                                                >
+                                                    <div className="text-xl mb-1">🥩</div>
+                                                    <p className="text-sm">High Meat</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="mb-4">
+                                            <p className="text-sm font-medium mb-2">Local food consumption:</p>
+                                            <div className="grid grid-cols-3 gap-2">
+                                                <div 
+                                                    className={`transport-option border p-2 cursor-pointer text-center rounded-lg ${footprintData.localFood === 'mostly' ? 'selected' : ''}`}
+                                                    onClick={() => updateFootprintData('localFood', 'mostly')}
+                                                >
+                                                    <p className="text-sm">Mostly Local</p>
+                                                </div>
+                                                <div 
+                                                    className={`transport-option border p-2 cursor-pointer text-center rounded-lg ${footprintData.localFood === 'sometimes' ? 'selected' : ''}`}
+                                                    onClick={() => updateFootprintData('localFood', 'sometimes')}
+                                                >
+                                                    <p className="text-sm">Sometimes</p>
+                                                </div>
+                                                <div 
+                                                    className={`transport-option border p-2 cursor-pointer text-center rounded-lg ${footprintData.localFood === 'rarely' ? 'selected' : ''}`}
+                                                    onClick={() => updateFootprintData('localFood', 'rarely')}
+                                                >
+                                                    <p className="text-sm">Rarely</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="mb-4">
+                                            <p className="text-sm font-medium mb-2">Food waste level:</p>
+                                            <div className="grid grid-cols-3 gap-2">
+                                                <div 
+                                                    className={`transport-option border p-2 cursor-pointer text-center rounded-lg ${footprintData.foodWaste === 'low' ? 'selected' : ''}`}
+                                                    onClick={() => updateFootprintData('foodWaste', 'low')}
+                                                >
+                                                    <p className="text-sm">Low</p>
+                                                </div>
+                                                <div 
+                                                    className={`transport-option border p-2 cursor-pointer text-center rounded-lg ${footprintData.foodWaste === 'medium' ? 'selected' : ''}`}
+                                                    onClick={() => updateFootprintData('foodWaste', 'medium')}
+                                                >
+                                                    <p className="text-sm">Medium</p>
+                                                </div>
+                                                <div 
+                                                    className={`transport-option border p-2 cursor-pointer text-center rounded-lg ${footprintData.foodWaste === 'high' ? 'selected' : ''}`}
+                                                    onClick={() => updateFootprintData('foodWaste', 'high')}
+                                                >
+                                                    <p className="text-sm">High</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <h3 className="font-medium border-b border-gray-200 dark:border-gray-700 pb-2 mb-3 text-base">Home Energy</h3>
+                                        
+                                        <div className="mb-4">
+                                            <p className="text-sm font-medium mb-2">Household size:</p>
+                                            <div className="flex items-center">
+                                                <button 
+                                                    className="border h-8 w-8 flex items-center justify-center text-gray-500 rounded-l-lg"
+                                                    onClick={() => updateFootprintData('householdSize', Math.max(1, footprintData.householdSize - 1))}
+                                                >
+                                                    -
+                                                </button>
+                                                <input 
+                                                    type="number" 
+                                                    min="1" 
+                                                    value={footprintData.householdSize} 
+                                                    onChange={(e) => updateFootprintData('householdSize', parseInt(e.target.value) || 1)}
+                                                    className="h-8 w-12 text-center border-t border-b custom-number-input"
+                                                />
+                                                <button 
+                                                    className="border h-8 w-8 flex items-center justify-center text-gray-500 rounded-r-lg"
+                                                    onClick={() => updateFootprintData('householdSize', footprintData.householdSize + 1)}
+                                                >
+                                                    +
+                                                </button>
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="mb-4">
+                                            <p className="text-sm font-medium mb-2">Home size:</p>
+                                            <div className="grid grid-cols-3 gap-2">
+                                                <div 
+                                                    className={`transport-option border p-2 cursor-pointer text-center rounded-lg ${footprintData.homeSize === 'small' ? 'selected' : ''}`}
+                                                    onClick={() => updateFootprintData('homeSize', 'small')}
+                                                >
+                                                    <p className="text-sm">Small</p>
+                                                    <p className="text-xs text-gray-500">&lt;1000 sq ft</p>
+                                                </div>
+                                                <div 
+                                                    className={`transport-option border p-2 cursor-pointer text-center rounded-lg ${footprintData.homeSize === 'medium' ? 'selected' : ''}`}
+                                                    onClick={() => updateFootprintData('homeSize', 'medium')}
+                                                >
+                                                    <p className="text-sm">Medium</p>
+                                                    <p className="text-xs text-gray-500">1000-2000 sq ft</p>
+                                                </div>
+                                                <div 
+                                                    className={`transport-option border p-2 cursor-pointer text-center rounded-lg ${footprintData.homeSize === 'large' ? 'selected' : ''}`}
+                                                    onClick={() => updateFootprintData('homeSize', 'large')}
+                                                >
+                                                    <p className="text-sm">Large</p>
+                                                    <p className="text-xs text-gray-500">&gt;2000 sq ft</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="mb-4">
+                                            <p className="text-sm font-medium mb-2">Renewable energy use:</p>
+                                            <div className="grid grid-cols-3 gap-2">
+                                                <div 
+                                                    className={`transport-option border p-2 cursor-pointer text-center rounded-lg ${footprintData.renewableEnergy === 'full' ? 'selected' : ''}`}
+                                                    onClick={() => updateFootprintData('renewableEnergy', 'full')}
+                                                >
+                                                    <p className="text-sm">100% Renewable</p>
+                                                </div>
+                                                <div 
+                                                    className={`transport-option border p-2 cursor-pointer text-center rounded-lg ${footprintData.renewableEnergy === 'partial' ? 'selected' : ''}`}
+                                                    onClick={() => updateFootprintData('renewableEnergy', 'partial')}
+                                                >
+                                                    <p className="text-sm">Partial</p>
+                                                </div>
+                                                <div 
+                                                    className={`transport-option border p-2 cursor-pointer text-center rounded-lg ${footprintData.renewableEnergy === 'none' ? 'selected' : ''}`}
+                                                    onClick={() => updateFootprintData('renewableEnergy', 'none')}
+                                                >
+                                                    <p className="text-sm">None</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="mb-5">
+                                            <div className="flex justify-between mb-1">
+                                                <p className="text-sm font-medium">Energy efficiency measures:</p>
+                                                <p className="text-sm">{footprintData.energyEfficiency}%</p>
+                                            </div>
+                                            <input 
+                                                type="range" 
+                                                min="0" 
+                                                max="100" 
+                                                step="5" 
+                                                value={footprintData.energyEfficiency} 
+                                                onChange={(e) => updateFootprintData("energyEfficiency", parseInt(e.target.value))}
+                                                className="w-full"
+                                            />
+                                            <div className="flex justify-between mt-1 text-xs text-gray-500">
+                                                <span>0%</span>
+                                                <span>50%</span>
+                                                <span>100%</span>
+                                            </div>
+                                            <p className="text-xs text-gray-500 mt-1">
+                                                Includes LED bulbs, efficient appliances, smart thermostats, insulation, etc.
+                                            </p>
+                                        </div>
+                                        
+                                        <h3 className="font-medium border-b border-gray-200 dark:border-gray-700 pb-2 mb-3 text-base">Goods & Services</h3>
+                                        
+                                        <div className="mb-6">
+                                            <div className="flex justify-between mb-1">
+                                                <p className="text-sm font-medium">Consumption Level:</p>
+                                                <p className="text-sm">{footprintData.goods} tons</p>
+                                            </div>
+                                            <input 
+                                                type="range" 
+                                                min="0" 
+                                                max="4" 
+                                                step="0.1" 
+                                                value={footprintData.goods} 
+                                                onChange={(e) => updateFootprint("goods", e.target.value)}
+                                                className="w-full"
+                                            />
+                                            <div className="flex justify-between mt-1 text-xs text-gray-500">
+                                                <span>Low</span>
+                                                <span>Average</span>
+                                                <span>High</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="sticky bottom-4 mt-6">
+                                            <button 
+                                                className="bg-primary text-white px-4 py-3 w-full font-medium hover:bg-opacity-90 transition rounded-lg"
+                                                onClick={() => {
+                                                    setUser(prev => ({
+                                                        ...prev, 
+                                                        points: prev.points + 50,
+                                                        actions: prev.actions + 1
+                                                    }));
+                                                    setModalContent("🎉 Footprint updated! +50 points");
+                                                    setShowModal(true);
+                                                    setTimeout(() => setShowModal(false), 2000);
+                                                    setActiveSideNav("results");
+                                                }}
+                                            >
+                                                Calculate Footprint
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                        
+                    case "results":
+                        return (
+                            <div className="space-y-4">
+                                <div className="bg-white dark:bg-darkcard shadow rounded-lg p-4 mb-16">
+                                    <h2 className="text-lg font-semibold mb-3">Your Carbon Footprint</h2>
+                                    
+                                    <div className="bg-gray-50 dark:bg-gray-800 p-4 text-center mb-4 rounded-lg">
+                                        <p className="text-sm text-gray-500 dark:text-gray-400">Annual Carbon Footprint</p>
+                                        <p className="text-3xl font-bold my-2">{calculateFootprint().toFixed(1)}</p>
+                                        <p className="text-base">metric tons CO₂e</p>
+                                        
+                                        <div className="mt-3 flex items-center justify-center">
+                                            {calculateFootprint() <= 2 ? (
+                                                <span className="bg-secondary text-white px-3 py-1 rounded-full">Very Low Impact</span>
+                                            ) : calculateFootprint() <= 5 ? (
+                                                <span className="bg-green-600 text-white px-3 py-1 rounded-full">Low Impact</span>
+                                            ) : calculateFootprint() <= 10 ? (
+                                                <span className="bg-yellow-500 text-white px-3 py-1 rounded-full">Medium Impact</span>
+                                            ) : (
+                                                <span className="bg-red-500 text-white px-3 py-1 rounded-full">High Impact</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <h3 className="font-medium mb-2 text-base">Impact Breakdown</h3>
+                                        <div className="space-y-3">
+                                            <div>
+                                                <div className="flex justify-between text-sm">
+                                                    <span>Transportation</span>
+                                                    <span>{footprintData.transport} tons ({Math.round(footprintData.transport / calculateFootprint() * 100)}%)</span>
+                                                </div>
+                                                <div className="w-full bg-gray-200 dark:bg-gray-700 h-2 mt-1 rounded-full">
+                                                    <div className="bg-primary h-2 rounded-full" style={{width: `${(footprintData.transport / calculateFootprint()) * 100}%`}}></div>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div className="flex justify-between text-sm">
+                                                    <span>Food & Diet</span>
+                                                    <span>{footprintData.food} tons ({Math.round(footprintData.food / calculateFootprint() * 100)}%)</span>
+                                                </div>
+                                                <div className="w-full bg-gray-200 dark:bg-gray-700 h-2 mt-1 rounded-full">
+                                                    <div className="bg-secondary h-2 rounded-full" style={{width: `${(footprintData.food / calculateFootprint()) * 100}%`}}></div>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div className="flex justify-between text-sm">
+                                                    <span>Home Energy</span>
+                                                    <span>{footprintData.energy} tons ({Math.round(footprintData.energy / calculateFootprint() * 100)}%)</span>
+                                                </div>
+                                                <div className="w-full bg-gray-200 dark:bg-gray-700 h-2 mt-1 rounded-full">
+                                                    <div className="bg-accent h-2 rounded-full" style={{width: `${(footprintData.energy / calculateFootprint()) * 100}%`}}></div>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div className="flex justify-between text-sm">
+                                                    <span>Goods & Services</span>
+                                                    <span>{footprintData.goods} tons ({Math.round(footprintData.goods / calculateFootprint() * 100)}%)</span>
+                                                </div>
+                                                <div className="w-full bg-gray-200 dark:bg-gray-700 h-2 mt-1 rounded-full">
+                                                    <div className="bg-tertiary h-2 rounded-full" style={{width: `${(footprintData.goods / calculateFootprint()) * 100}%`}}></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="mt-5">
+                                        <div className="flex justify-between">
+                                            <h3 className="font-medium text-base">Compare Your Footprint</h3>
+                                            <button 
+                                                className="text-primary text-sm"
+                                                onClick={() => setCompareMode(!compareMode)}
+                                            >
+                                                {compareMode ? 'Hide' : 'Show'}
+                                            </button>
+                                        </div>
+                                        
+                                        {compareMode && (
+                                            <div className="mt-3">
+                                                <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
+                                                    <div className="h-40">
+                                                        <canvas ref={comparisonChartRef}></canvas>
+                                                    </div>
+                                                </div>
+                                                <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                                                    <p>Sustainable level: 2.0 tons per person per year</p>
+                                                    <p>World average: 4.8 tons per person per year</p>
+                                                    <p>US average: 15.5 tons per person per year</p>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                    
+                                    <div className="mt-5">
+                                        <h3 className="font-medium mb-3 text-base">Personalized Recommendations</h3>
+                                        <div className="space-y-3">
+                                            {generateRecommendations(calculateFootprint(), footprintData).map((rec, i) => (
+                                                <div key={i} className="border border-gray-200 dark:border-gray-700 rounded-lg">
+                                                    <div className="p-3 border-l-4 border-primary bg-gray-50 dark:bg-gray-800 flex rounded-tl-lg">
+                                                        <span className="text-2xl mr-3">{rec.icon}</span>
+                                                        <div>
+                                                            <h4 className="font-medium">{rec.title}</h4>
+                                                            <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">{rec.description}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="p-2 flex justify-between items-center">
+                                                        <span className="text-xs bg-blue-100 dark:bg-blue-900 dark:bg-opacity-20 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded-full">
+                                                            {rec.impact}
+                                                        </span>
+                                                        <label className="apple-switch">
+                                                            <input type="checkbox" />
+                                                            <span className="apple-slider"></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="mt-5">
+                                        <h3 className="font-medium mb-2 text-base">Carbon Offset Options</h3>
+                                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
+                                            After reducing emissions, consider offsetting unavoidable carbon footprint
+                                            by supporting verified carbon reduction projects.
+                                        </p>
+                                        
+                                        <button 
+                                            className="flex justify-between items-center w-full p-3 border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 rounded-lg"
+                                            onClick={() => setShowOffsetOptions(!showOffsetOptions)}
+                                        >
+                                            <span className="font-medium">Explore Carbon Offset Projects</span>
+                                            <span>{showOffsetOptions ? '▲' : '▼'}</span>
+                                        </button>
+                                        
+                                        {showOffsetOptions && (
+                                            <div className="mt-3 space-y-3">
+                                                {offsetProjects.map(project => (
+                                                    <div key={project.id} className="border border-gray-200 dark:border-gray-700 flex overflow-hidden rounded-lg">
+                                                        <div className="w-1/3">
+                                                            <img src={project.image} alt={project.title} className="w-full h-full object-cover" />
+                                                        </div>
+                                                        <div className="w-2/3 p-3">
+                                                            <div className="flex justify-between">
+                                                                <h4 className="font-medium text-sm">{project.title}</h4>
+                                                                {project.verified && (
+                                                                    <span className="text-xs bg-secondary text-white px-1 rounded-full">Verified</span>
+                                                                )}
+                                                            </div>
+                                                            <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">{project.description}</p>
+                                                            <div className="flex justify-between items-center mt-2">
+                                                                <span className="text-xs font-medium">{project.impact}</span>
+                                                                <button className="text-xs bg-primary text-white px-2 py-1 rounded-full">Support</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                    
+                                    <div className="sticky bottom-4 mt-6">
+                                        <button 
+                                            className="bg-secondary text-white px-4 py-3 w-full font-medium hover:bg-opacity-90 transition rounded-lg"
+                                            onClick={() => {
+                                                setUser(prev => ({
+                                                    ...prev, 
+                                                    points: prev.points + 100,
+                                                    actions: prev.actions + 1
+                                                }));
+                                                setModalContent("🌱 Commitment made! +100 points");
+                                                setShowModal(true);
+                                                setTimeout(() => setShowModal(false), 2000);
+                                            }}
+                                        >
+                                            Commit to These Actions
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                        
+                    case "analytics":
+                        return (
+                            <div className="space-y-4">
+                                <div className="bg-white dark:bg-darkcard shadow rounded-lg p-4 mb-16">
+                                    <h2 className="text-lg font-semibold mb-3">Carbon Analytics</h2>
+                                    
+                                    <h3 className="font-medium mb-2 text-base">Emission Breakdown</h3>
+                                    <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
+                                        <div className="h-48">
+                                            <canvas ref={chartRef}></canvas>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="mt-5">
+                                        <h3 className="font-medium mb-2 text-base">Monthly Trend</h3>
+                                        <div className="bg-gray-50 dark:bg-gray-800 p-3 h-40 flex items-end rounded-lg">
+                                            <div className="flex items-end justify-between w-full h-full">
+                                                {[8.9, 8.7, 8.5, 8.6, 8.3, 8.2, 8.0, 7.8, 7.6, 7.5, 7.4, 7.2].map((value, i) => (
+                                                    <div key={i} className="flex flex-col items-center">
+                                                        <div 
+                                                            className={`w-5 ${i === 11 ? 'bg-primary' : 'bg-gray-300 dark:bg-gray-600'} rounded-t-lg`} 
+                                                            style={{height: `${(value / 10) * 100}%`}}
+                                                        ></div>
+                                                        <p className="text-[10px] mt-0.5">{['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'][i]}</p>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="mt-5">
+                                        <h3 className="font-medium mb-2 text-base">Impact Metrics</h3>
+                                        <div className="space-y-3">
+                                            <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
+                                                <div className="flex items-center">
+                                                    <div className="text-2xl mr-3">🌳</div>
+                                                    <div>
+                                                        <p className="text-xs text-gray-500 dark:text-gray-400">Trees needed to offset</p>
+                                                        <p className="text-lg font-bold">{Math.round(calculateFootprint() * 15)} trees</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
+                                                <div className="flex items-center">
+                                                    <div className="text-2xl mr-3">🏠</div>
+                                                    <div>
+                                                        <p className="text-xs text-gray-500 dark:text-gray-400">Compared to average home</p>
+                                                        <p className="text-lg font-bold">{Math.round(calculateFootprint() / 7.5 * 100)}%</p>
+                                                        <p className="text-xs text-gray-500 dark:text-gray-400">US average home: 7.5 tons/year</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
+                                                <h4 className="font-medium mb-2 text-sm">Carbon Budget</h4>
+                                                <p className="text-xs text-gray-600 dark:text-gray-300 mb-2">Remaining annual budget to stay within 1.5°C warming:</p>
+                                                <div className="w-full bg-gray-200 dark:bg-gray-700 h-3 rounded-full">
+                                                    <div 
+                                                        className={`h-3 rounded-full ${calculateFootprint() <= 2 ? 'bg-secondary' : 'bg-yellow-500'}`} 
+                                                        style={{width: `${Math.min(100, (calculateFootprint() / 2) * 100)}%`}}
+                                                    ></div>
+                                                </div>
+                                                <div className="flex justify-between mt-1">
+                                                    <span className="text-xs">0 tons</span>
+                                                    <span className="text-xs">2 tons (sustainable)</span>
+                                                </div>
+                                                <p className="text-sm mt-2">
+                                                    {calculateFootprint() <= 2 
+                                                        ? '✓ Within sustainable limits' 
+                                                        : `${(calculateFootprint() - 2).toFixed(1)} tons above sustainable limits`}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="sticky bottom-4 mt-6">
+                                        <button 
+                                            className="bg-primary text-white px-4 py-3 font-medium hover:bg-opacity-90 transition w-full rounded-lg"
+                                            onClick={() => {
+                                                window.Poe.sendUserMessage(
+                                                    "@Claude-3.7-Sonnet Generate a detailed carbon footprint report based on these metrics: Transportation: " +
+                                                    footprintData.transport + " tons, Food: " + footprintData.food + 
+                                                    " tons, Energy: " + footprintData.energy + " tons, Goods: " + 
+                                                    footprintData.goods + " tons. Total: " + calculateFootprint().toFixed(1) + 
+                                                    " tons CO2e per year.",
+                                                    { openChat: true }
+                                                );
+                                            }}
+                                        >
+                                            Generate Detailed Report
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                        
+                    default:
+                        return null;
+                }
+            };
+
+            // Social tab content
+            const renderSocialContent = () => {
+                return (
+                    <div className="space-y-4 mb-16">
+                        <div className="bg-white dark:bg-darkcard shadow rounded-lg p-4">
+                            <form onSubmit={handlePostSubmit}>
+                                <textarea 
+                                    className="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 text-base rounded-lg"
+                                    placeholder="Share your climate action or thoughts..."
+                                    value={newPost}
+                                    onChange={(e) => setNewPost(e.target.value)}
+                                    rows="3"
+                                ></textarea>
+                                <div className="mt-2 flex justify-between items-center">
+                                    <div className="flex space-x-2">
+                                        <button type="button" className="p-2 text-gray-500 hover:text-primary">
+                                            📷
+                                        </button>
+                                        <button type="button" className="p-2 text-gray-500 hover:text-primary">
+                                            📍
+                                        </button>
+                                        <button type="button" className="p-2 text-gray-500 hover:text-primary">
+                                            #️⃣
+                                        </button>
+                                    </div>
+                                    <button 
+                                        type="submit" 
+                                        className="bg-primary text-white px-4 py-2 font-medium hover:bg-opacity-90 transition rounded-lg"
+                                        disabled={!newPost.trim()}
+                                    >
+                                        Post
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        {posts.map(post => (
+                            <div key={post.id} className="bg-white dark:bg-darkcard shadow rounded-lg">
+                                <div className="p-4">
+                                    <div className="flex items-center">
+                                        <img src={post.avatar} alt={post.user} className="w-10 h-10 mr-3 rounded-full" />
+                                        <div>
+                                            <h3 className="font-semibold">{post.user}</h3>
+                                            <p className="text-xs text-gray-500 dark:text-gray-400">{post.timeAgo}</p>
+                                        </div>
+                                        <div className="ml-auto">
+                                            <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                                                •••
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    {post.badges && post.badges.length > 0 && (
+                                        <div className="flex mt-2 flex-wrap">
+                                            {post.badges.map((badge, i) => (
+                                                <span 
+                                                    key={i} 
+                                                    className="text-xs bg-primary bg-opacity-10 text-primary px-2 py-0.5 mr-1 mb-1 rounded-full"
+                                                >
+                                                    {badge}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
+                                    
+                                    <p className="mt-3">{post.content}</p>
+                                    {post.image && <img src={post.image} alt="Post" className="mt-3 w-full object-cover max-h-80 rounded-lg" />}
+                                    
+                                    <div className="mt-4 flex justify-between items-center border-t border-gray-200 dark:border-gray-700 pt-3">
+                                        <button 
+                                            className={`flex items-center ${post.liked ? 'text-primary' : 'text-gray-500 dark:text-gray-400'}`}
+                                            onClick={() => toggleLike(post.id)}
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
+                                            </svg>
+                                            {post.likes}
+                                        </button>
+                                        <button className="flex items-center text-gray-500 dark:text-gray-400">
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clipRule="evenodd" />
+                                            </svg>
+                                            {post.comments}
+                                        </button>
+                                        <button className="flex items-center text-gray-500 dark:text-gray-400">
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" />
+                                            </svg>
+                                            Share
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                );
+            };
+
+            // AI tab content
+            const renderAIContent = () => {
+                return (
+                    <div className="bg-white dark:bg-darkcard shadow rounded-lg p-4 h-[calc(100vh-180px)] flex flex-col mb-16">
+                        <div className="flex items-center mb-3">
+                            <div className="w-10 h-10 bg-primary flex items-center justify-center text-white mr-3 rounded-full">
+                                🤖
+                            </div>
+                            <div>
+                                <h2 className="font-bold">EcoBot Assistant</h2>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">AI powered climate assistant</p>
+                            </div>
+                        </div>
+                        
+                        <div className="flex-grow overflow-y-auto mb-4 space-y-3">
+                            {aiResponses.length === 0 ? (
+                                <div className="text-center text-gray-500 dark:text-gray-400 mt-10">
+                                    <p className="text-lg mb-2">Welcome to EcoBot!</p>
+                                    <p className="text-sm">Ask me anything about climate change, sustainability, or reducing your carbon footprint.</p>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-6 max-w-md mx-auto">
+                                        <button 
+                                            className="p-2 border border-gray-300 dark:border-gray-600 text-left text-sm hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg"
+                                            onClick={() => setAiMessage("How can I reduce my carbon footprint at home?")}
+                                        >
+                                            How can I reduce my carbon footprint at home?
+                                        </button>
+                                        <button 
+                                            className="p-2 border border-gray-300 dark:border-gray-600 text-left text-sm hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg"
+                                            onClick={() => setAiMessage("Explain climate change in simple terms")}
+                                        >
+                                            Explain climate change in simple terms
+                                        </button>
+                                        <button 
+                                            className="p-2 border border-gray-300 dark:border-gray-600 text-left text-sm hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg"
+                                            onClick={() => setAiMessage("What are the best renewable energy options?")}
+                                        >
+                                            What are the best renewable energy options?
+                                        </button>
+                                        <button 
+                                            className="p-2 border border-gray-300 dark:border-gray-600 text-left text-sm hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg"
+                                            onClick={() => setAiMessage("Give me 5 easy eco-friendly habits")}
+                                        >
+                                            Give me 5 easy eco-friendly habits
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                aiResponses.map((msg, index) => (
+                                    <div 
+                                        key={index} 
+                                        className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                                    >
+                                        <div 
+                                            className={`max-w-[80%] p-3 ${
+                                                msg.sender === 'user' 
+                                                    ? 'bg-primary text-white rounded-tl-lg rounded-bl-lg rounded-br-lg' 
+                                                    : 'bg-gray-100 dark:bg-gray-800 rounded-tr-lg rounded-bl-lg rounded-br-lg'
+                                            }`}
+                                        >
+                                            {msg.sender === 'ai' ? (
+                                                <div dangerouslySetInnerHTML={{ 
+                                                    __html: marked.parse(msg.content) 
+                                                }} />
+                                            ) : (
+                                                <p>{msg.content}</p>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                            {isLoading && (
+                                <div className="flex justify-start">
+                                    <div className="max-w-[80%] p-3 bg-gray-100 dark:bg-gray-800 rounded-tr-lg rounded-bl-lg rounded-br-lg">
+                                        <div className="flex space-x-2">
+                                            <div className="w-3 h-3 bg-gray-300 dark:bg-gray-600 rounded-full animate-pulse"></div>
+                                            <div className="w-3 h-3 bg-gray-300 dark:bg-gray-600 rounded-full animate-pulse delay-75"></div>
+                                            <div className="w-3 h-3 bg-gray-300 dark:bg-gray-600 rounded-full animate-pulse delay-150"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                            <div ref={messageEndRef} />
+                        </div>
+                        
+                        <div className="border-t border-gray-200 dark:border-gray-700 pt-3">
+                            <form 
+                                className="flex items-center"
+                                onSubmit={(e) => {
+                                    e.preventDefault();
+                                    handleAIChat();
+                                }}
+                            >
+                                <input 
+                                    type="text" 
+                                    className="flex-grow p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 text-base mr-2 rounded-full"
+                                    placeholder="Ask about climate change..."
+                                    value={aiMessage}
+                                    onChange={(e) => setAiMessage(e.target.value)}
+                                />
+                                <button 
+                                    type="submit" 
+                                    className="bg-primary text-white p-3 rounded-full"
+                                    disabled={!aiMessage.trim() || isLoading}
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                    </svg>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                );
+            };
+
+            // Render the app header
+            const renderHeader = () => {
+                return (
+                    <header className="sticky top-0 z-10 bg-white dark:bg-darkbg border-b border-gray-200 dark:border-gray-800 p-4">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center">
+                                <span className="text-primary text-xl mr-2">🌱</span>
+                                <h1 className="text-lg font-bold">EcoConnect</h1>
+                            </div>
+                            
+                            <div className="flex items-center">
+                                <div className="relative">
+                                    <img 
+                                        src={user.avatar} 
+                                        alt="Profile" 
+                                        className="w-8 h-8 rounded-full border border-primary"
+                                    />
+                                    <div className="absolute -bottom-0.5 -right-0.5 bg-secondary rounded-full w-3 h-3 border border-white dark:border-darkbg"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {/* Segment control for sub-navigation */}
+                        {activeTab === "home" && (
+                            <div className="segmented-control">
+                                <button 
+                                    className={`segment ${activeSideNav === "dashboard" ? 'active' : ''}`}
+                                    onClick={() => setActiveSideNav("dashboard")}
+                                >
+                                    Dashboard
+                                </button>
+                                <button 
+                                    className={`segment ${activeSideNav === "achievements" ? 'active' : ''}`}
+                                    onClick={() => setActiveSideNav("achievements")}
+                                >
+                                    Achievements
+                                </button>
+                                <button 
+                                    className={`segment ${activeSideNav === "stats" ? 'active' : ''}`}
+                                    onClick={() => setActiveSideNav("stats")}
+                                >
+                                    Stats
+                                </button>
+                            </div>
+                        )}
+                        
+                        {activeTab === "footprint" && (
+                            <div className="segmented-control">
+                                <button 
+                                    className={`segment ${activeSideNav === "calculator" ? 'active' : ''}`}
+                                    onClick={() => setActiveSideNav("calculator")}
+                                >
+                                    Calculator
+                                </button>
+                                <button 
+                                    className={`segment ${activeSideNav === "results" ? 'active' : ''}`}
+                                    onClick={() => setActiveSideNav("results")}
+                                >
+                                    Results
+                                </button>
+                                <button 
+                                    className={`segment ${activeSideNav === "analytics" ? 'active' : ''}`}
+                                    onClick={() => setActiveSideNav("analytics")}
+                                >
+                                    Analytics
+                                </button>
+                            </div>
+                        )}
+                    </header>
+                );
+            };
+
+            // Render the bottom navigation bar
+            const renderBottomNav = () => {
+                return (
+                    <div className="bottom-tab-bar">
+                        <button 
+                            className={`tab-item ${activeTab === "home" ? 'active' : ''}`}
+                            onClick={() => {
+                                setActiveTab("home"); 
+                                setActiveSideNav("dashboard");
+                            }}
+                        >
+                            <div className="tab-item-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                                </svg>
+                            </div>
+                            <span>Home</span>
+                        </button>
+                        <button 
+                            className={`tab-item ${activeTab === "footprint" ? 'active' : ''}`}
+                            onClick={() => {
+                                setActiveTab("footprint");
+                                setActiveSideNav("calculator");
+                            }}
+                        >
+                            <div className="tab-item-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                </svg>
+                            </div>
+                            <span>Footprint</span>
+                        </button>
+                        <button 
+                            className={`tab-item ${activeTab === "social" ? 'active' : ''}`}
+                            onClick={() => {
+                                setActiveTab("social");
+                            }}
+                        >
+                            <div className="tab-item-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
+                                </svg>
+                            </div>
+                            <span>Community</span>
+                        </button>
+                        <button 
+                            className={`tab-item ${activeTab === "ai" ? 'active' : ''}`}
+                            onClick={() => {
+                                setActiveTab("ai");
+                            }}
+                        >
+                            <div className="tab-item-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                            <span>EcoBot</span>
+                        </button>
+                    </div>
+                );
+            };
+
+            return (
+                <div className="pb-16">
+                    {renderHeader()}
+                    
+                    <main className="p-4">
+                        {renderMainContent()}
+                    </main>
+                    
+                    {renderBottomNav()}
+                    
+                    {showModal && (
+                        <div className="fixed bottom-16 left-0 right-0 mx-auto w-5/6 bg-gray-800 text-white py-2 px-4 shadow-lg z-50 rounded-lg text-center">
+                            {modalContent}
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        ReactDOM.render(
+            <App />,
+            document.getElementById('root')
+        );
+    </script>
+</body>
+</html>
