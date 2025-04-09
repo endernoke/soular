@@ -44,11 +44,10 @@ Soular is a comprehensive web application designed to raise awareness about clim
 
 ## Technical Details
 
-- **Frontend**: Built using React for a responsive and interactive user interface.
-- **AI Integration**: Utilizes Claude AI for personalized advice.
+- **Tech Stack**: Built using Firebase for user authentication and storage, with React + TailwindCSS for a responsive and interactive UI.
+- **AI Integration**: Utilizes Google Gemini LLM for personalized advice.
 - **Design**: Supports both light and dark modes based on system preferences.
 - **Responsiveness**: Fully responsive for both mobile and desktop devices.
-- **Hosting**: Backend will be hosted using Render.
 
 ## Future Enhancements
 
