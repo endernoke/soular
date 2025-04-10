@@ -15,7 +15,13 @@ export default {
       },
       container: {
         center: true,
-        padding: '2rem'
+        padding: {
+          DEFAULT: '1rem',
+          sm: '2rem',
+          lg: '3rem',
+          xl: '4rem',
+          '2xl': '5rem',
+        },
       },
       fontFamily: {
         sans: ['Inter var', 'sans-serif'],
