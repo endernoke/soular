@@ -54,18 +54,24 @@ Soular is a comprehensive web application designed to raise awareness about clim
 To test or start developing locally, follow these steps:
 
 1. Clone the repo
-   ```
+
+   ``` cmd
    git clone https://github.com/endernoke/soular
    cd soular
    ```
+
 2. Install dependencies
-   ```
+
+   ``` cmd
    npm install
    ```
+
 3. Start a development server
-   ```
+
+   ``` cmd
    npm run dev
    ```
+
    Follow the instructions in the terminal to navigate to the webapp. Its content will be updated dynamically after making changes to the code.
 
 > [!TIP]
