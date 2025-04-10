@@ -110,14 +110,14 @@ function Social() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="max-w-2xl mx-auto bg-white dark:bg-darkbg p-2">  
       {/* Create Post */}
       <div className="bg-white dark:bg-darkcard p-6 rounded-lg shadow-lg mb-6">
         <form onSubmit={handlePostSubmit}>
           <textarea
             value={newPost}
             onChange={(e) => setNewPost(e.target.value)}
-            placeholder="Share your climate action..."
+            placeholder="Share your climate action or thoughts..."
             className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-800 dark:border-gray-700"
             rows="3"
           ></textarea>
@@ -159,7 +159,7 @@ function Social() {
               <p className="mb-4">{post.content}</p>
 
               {/* Post Actions */}
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center justify-between mr-auto">
                 <button
                   onClick={() => handleLike(post.id)}
                   className={`flex items-center space-x-1 ${
@@ -177,6 +177,18 @@ function Social() {
                     <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
                   </svg>
                   <span>{post.likes.length}</span>
+                </button>
+                <button className="flex items-center text-gray-500 dark:text-gray-400">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clipRule="evenodd" />
+                  </svg>
+                  {post.comments}
+                </button>
+                <button className="flex items-center text-gray-500 dark:text-gray-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" />
+                    </svg>
+                    Share
                 </button>
               </div>
             </div>
