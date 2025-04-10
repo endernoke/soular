@@ -1,18 +1,11 @@
 @import "tailwindcss";
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
-.loader {
-  border-top-color: #40a2ff;
-  animation: spinner 1.5s linear infinite;
-}
-
-@keyframes spinner {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.carbon-gauge {
-  transition: width 1s ease-in-out;
+@theme {
+  --color-primary: #40a2ff; /* Main blue */
+  --color-secondary: #ff2941; /* Main red */
+  --color-darkbg: #181818; /* Dark background */
+  --color-darkcard: #2a2a2a; /* Dark card background */
+  --color-primary-light: #87ceeb; /* Lighter blue */
+  --color-secondary-light: #ff69b4; /* Lighter red */
+  --color-neutral: #f7f7f7; /* Light neutral */
 }
