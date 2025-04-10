@@ -49,6 +49,28 @@ Soular is a comprehensive web application designed to raise awareness about clim
 - **Design**: Supports both light and dark modes based on system preferences.
 - **Responsiveness**: Fully responsive for both mobile and desktop devices.
 
+## Development
+
+To test or start developing locally, follow these steps:
+
+1. Clone the repo
+   ```
+   git clone https://github.com/endernoke/soular
+   cd soular
+   ```
+2. Install dependencies
+   ```
+   npm install
+   ```
+3. Start a development server
+   ```
+   npm run dev
+   ```
+   Follow the instructions in the terminal to navigate to the webapp. Its content will be updated dynamically after making changes to the code.
+
+> [!TIP]
+> You can view the original app prototype on [Github Pages](https://endernoke.github.io/soular).
+
 ## Future Enhancements
 
 - **Enhance User Engagement**: Add more interactive features to increase user retention.
