@@ -3,6 +3,8 @@
 @theme {
   --color-primary: #40a2ff;
   --color-secondary: #ff2941;
+  --color-green-gradient: #6be585a9;
+  --color-red-gradient: #dd3e539f;
   --color-darkbg: #181818;
   --color-darkcard: #2a2a2a;
 }

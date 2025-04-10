@@ -17,8 +17,8 @@ function App() {
   return (
     <ThemeProvider>
       <div className="min-h-screen bg-gray-200 dark:bg-darkbg flex flex-col">
-        <div className="bg-white dark:bg-darkbg flex flex-row items-center p-4 sticky z-50 top-0 left-0 right-0">
-          <h1 className="text-2xl font-bold text-center">🌱 Soular</h1> {/* add Logo later */}
+        <div className="bg-white dark:bg-darkbg flex flex-row items-center p-4 pb-2 sticky z-50 top-0 left-0 right-0">
+          <h1 className="text-3xl font-bold text-center">🌱 Soular</h1> {/* add Logo later */}
           <div className="flex right-5 absolute">
             <button onClick={() => setActiveTab("profile")} className={`py-2 px-2`}>
               Profile {/* replace as profile image later */}
