@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "expo-t",
-    "slug": "expo-t",
-    "version": "1.0.0",
+    "name": "soular",
+    "slug": "soular",
+    "version": "0.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
@@ -12,6 +12,7 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.endernoke.soular",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
