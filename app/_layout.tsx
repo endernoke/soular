@@ -51,6 +51,16 @@ function RootLayoutNav() {
         }}
       />
       <Tabs.Screen
+        name="events/index"
+        options={{
+          title: 'Events',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="calendar" size={size} color={color} />
+          ),
+          tabBarStyle: { display: 'flex' },
+        }}
+      />
+      <Tabs.Screen
         name="social"
         options={{
           title: 'Social',
@@ -70,6 +80,7 @@ function RootLayoutNav() {
           tabBarStyle: { display: 'flex' },
         }}
       />
+      {/* Hidden screens for navigation purposes */}
       <Tabs.Screen
         name="welcome"
         options={{
@@ -86,6 +97,20 @@ function RootLayoutNav() {
       />
       <Tabs.Screen
         name="auth/signup"
+        options={{
+          href: null,
+          tabBarStyle: { display: 'none' },
+        }}
+      />
+      <Tabs.Screen
+        name="events/new"
+        options={{
+          href: null,
+          tabBarStyle: { display: 'none' },
+        }}
+      />
+      <Tabs.Screen
+        name="events/[id]"
         options={{
           href: null,
           tabBarStyle: { display: 'none' },

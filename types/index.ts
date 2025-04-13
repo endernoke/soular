@@ -16,3 +16,19 @@ export interface Post {
     photoURL: string | null;
   };
 }
+
+export type EventStage = 'upcoming' | 'in-development' | 'completed';
+
+export interface Event {
+  id: string;
+  title: string;
+  description: string;
+  date: string;
+  time: string;
+  venue: string;
+  stage: EventStage;
+  createdAt: Date;
+  createdBy: string;
+  organizers: string[];
+  participants: string[];
+}
