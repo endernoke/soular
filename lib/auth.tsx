@@ -20,8 +20,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser({
           uid: firebaseUser.uid,
           email: firebaseUser.email,
-          displayName: firebaseUser.displayName,
-          photoURL: firebaseUser.photoURL,
+          displayName: firebaseUser?.displayName,
+          photoURL: firebaseUser?.photoURL,
         });
       } else {
         setUser(null);

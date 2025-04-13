@@ -40,8 +40,8 @@ export default function SocialScreen() {
         createdAt: serverTimestamp(),
         user: {
           id: user.uid,
-          displayName: user.displayName,
-          photoURL: user.photoURL,
+          displayName: user?.displayName,
+          photoURL: user?.photoURL,
         },
       });
       setNewPost('');

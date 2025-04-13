@@ -3,6 +3,9 @@ import { Tabs } from 'expo-router';
 import { useRouter, Slot, SplashScreen } from 'expo-router';
 import { AuthProvider, useAuth } from '@/lib/auth';
 import { Ionicons } from '@expo/vector-icons';
+import { StatusBar } from 'expo-status-bar';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import '../global.css';
 
 // Keep splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
@@ -94,8 +97,13 @@ function RootLayoutNav() {
 
 export default function RootLayout() {
   return (
-    <AuthProvider>
-      <RootLayoutNav />
-    </AuthProvider>
+    <>
+      <StatusBar style="dark" />
+      <SafeAreaView className='flex-1' edges={['top', 'left', 'right', 'bottom']}>
+        <AuthProvider>
+          <RootLayoutNav />
+        </AuthProvider>
+      </SafeAreaView>
+    </>
   );
 }

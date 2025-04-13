@@ -16,6 +16,10 @@ dist/
 web-build/
 expo-env.d.ts
 
+# NativeWind
+# I'm not sure if this is needed, but it seems to be a common practice to ignore this file.
+nativewind-env.d.ts
+
 # Native
 *.orig.*
 *.jks
