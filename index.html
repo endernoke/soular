@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detailed Carbon Footprint Calculator | Soular</title>
+    <title>Carbon Footprint Calculator | Soular</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -14,16 +14,25 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#40a2ff',
-                        secondary: '#ff2941',
-                        darkbg: '#181818',
-                        darkcard: '#2A2A2A'
+                        primary: '#2E7D32', // Forest green
+                        secondary: '#81C784', // Light green
+                        accent: '#4CAF50', // Vibrant green
+                        darkbg: '#1B2827', // Dark forest
+                        darkcard: '#263A38', // Dark moss
+                        eco: {
+                            light: '#C8E6C9',
+                            DEFAULT: '#4CAF50',
+                            dark: '#2E7D32',
+                            water: '#81D4FA',
+                            earth: '#8D6E63',
+                            leaf: '#81C784'
+                        }
                     }
                 }
             }
         };
-
-        // Dark mode detection (same as before)
+    
+        // Dark mode detection
         if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
             document.documentElement.classList.add('dark');
         }
@@ -34,24 +43,317 @@
                 document.documentElement.classList.remove('dark');
             }
         });
+
+        // Language translations
+        const translations = {
+            en: {
+                title: "Carbon Footprint Calculator",
+                lifestyle: "Your Lifestyle Details",
+                transport: {
+                    title: "Transportation",
+                    primaryVehicle: "Primary Vehicle/Mode",
+                    vehicles: {
+                        car_gas_avg: "Car (Average Gas)",
+                        car_electric: "Car (Electric)",
+                        motorcycle: "Motorcycle",
+                        bus: "Primarily Bus",
+                        train: "Primarily Train",
+                        bike_walk: "Primarily Bike/Walk"
+                    },
+                    weeklyMiles: "Weekly Miles in Private Vehicle (Car/Motorcycle)",
+                    publicMiles: "Weekly Miles via Public Transport (Bus/Train)",
+                    flights: {
+                        short: "Short Flights/yr (<3hr)",
+                        medium: "Medium Flights/yr (3-6hr)",
+                        long: "Long Flights/yr (>6hr)"
+                    },
+                    estimate: "Est. Transport"
+                },
+                food: {
+                    title: "Food & Diet",
+                    dietType: "Describe Your Diet",
+                    diets: {
+                        meat_heavy: "Meat in most meals",
+                        meat_average: "Average omnivore (meat 5-7 times/week)",
+                        vegetarian: "Vegetarian (no meat/fish)",
+                        vegan: "Vegan (no animal products)"
+                    },
+                    estimate: "Est. Food"
+                },
+                energy: {
+                    title: "Home Energy",
+                    homeType: "Type of Home",
+                    homes: {
+                        apartment: "Apartment / Condo",
+                        small_house: "Small House (~1000 sqft)",
+                        medium_house: "Medium House (~2000 sqft)",
+                        large_house: "Large House (>2500 sqft)"
+                    },
+                    heatingSource: "Primary Heating Source",
+                    heating: {
+                        natural_gas: "Natural Gas",
+                        heating_oil: "Heating Oil",
+                        propane: "Propane",
+                        electric: "Electric (Baseboard/Furnace)",
+                        other_renewable: "Wood / Solar / Geothermal"
+                    },
+                    manualElectricity: "Manually enter annual electricity usage?",
+                    annualElectricity: "Annual Electricity (kWh)",
+                    manualHeating: "Manually enter annual heating fuel usage?",
+                    annualHeating: "Annual Heating Fuel",
+                    estimate: "Est. Energy"
+                },
+                goods: {
+                    title: "Goods & Services",
+                    spending: "Spending on non-essential goods (clothing, electronics, furniture, entertainment etc.)",
+                    levels: {
+                        low: "Low (Minimal, mostly essentials)",
+                        medium: "Medium (Average purchases)",
+                        high: "High (Frequent purchases, latest trends)",
+                        very_high: "Very High (Luxury goods, frequent upgrades)"
+                    },
+                    estimate: "Est. Goods"
+                },
+                footprint: {
+                    title: "Your Estimated Carbon Footprint",
+                    transport: "Transportation",
+                    food: "Food & Diet",
+                    energy: "Home Energy",
+                    goods: "Goods & Services",
+                    total: "tons CO₂e / year",
+                    impact: "Your Impact",
+                    levels: {
+                        veryHigh: "Very High",
+                        high: "High",
+                        medium: "Medium",
+                        low: "Low"
+                    },
+                    averages: "Global average: ~4.8 tons | HK average: ~4.4 tons"
+                },
+                recommendations: {
+                    title: "Personal Recommendations",
+                    commit: "Commit to Taking Action",
+                    success: "🎉 Commitment registered! +50 points",
+                    messages: {
+                        highFootprint: "Your footprint is significantly high. Consider major lifestyle changes across categories.",
+                        transport: {
+                            highCar: "Transportation Footprint High: Explore reducing car travel, using public transport, biking, or considering a more fuel-efficient/electric vehicle.",
+                            highFlights: "Transportation Footprint High: Reduce air travel, especially long-haul flights, or consider carbon offsets.",
+                            medium: "Transportation: Look for opportunities to combine trips, carpool, or use public transport for some journeys."
+                        },
+                        food: {
+                            high: "Food Footprint High: Reduce consumption of red meat (beef, lamb). Explore more plant-based meals.",
+                            medium: "Food: Try incorporating more 'Meatless Mondays' or reducing meat portion sizes."
+                        },
+                        energy: {
+                            high: "Energy Footprint High: Investigate home insulation improvements, switch to LED lighting, unplug unused electronics, and consider energy-efficient appliances.",
+                            heating: "Energy: Explore options for switching to renewable heating sources or improving heating system efficiency.",
+                            medium: "Energy: Adjust thermostat settings seasonally, seal air leaks around windows/doors, and use smart power strips."
+                        },
+                        goods: {
+                            high: "Goods/Services Footprint High: Focus on reducing consumption, buying secondhand, repairing items, and choosing products with minimal packaging.",
+                            medium: "Goods/Services: Prioritize experiences over material goods, borrow or rent items when possible, and recycle diligently."
+                        },
+                        lowFootprint: "Great job maintaining a lower footprint! Consider sharing your sustainable practices or exploring local environmental initiatives.",
+                        solar: "Look into community solar or advocating for sustainable policies.",
+                        generic: [
+                            "Switch to a renewable energy provider if available.",
+                            "Reduce food waste by planning meals and composting.",
+                            "Support businesses with strong sustainability practices."
+                        ]
+                    }
+                },
+                didYouKnow: {
+                    title: "Did You Know?",
+                    content: "Reducing your carbon footprint by just 1 ton is equivalent to planting 16.5 trees or taking one car off the road for three months!",
+                    learnMore: "Learn more"
+                }
+            },
+            zh: {
+                title: "碳足跡計算器",
+                lifestyle: "您的生活方式詳情",
+                transport: {
+                    title: "交通運輸",
+                    primaryVehicle: "主要交通工具",
+                    vehicles: {
+                        car_gas_avg: "汽油車（平均）",
+                        car_electric: "電動車",
+                        motorcycle: "摩托車",
+                        bus: "主要搭乘巴士",
+                        train: "主要搭乘火車",
+                        bike_walk: "主要騎自行車/步行"
+                    },
+                    weeklyMiles: "每週私人車輛行駛里程（汽車/摩托車）",
+                    publicMiles: "每週公共交通里程（巴士/火車）",
+                    flights: {
+                        short: "短程航班/年（<3小時）",
+                        medium: "中程航班/年（3-6小時）",
+                        long: "長程航班/年（>6小時）"
+                    },
+                    estimate: "預估交通運輸"
+                },
+                food: {
+                    title: "飲食習慣",
+                    dietType: "描述您的飲食習慣",
+                    diets: {
+                        meat_heavy: "大多餐點含肉",
+                        meat_average: "一般葷食（每週食用肉類5-7次）",
+                        vegetarian: "素食（不食用肉類/魚類）",
+                        vegan: "純素（不食用任何動物產品）"
+                    },
+                    estimate: "預估飲食"
+                },
+                energy: {
+                    title: "家庭能源",
+                    homeType: "住宅類型",
+                    homes: {
+                        apartment: "公寓/套房",
+                        small_house: "小型房屋（約93平方米）",
+                        medium_house: "中型房屋（約186平方米）",
+                        large_house: "大型房屋（>232平方米）"
+                    },
+                    heatingSource: "主要供暖來源",
+                    heating: {
+                        natural_gas: "天然氣",
+                        heating_oil: "暖氣油",
+                        propane: "丙烷",
+                        electric: "電力（電暖器/暖爐）",
+                        other_renewable: "木材/太陽能/地熱"
+                    },
+                    manualElectricity: "手動輸入年度用電量？",
+                    annualElectricity: "年度用電量（千瓦時）",
+                    manualHeating: "手動輸入年度供暖燃料使用量？",
+                    annualHeating: "年度供暖燃料",
+                    estimate: "預估能源"
+                },
+                goods: {
+                    title: "商品與服務",
+                    spending: "非必需品支出（服飾、電子產品、家具、娛樂等）",
+                    levels: {
+                        low: "低（最低限度，主要為必需品）",
+                        medium: "中等（一般購物）",
+                        high: "高（經常購物，追逐潮流）",
+                        very_high: "極高（奢侈品，頻繁更新）"
+                    },
+                    estimate: "預估商品"
+                },
+                footprint: {
+                    title: "您的預估碳足跡",
+                    transport: "交通運輸",
+                    food: "飲食習慣",
+                    energy: "家庭能源",
+                    goods: "商品與服務",
+                    total: "噸二氧化碳當量/年",
+                    impact: "您的影響",
+                    levels: {
+                        veryHigh: "非常高",
+                        high: "高",
+                        medium: "中等",
+                        low: "低"
+                    },
+                    averages: "全球平均：約4.8噸 | 香港平均：約4.4噸"
+                },
+                recommendations: {
+                    title: "個人建議",
+                    commit: "承諾採取行動",
+                    success: "🎉 已記錄承諾！+50積分",
+                    messages: {
+                        highFootprint: "您的碳足跡顯著偏高。請考慮在各個方面改變生活方式。",
+                        transport: {
+                            highCar: "交通碳足跡偏高：考慮減少開車，改用公共交通工具、騎自行車，或選擇更節能/電動的車輛。",
+                            highFlights: "交通碳足跡偏高：減少航空旅行，特別是長途航班，或考慮購買碳補償。",
+                            medium: "交通建議：尋找機會合併行程、共乘，或在某些旅程中使用公共交通工具。"
+                        },
+                        food: {
+                            high: "飲食碳足跡偏高：減少紅肉（牛肉、羊肉）的攝入。探索更多植物性餐點。",
+                            medium: "飲食建議：嘗試實行「無肉星期一」或減少肉類份量。"
+                        },
+                        energy: {
+                            high: "能源碳足跡偏高：研究改善房屋隔熱、轉換LED照明、拔掉未使用的電器插頭，並考慮使用節能電器。",
+                            heating: "能源建議：探索轉換為可再生能源供暖或改善供暖系統效率的選項。",
+                            medium: "能源建議：根據季節調整恆溫器設定，密封門窗周圍的漏氣處，使用智能電源插座。"
+                        },
+                        goods: {
+                            high: "商品/服務碳足跡偏高：著重於減少消費，購買二手商品，維修物品，選擇包裝最少的產品。",
+                            medium: "商品/服務建議：優先選擇體驗而非物質商品，可能時借用或租用物品，認真回收。"
+                        },
+                        lowFootprint: "做得好！保持較低的碳足跡！考慮分享您的環保實踐或探索本地環保計劃。",
+                        solar: "了解社區太陽能項目或倡導可持續發展政策。",
+                        generic: [
+                            "如果可能，轉換到可再生能源供應商。",
+                            "通過規劃用餐和堆肥來減少食物浪費。",
+                            "支持具有強烈可持續發展理念的企業。"
+                        ]
+                    }
+                },
+                didYouKnow: {
+                    title: "您知道嗎？",
+                    content: "減少1噸碳足跡相當於種植16.5棵樹或減少一輛汽車三個月的道路行駛！",
+                    learnMore: "了解更多"
+                }
+            }
+        };
     </script>
     <style>
-        .loader { /* Style unchanged */ }
-        @keyframes spinner { /* Style unchanged */ }
-        .carbon-gauge { /* Style unchanged */ }
-        label { display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-medium; }
+        .loader {
+            border-top-color: #4CAF50;
+            animation: spinner 1.5s linear infinite;
+        }
+        
+        @keyframes spinner {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .carbon-gauge {
+            transition: width 1s ease-in-out;
+        }
+        .eco-card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #2E7D32;
+        }
+        
+        .dark label {
+            color: #81C784;
+        }
+        
         select, input[type="number"] {
             width: 100%;
-            padding: 0.5rem;
-            border-radius: 0.375rem;
-            border: 1px solid #D1D5DB; /* gray-300 */
-            background-color: #FFF; /* white */
-            color: #111827; /* gray-900 */
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border: 2px solid #E8F5E9;
+            background-color: #FFFFFF;
+            color: #2E7D32;
+            transition: all 0.3s ease;
         }
+        
+        select:focus, input[type="number"]:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+            outline: none;
+        }
+        
         .dark select, .dark input[type="number"] {
-            border-color: #4B5563; /* dark:gray-600 */
-            background-color: #374151; /* dark:gray-700 */
-            color: #F9FAFB; /* dark:gray-50 */
+            border-color: #263A38;
+            background-color: #1B2827;
+            color: #C8E6C9;
+        }
+        
+        .eco-gradient {
+            background: linear-gradient(135deg, #2E7D32 0%, #81C784 100%);
+        }
+        
+        .leaf-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 30c4-8 8-4 8-4s4 4 4 8-4 8-8 8-8-4-8-8 4-4 4-4z' fill='%234CAF50' fill-opacity='0.05'/%3E%3C/svg%3E");
         }
     </style>
 </head>
@@ -61,56 +363,54 @@
     <script type="text/babel">
         const { useState, useMemo } = React;
 
-        // --- Emission Factors (Simplified Averages - Replace with more accurate/regional data if needed) ---
         const EMISSION_FACTORS = {
             transport: {
-                car_gas_avg: 0.40, // kg CO2e per mile (avg US car)
-                car_electric: 0.15, // kg CO2e per mile (avg US grid mix, varies greatly by region)
-                bus: 0.10, // kg CO2e per passenger mile
-                train: 0.08, // kg CO2e per passenger mile
-                motorcycle: 0.18, // kg CO2e per mile
-                plane_short: 0.25, // kg CO2e per passenger mile (<300 miles)
-                plane_medium: 0.18, // kg CO2e per passenger mile (300-2300 miles)
-                plane_long: 0.15, // kg CO2e per passenger mile (>2300 miles)
+                car_gas_avg: 0.40,
+                car_electric: 0.15,
+                bus: 0.10,
+                train: 0.08,
+                motorcycle: 0.18,
+                plane_short: 0.25,
+                plane_medium: 0.18,
+                plane_long: 0.15,
             },
-            diet: { // Annual tons CO2e per person
+            diet: {
                 meat_heavy: 3.3,
                 meat_average: 2.5,
                 vegetarian: 1.7,
                 vegan: 1.5,
             },
             energy: {
-                electricity_kwh: 0.4, // kg CO2e per kWh (US avg grid)
-                natural_gas_therm: 5.3, // kg CO2e per therm
-                heating_oil_gallon: 10.1, // kg CO2e per gallon
-                propane_gallon: 5.7, // kg CO2e per gallon
-                // Average annual consumption estimates (vary hugely)
-                home_electricity: { // kWh per year
+                electricity_kwh: 0.4,
+                natural_gas_therm: 5.3,
+                heating_oil_gallon: 10.1,
+                propane_gallon: 5.7,
+                home_electricity: {
                     apartment: 4000,
                     small_house: 8000,
                     medium_house: 11000,
                     large_house: 15000,
                 },
-                home_heating_gas: { // therms per year
+                home_heating_gas: {
                     apartment: 300,
                     small_house: 500,
                     medium_house: 700,
                     large_house: 1000,
                 },
-                 home_heating_oil: { // gallons per year
+                home_heating_oil: {
                     apartment: 200,
                     small_house: 400,
                     medium_house: 600,
                     large_house: 800,
                 },
-                 home_heating_propane: { // gallons per year
+                home_heating_propane: {
                     apartment: 250,
                     small_house: 450,
                     medium_house: 650,
                     large_house: 900,
                 }
             },
-            goods: { // Annual tons CO2e per person based on spending habits
+            goods: {
                 low: 0.8,
                 medium: 1.5,
                 high: 3.0,
@@ -119,36 +419,31 @@
         };
 
         function App() {
-            // --- State for User Inputs ---
+            const [language, setLanguage] = useState('zh');
+            const t = translations[language];
+
             const [inputs, setInputs] = useState({
-                // Transport
                 primaryVehicle: 'car_gas_avg',
                 weeklyMilesDriven: 50,
                 publicTransportMiles: 10,
-                flightsShortPerYear: 1, // < 3 hours approx
-                flightsMediumPerYear: 1, // 3-6 hours approx
-                flightsLongPerYear: 0, // > 6 hours approx
-
-                // Food
+                flightsShortPerYear: 1,
+                flightsMediumPerYear: 1,
+                flightsLongPerYear: 0,
                 dietType: 'meat_average',
-
-                // Energy
                 homeType: 'medium_house',
-                electricityUsageKnown: false, // Toggle for manual input
-                annualKWh: EMISSION_FACTORS.energy.home_electricity.medium_house, // Default estimate
+                electricityUsageKnown: false,
+                annualKWh: EMISSION_FACTORS.energy.home_electricity.medium_house,
                 primaryHeatingFuel: 'natural_gas',
-                heatingUsageKnown: false, // Toggle for manual input
-                annualHeatingUnits: EMISSION_FACTORS.energy.home_heating_gas.medium_house, // Default estimate (therms for gas)
-
-                // Goods
-                shoppingHabits: 'medium', // 'low', 'medium', 'high', 'very_high'
+                heatingUsageKnown: false,
+                annualHeatingUnits: EMISSION_FACTORS.energy.home_heating_gas.medium_house,
+                shoppingHabits: 'medium',
             });
 
-            const [user, setUser] = useState({ // User profile state unchanged
+            const [user, setUser] = useState({
                 name: "Guest User",
                 points: 240,
                 level: 3,
-                footprint: 8.2, // Will be updated by calculation
+                footprint: 8.2,
                 actions: 12,
                 avatar: "https://i.imgur.com/HYsTHOF.png"
             });
@@ -156,7 +451,6 @@
             const [showModal, setShowModal] = useState(false);
             const [modalContent, setModalContent] = useState("");
 
-            // --- Input Change Handler ---
             const handleInputChange = (event) => {
                 const { name, value, type, checked } = event.target;
                 const val = type === 'checkbox' ? checked : (type === 'number' ? parseFloat(value) || 0 : value);
@@ -164,7 +458,6 @@
                 setInputs(prev => {
                     const newState = { ...prev, [name]: val };
 
-                    // Update default energy estimates if homeType changes and usage isn't manually set
                     if (name === 'homeType') {
                         if (!newState.electricityUsageKnown) {
                             newState.annualKWh = EMISSION_FACTORS.energy.home_electricity[val] || 0;
@@ -174,67 +467,56 @@
                            if (fuel === 'natural_gas') newState.annualHeatingUnits = EMISSION_FACTORS.energy.home_heating_gas[val] || 0;
                            else if (fuel === 'heating_oil') newState.annualHeatingUnits = EMISSION_FACTORS.energy.home_heating_oil[val] || 0;
                            else if (fuel === 'propane') newState.annualHeatingUnits = EMISSION_FACTORS.energy.home_heating_propane[val] || 0;
-                           else newState.annualHeatingUnits = 0; // Reset for electric/other
+                           else newState.annualHeatingUnits = 0;
                         }
                     }
-                    // Update default heating estimate if fuel type changes and usage isn't manually set
                      if (name === 'primaryHeatingFuel' && !newState.heatingUsageKnown) {
                            const home = newState.homeType;
                            if (val === 'natural_gas') newState.annualHeatingUnits = EMISSION_FACTORS.energy.home_heating_gas[home] || 0;
                            else if (val === 'heating_oil') newState.annualHeatingUnits = EMISSION_FACTORS.energy.home_heating_oil[home] || 0;
                            else if (val === 'propane') newState.annualHeatingUnits = EMISSION_FACTORS.energy.home_heating_propane[home] || 0;
-                           else newState.annualHeatingUnits = 0; // Reset for electric/other
+                           else newState.annualHeatingUnits = 0;
                     }
 
                     return newState;
                 });
             };
 
-
-            // --- Calculation Logic (using useMemo for efficiency) ---
             const footprintData = useMemo(() => {
                 let transport = 0;
                 let food = 0;
                 let energy = 0;
                 let goods = 0;
 
-                // Transport Calculation
                 const annualMilesDriven = inputs.weeklyMilesDriven * 52;
                 const vehicleFactor = EMISSION_FACTORS.transport[inputs.primaryVehicle] || 0;
-                transport += (annualMilesDriven * vehicleFactor) / 1000; // Convert kg to tons
+                transport += (annualMilesDriven * vehicleFactor) / 1000;
 
                 const annualPublicMiles = inputs.publicTransportMiles * 52;
-                 // Using bus factor as a proxy for general public transport
                 transport += (annualPublicMiles * EMISSION_FACTORS.transport.bus) / 1000;
 
-                // Rough flight estimates (using average distances)
-                const shortFlightDist = 500; // miles
-                const mediumFlightDist = 1500; // miles
-                const longFlightDist = 4000; // miles
+                const shortFlightDist = 500;
+                const mediumFlightDist = 1500;
+                const longFlightDist = 4000;
                 transport += (inputs.flightsShortPerYear * shortFlightDist * EMISSION_FACTORS.transport.plane_short) / 1000;
                 transport += (inputs.flightsMediumPerYear * mediumFlightDist * EMISSION_FACTORS.transport.plane_medium) / 1000;
                 transport += (inputs.flightsLongPerYear * longFlightDist * EMISSION_FACTORS.transport.plane_long) / 1000;
 
-                // Food Calculation
                 food = EMISSION_FACTORS.diet[inputs.dietType] || 0;
 
-                // Energy Calculation
                 energy += (inputs.annualKWh * EMISSION_FACTORS.energy.electricity_kwh) / 1000;
 
                 let heatingFactor = 0;
                 if (inputs.primaryHeatingFuel === 'natural_gas') heatingFactor = EMISSION_FACTORS.energy.natural_gas_therm;
                 else if (inputs.primaryHeatingFuel === 'heating_oil') heatingFactor = EMISSION_FACTORS.energy.heating_oil_gallon;
                 else if (inputs.primaryHeatingFuel === 'propane') heatingFactor = EMISSION_FACTORS.energy.propane_gallon;
-                // Note: Electric heating is accounted for in the main electricity usage (annualKWh)
 
                 energy += (inputs.annualHeatingUnits * heatingFactor) / 1000;
 
-                // Goods Calculation
                 goods = EMISSION_FACTORS.goods[inputs.shoppingHabits] || 0;
 
                 const total = transport + food + energy + goods;
 
-                // Update user profile footprint
                 setUser(prev => ({...prev, footprint: total}));
 
                 return {
@@ -244,270 +526,269 @@
                     goods: goods,
                     total: total
                 };
-            }, [inputs]); // Recalculate only when inputs change
+            }, [inputs]);
 
-
-            // --- Recommendations (can be made more specific based on calculated category values) ---
-             const generateRecommendations = (calculatedFootprint, details) => {
+            const generateRecommendations = (calculatedFootprint, details) => {
                 const recommendations = [];
-                // General High Footprint
-                if (calculatedFootprint > 15) { // Adjusted threshold for detailed calc
-                     recommendations.push("Your footprint is significantly high. Consider major lifestyle changes across categories.");
+                const msgs = t.recommendations.messages;
+
+                if (calculatedFootprint > 15) {
+                    recommendations.push(msgs.highFootprint);
                 }
 
-                // Category-Specific Recommendations
                 if (details.transport > 4) {
-                    if(inputs.primaryVehicle.includes('car')) recommendations.push("Transportation Footprint High: Explore reducing car travel, using public transport, biking, or considering a more fuel-efficient/electric vehicle.");
-                    if(inputs.flightsLongPerYear > 1 || inputs.flightsMediumPerYear > 3) recommendations.push("Transportation Footprint High: Reduce air travel, especially long-haul flights, or consider carbon offsets.");
+                    if(inputs.primaryVehicle.includes('car')) {
+                        recommendations.push(msgs.transport.highCar);
+                    }
+                    if(inputs.flightsLongPerYear > 1 || inputs.flightsMediumPerYear > 3) {
+                        recommendations.push(msgs.transport.highFlights);
+                    }
                 } else if (details.transport > 2) {
-                     recommendations.push("Transportation: Look for opportunities to combine trips, carpool, or use public transport for some journeys.");
+                    recommendations.push(msgs.transport.medium);
                 }
 
-                 if (details.food > 2.8) {
-                    recommendations.push("Food Footprint High: Reduce consumption of red meat (beef, lamb). Explore more plant-based meals.");
+                if (details.food > 2.8) {
+                    recommendations.push(msgs.food.high);
                 } else if (details.food > 2.0) {
-                     recommendations.push("Food: Try incorporating more 'Meatless Mondays' or reducing meat portion sizes.");
+                    recommendations.push(msgs.food.medium);
                 }
 
-                 if (details.energy > 3) {
-                    recommendations.push("Energy Footprint High: Investigate home insulation improvements, switch to LED lighting, unplug unused electronics, and consider energy-efficient appliances.");
-                     if(inputs.primaryHeatingFuel !== 'electric' && inputs.primaryHeatingFuel !== 'other_renewable') recommendations.push("Energy: Explore options for switching to renewable heating sources or improving heating system efficiency.");
-                 } else if (details.energy > 1.5) {
-                    recommendations.push("Energy: Adjust thermostat settings seasonally, seal air leaks around windows/doors, and use smart power strips.");
-                 }
+                if (details.energy > 3) {
+                    recommendations.push(msgs.energy.high);
+                    if(inputs.primaryHeatingFuel !== 'electric' && inputs.primaryHeatingFuel !== 'other_renewable') {
+                        recommendations.push(msgs.energy.heating);
+                    }
+                } else if (details.energy > 1.5) {
+                    recommendations.push(msgs.energy.medium);
+                }
 
-                 if (details.goods > 2.5) {
-                    recommendations.push("Goods/Services Footprint High: Focus on reducing consumption, buying secondhand, repairing items, and choosing products with minimal packaging.");
-                 } else if (details.goods > 1.2) {
-                    recommendations.push("Goods/Services: Prioritize experiences over material goods, borrow or rent items when possible, and recycle diligently.");
-                 }
+                if (details.goods > 2.5) {
+                    recommendations.push(msgs.goods.high);
+                } else if (details.goods > 1.2) {
+                    recommendations.push(msgs.goods.medium);
+                }
 
-                 // Low Footprint Encouragement
-                 if (calculatedFootprint < 7) { // Adjusted threshold
-                     recommendations.push("Great job maintaining a lower footprint! Consider sharing your sustainable practices or exploring local environmental initiatives.");
-                     if (recommendations.length === 1) { // If only the low footprint message is there
-                         recommendations.push("Look into community solar or advocating for sustainable policies.");
-                     }
-                 }
+                if (calculatedFootprint < 7) {
+                    recommendations.push(msgs.lowFootprint);
+                    if (recommendations.length === 1) {
+                        recommendations.push(msgs.solar);
+                    }
+                }
 
-                 // Ensure at least 3 recommendations if possible, adding generic ones if needed
-                 const genericRecs = [
-                     "Switch to a renewable energy provider if available.",
-                     "Reduce food waste by planning meals and composting.",
-                     "Support businesses with strong sustainability practices."
-                 ];
-                 let recIndex = 0;
-                 while (recommendations.length < 3 && recIndex < genericRecs.length) {
-                     if (!recommendations.includes(genericRecs[recIndex])) {
-                         recommendations.push(genericRecs[recIndex]);
-                     }
-                     recIndex++;
-                 }
+                let recIndex = 0;
+                while (recommendations.length < 3 && recIndex < msgs.generic.length) {
+                    if (!recommendations.includes(msgs.generic[recIndex])) {
+                        recommendations.push(msgs.generic[recIndex]);
+                    }
+                    recIndex++;
+                }
 
-
-                return recommendations.slice(0, 4); // Limit to 4 recommendations
+                return recommendations.slice(0, 4);
             };
-
 
             const totalFootprint = footprintData.total;
 
             return (
                 <div className="max-w-3xl mx-auto px-4 py-6">
-                    <header className="flex items-center justify-between mb-6">
-                        {/* Header unchanged */}
+                    <header className="flex items-center justify-between mb-8 bg-eco-light dark:bg-darkcard rounded-xl p-6 shadow-lg">
                         <div className="flex items-center">
                             <span className="text-primary text-4xl mr-2">🌱</span>
-                            <h1 className="text-2xl font-bold">Detailed Carbon Footprint Calculator</h1>
+                            <h1 className="text-2xl font-bold">{t.title}</h1>
+                        </div>
+                        <div className="flex gap-2">
+                            <button 
+                                onClick={() => setLanguage('zh')}
+                                className={`px-4 py-2 rounded-lg transition ${
+                                    language === 'zh' 
+                                    ? 'bg-primary text-white' 
+                                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                                }`}
+                            >
+                                繁體中文
+                            </button>
+                            <button 
+                                onClick={() => setLanguage('en')}
+                                className={`px-4 py-2 rounded-lg transition ${
+                                    language === 'en' 
+                                    ? 'bg-primary text-white' 
+                                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                                }`}
+                            >
+                                English
+                            </button>
                         </div>
                     </header>
 
                     <main>
-                        <div className="space-y-6">
-                            {/* --- Input Section --- */}
-                            <div className="bg-white dark:bg-darkcard rounded-lg shadow p-4">
-                                <h2 className="text-xl font-bold mb-4">Your Lifestyle Details</h2>
+                        <div className="max-w-4xl mx-auto px-4 py-8 leaf-pattern">
+                            <div className="bg-white dark:bg-darkcard rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl border-l-4 border-eco-DEFAULT">
+                                <h2 className="text-xl font-bold mb-4">{t.lifestyle}</h2>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
 
-                                    {/* Transportation Inputs */}
-                                    <fieldset className="border dark:border-gray-700 p-3 rounded">
-                                        <legend className="text-lg font-semibold px-1">Transportation</legend>
+                                    <fieldset className="border-2 dark:border-eco-dark p-4 rounded-xl bg-white dark:bg-darkcard shadow-inner">
+                                        <legend className="text-lg font-semibold px-1">{t.transport.title}</legend>
                                         <div className="space-y-3">
                                             <div>
-                                                <label htmlFor="primaryVehicle">Primary Vehicle/Mode</label>
+                                                <label htmlFor="primaryVehicle">{t.transport.primaryVehicle}</label>
                                                 <select id="primaryVehicle" name="primaryVehicle" value={inputs.primaryVehicle} onChange={handleInputChange}>
-                                                    <option value="car_gas_avg">Car (Average Gas)</option>
-                                                    <option value="car_electric">Car (Electric)</option>
-                                                    <option value="motorcycle">Motorcycle</option>
-                                                    <option value="bus">Primarily Bus</option>
-                                                    <option value="train">Primarily Train</option>
-                                                    <option value="bike_walk">Primarily Bike/Walk</option> {/* Add factor if needed */}
+                                                    {Object.entries(t.transport.vehicles).map(([value, label]) => (
+                                                        <option key={value} value={value}>{label}</option>
+                                                    ))}
                                                 </select>
                                             </div>
                                             <div>
-                                                <label htmlFor="weeklyMilesDriven">Weekly Miles in Private Vehicle (Car/Motorcycle)</label>
+                                                <label htmlFor="weeklyMilesDriven">{t.transport.weeklyMiles}</label>
                                                 <input type="number" id="weeklyMilesDriven" name="weeklyMilesDriven" value={inputs.weeklyMilesDriven} onChange={handleInputChange} min="0" />
                                             </div>
-                                             <div>
-                                                <label htmlFor="publicTransportMiles">Weekly Miles via Public Transport (Bus/Train)</label>
+                                            <div>
+                                                <label htmlFor="publicTransportMiles">{t.transport.publicMiles}</label>
                                                 <input type="number" id="publicTransportMiles" name="publicTransportMiles" value={inputs.publicTransportMiles} onChange={handleInputChange} min="0" />
                                             </div>
                                             <div className="grid grid-cols-3 gap-2">
                                                 <div>
-                                                    <label htmlFor="flightsShortPerYear" className="text-xs">Short Flights/yr (&lt;3hr)</label>
+                                                    <label htmlFor="flightsShortPerYear" className="text-xs">{t.transport.flights.short}</label>
                                                     <input type="number" id="flightsShortPerYear" name="flightsShortPerYear" value={inputs.flightsShortPerYear} onChange={handleInputChange} min="0" />
                                                 </div>
                                                 <div>
-                                                    <label htmlFor="flightsMediumPerYear" className="text-xs">Medium Flights/yr (3-6hr)</label>
+                                                    <label htmlFor="flightsMediumPerYear" className="text-xs">{t.transport.flights.medium}</label>
                                                     <input type="number" id="flightsMediumPerYear" name="flightsMediumPerYear" value={inputs.flightsMediumPerYear} onChange={handleInputChange} min="0" />
                                                 </div>
-                                                 <div>
-                                                    <label htmlFor="flightsLongPerYear" className="text-xs">Long Flights/yr (&gt;6hr)</label>
+                                                <div>
+                                                    <label htmlFor="flightsLongPerYear" className="text-xs">{t.transport.flights.long}</label>
                                                     <input type="number" id="flightsLongPerYear" name="flightsLongPerYear" value={inputs.flightsLongPerYear} onChange={handleInputChange} min="0" />
                                                 </div>
                                             </div>
-                                            <p className="text-sm font-medium text-right">Est. Transport: {footprintData.transport.toFixed(1)} tons</p>
+                                            <p className="text-sm font-medium text-right">{t.transport.estimate}: {footprintData.transport.toFixed(1)} {t.footprint.total}</p>
                                         </div>
                                     </fieldset>
 
-                                    {/* Food Inputs */}
-                                     <fieldset className="border dark:border-gray-700 p-3 rounded">
-                                        <legend className="text-lg font-semibold px-1">Food & Diet</legend>
+                                    <fieldset className="border-2 dark:border-eco-dark p-4 rounded-xl bg-white dark:bg-darkcard shadow-inner">
+                                        <legend className="text-lg font-semibold px-1">{t.food.title}</legend>
                                         <div className="space-y-3">
                                             <div>
-                                                <label htmlFor="dietType">Describe Your Diet</label>
+                                                <label htmlFor="dietType">{t.food.dietType}</label>
                                                 <select id="dietType" name="dietType" value={inputs.dietType} onChange={handleInputChange}>
-                                                    <option value="meat_heavy">Meat in most meals</option>
-                                                    <option value="meat_average">Average omnivore (meat 5-7 times/week)</option>
-                                                    <option value="vegetarian">Vegetarian (no meat/fish)</option>
-                                                    <option value="vegan">Vegan (no animal products)</option>
+                                                    {Object.entries(t.food.diets).map(([value, label]) => (
+                                                        <option key={value} value={value}>{label}</option>
+                                                    ))}
                                                 </select>
                                             </div>
-                                             <p className="text-sm font-medium text-right pt-4">Est. Food: {footprintData.food.toFixed(1)} tons</p>
+                                            <p className="text-sm font-medium text-right pt-4">{t.food.estimate}: {footprintData.food.toFixed(1)} {t.footprint.total}</p>
                                         </div>
                                     </fieldset>
 
-                                    {/* Energy Inputs */}
-                                     <fieldset className="border dark:border-gray-700 p-3 rounded">
-                                        <legend className="text-lg font-semibold px-1">Home Energy</legend>
+                                    <fieldset className="border-2 dark:border-eco-dark p-4 rounded-xl bg-white dark:bg-darkcard shadow-inner">
+                                        <legend className="text-lg font-semibold px-1">{t.energy.title}</legend>
                                         <div className="space-y-3">
                                             <div>
-                                                <label htmlFor="homeType">Type of Home</label>
+                                                <label htmlFor="homeType">{t.energy.homeType}</label>
                                                 <select id="homeType" name="homeType" value={inputs.homeType} onChange={handleInputChange}>
-                                                    <option value="apartment">Apartment / Condo</option>
-                                                    <option value="small_house">Small House (~1000 sqft)</option>
-                                                    <option value="medium_house">Medium House (~2000 sqft)</option>
-                                                    <option value="large_house">Large House (&gt;2500 sqft)</option>
+                                                    {Object.entries(t.energy.homes).map(([value, label]) => (
+                                                        <option key={value} value={value}>{label}</option>
+                                                    ))}
                                                 </select>
                                             </div>
                                             <div>
-                                                <label htmlFor="primaryHeatingFuel">Primary Heating Source</label>
+                                                <label htmlFor="primaryHeatingFuel">{t.energy.heatingSource}</label>
                                                 <select id="primaryHeatingFuel" name="primaryHeatingFuel" value={inputs.primaryHeatingFuel} onChange={handleInputChange}>
-                                                    <option value="natural_gas">Natural Gas</option>
-                                                    <option value="heating_oil">Heating Oil</option>
-                                                    <option value="propane">Propane</option>
-                                                    <option value="electric">Electric (Baseboard/Furnace)</option>
-                                                    <option value="other_renewable">Wood / Solar / Geothermal</option>
+                                                    {Object.entries(t.energy.heating).map(([value, label]) => (
+                                                        <option key={value} value={value}>{label}</option>
+                                                    ))}
                                                 </select>
                                             </div>
-                                            {/* Optional Manual Input Toggles/Fields */}
                                             <div>
                                                 <label htmlFor="electricityUsageKnown" className="inline-flex items-center">
                                                     <input type="checkbox" id="electricityUsageKnown" name="electricityUsageKnown" checked={inputs.electricityUsageKnown} onChange={handleInputChange} className="mr-2"/>
-                                                    Manually enter annual electricity usage?
+                                                    {t.energy.manualElectricity}
                                                 </label>
                                                 {inputs.electricityUsageKnown && (
                                                     <div className="mt-1">
-                                                        <label htmlFor="annualKWh">Annual Electricity (kWh)</label>
+                                                        <label htmlFor="annualKWh">{t.energy.annualElectricity}</label>
                                                         <input type="number" id="annualKWh" name="annualKWh" value={inputs.annualKWh} onChange={handleInputChange} min="0"/>
                                                     </div>
                                                 )}
                                             </div>
-                                             {inputs.primaryHeatingFuel !== 'electric' && inputs.primaryHeatingFuel !== 'other_renewable' && (
+                                            {inputs.primaryHeatingFuel !== 'electric' && inputs.primaryHeatingFuel !== 'other_renewable' && (
                                                 <div>
                                                     <label htmlFor="heatingUsageKnown" className="inline-flex items-center">
                                                         <input type="checkbox" id="heatingUsageKnown" name="heatingUsageKnown" checked={inputs.heatingUsageKnown} onChange={handleInputChange} className="mr-2"/>
-                                                        Manually enter annual heating fuel usage?
+                                                        {t.energy.manualHeating}
                                                     </label>
                                                     {inputs.heatingUsageKnown && (
                                                         <div className="mt-1">
-                                                            <label htmlFor="annualHeatingUnits">Annual Heating Fuel ({
+                                                            <label htmlFor="annualHeatingUnits">{t.energy.annualHeating} ({
                                                                 inputs.primaryHeatingFuel === 'natural_gas' ? 'Therms' : 'Gallons'
                                                             })</label>
                                                             <input type="number" id="annualHeatingUnits" name="annualHeatingUnits" value={inputs.annualHeatingUnits} onChange={handleInputChange} min="0"/>
                                                         </div>
                                                     )}
                                                 </div>
-                                             )}
-                                              <p className="text-sm font-medium text-right">Est. Energy: {footprintData.energy.toFixed(1)} tons</p>
+                                            )}
+                                            <p className="text-sm font-medium text-right">{t.energy.estimate}: {footprintData.energy.toFixed(1)} {t.footprint.total}</p>
                                         </div>
                                     </fieldset>
 
-                                    {/* Goods Inputs */}
-                                     <fieldset className="border dark:border-gray-700 p-3 rounded">
-                                        <legend className="text-lg font-semibold px-1">Goods & Services</legend>
+                                    <fieldset className="border-2 dark:border-eco-dark p-4 rounded-xl bg-white dark:bg-darkcard shadow-inner">
+                                        <legend className="text-lg font-semibold px-1">{t.goods.title}</legend>
                                         <div className="space-y-3">
                                             <div>
-                                                <label htmlFor="shoppingHabits">Spending on non-essential goods (clothing, electronics, furniture, entertainment etc.)</label>
+                                                <label htmlFor="shoppingHabits">{t.goods.spending}</label>
                                                 <select id="shoppingHabits" name="shoppingHabits" value={inputs.shoppingHabits} onChange={handleInputChange}>
-                                                    <option value="low">Low (Minimal, mostly essentials)</option>
-                                                    <option value="medium">Medium (Average purchases)</option>
-                                                    <option value="high">High (Frequent purchases, latest trends)</option>
-                                                    <option value="very_high">Very High (Luxury goods, frequent upgrades)</option>
+                                                    {Object.entries(t.goods.levels).map(([value, label]) => (
+                                                        <option key={value} value={value}>{label}</option>
+                                                    ))}
                                                 </select>
                                             </div>
-                                            <p className="text-sm font-medium text-right pt-4">Est. Goods: {footprintData.goods.toFixed(1)} tons</p>
+                                            <p className="text-sm font-medium text-right pt-4">{t.goods.estimate}: {footprintData.goods.toFixed(1)} {t.footprint.total}</p>
                                         </div>
                                     </fieldset>
-
                                 </div>
                             </div>
 
-                            {/* --- Summary Section --- */}
-                             <div className="bg-white dark:bg-darkcard rounded-lg shadow p-4">
-                                <h2 className="text-xl font-bold mb-4">Your Estimated Carbon Footprint</h2>
-                                 <div className="flex flex-col md:flex-row gap-4 items-center">
-                                     {/* Category Breakdown (Optional Detailed View) */}
-                                     <div className="w-full md:w-1/2 space-y-2">
-                                         <p>Transportation: {footprintData.transport.toFixed(1)} tons</p>
-                                         <p>Food & Diet: {footprintData.food.toFixed(1)} tons</p>
-                                         <p>Home Energy: {footprintData.energy.toFixed(1)} tons</p>
-                                         <p>Goods & Services: {footprintData.goods.toFixed(1)} tons</p>
-                                     </div>
-                                     {/* Total Gauge */}
-                                     <div className="w-full md:w-1/2 flex flex-col items-center">
-                                         <div className="text-center mb-2">
-                                             <span className="text-3xl font-bold">{totalFootprint.toFixed(1)}</span>
-                                             <span className="text-xl ml-1">tons CO₂e / year</span>
-                                         </div>
-                                         {/* Gauge Visualization (adjust max value if needed) */}
-                                         <div className="w-40 h-40 rounded-full border-8 border-gray-200 dark:border-gray-700 relative flex items-center justify-center">
-                                             <div className="absolute inset-0 overflow-hidden rounded-full">
-                                                 <div
-                                                     className="carbon-gauge absolute bottom-0 left-0 right-0 bg-gradient-to-t from-red-500 via-yellow-400 to-green-400"
-                                                     style={{ height: `${Math.min(100, (totalFootprint / 20) * 100)}%` }} /* Adjusted max scale to 20 tons */
-                                                 ></div>
-                                             </div>
-                                             <div className="relative z-10 text-center">
-                                                 <p className="text-sm font-medium">Your Impact</p>
-                                                 {totalFootprint > 15 ? (
-                                                     <p className="text-xs text-red-500">Very High</p>
-                                                 ) : totalFootprint > 10 ? (
-                                                     <p className="text-xs text-red-500">High</p>
-                                                 ) : totalFootprint > 6 ? (
-                                                     <p className="text-xs text-yellow-500">Medium</p>
-                                                 ) : (
-                                                     <p className="text-xs text-green-500">Low</p>
-                                                 )}
-                                             </div>
-                                         </div>
-                                         <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Global average: ~4.8 tons | HK average: ~4.4 tons</p>
-                                     </div>
-                                 </div>
-                             </div>
+                            <div className="bg-white dark:bg-darkcard rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl border-l-4 border-eco-DEFAULT">
+                                <h2 className="text-xl font-bold mb-4">{t.footprint.title}</h2>
+                                <div className="flex flex-col md:flex-row gap-4 items-center">
+                                    <div className="w-full md:w-1/2 space-y-2">
+                                        <p>{t.footprint.transport}: {footprintData.transport.toFixed(1)} {t.footprint.total}</p>
+                                        <p>{t.footprint.food}: {footprintData.food.toFixed(1)} {t.footprint.total}</p>
+                                        <p>{t.footprint.energy}: {footprintData.energy.toFixed(1)} {t.footprint.total}</p>
+                                        <p>{t.footprint.goods}: {footprintData.goods.toFixed(1)} {t.footprint.total}</p>
+                                    </div>
+                                    <div className="w-full md:w-1/2 flex flex-col items-center">
+                                        <div className="text-center mb-2">
+                                            <span className="text-3xl font-bold">{totalFootprint.toFixed(1)}</span>
+                                            <span className="text-xl ml-1">{t.footprint.total}</span>
+                                        </div>
+                                        
+                                        {/* Gauge */}
+                                        <div className="w-48 h-48 rounded-full border-8 border-eco-light dark:border-eco-dark relative flex items-center justify-center shadow-lg">
+                                            <div className="absolute inset-0 overflow-hidden rounded-full">
+                                                <div
+                                                    className="carbon-gauge absolute bottom-0 left-0 right-0 bg-gradient-to-t from-red-500 via-yellow-400 to-green-400"
+                                                    style={{ height: `${Math.min(100, (totalFootprint / 20) * 100)}%` }}
+                                                ></div>
+                                            </div>
+                                            <div className="relative z-10 text-center">
+                                                <p className="text-sm font-medium">{t.footprint.impact}</p>
+                                                {totalFootprint > 15 ? (
+                                                    <p className="text-xs text-red-500">{t.footprint.levels.veryHigh}</p>
+                                                ) : totalFootprint > 10 ? (
+                                                    <p className="text-xs text-red-500">{t.footprint.levels.high}</p>
+                                                ) : totalFootprint > 6 ? (
+                                                    <p className="text-xs text-yellow-500">{t.footprint.levels.medium}</p>
+                                                ) : (
+                                                    <p className="text-xs text-green-500">{t.footprint.levels.low}</p>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">{t.footprint.averages}</p>
+                                    </div>
+                                </div>
+                            </div>
 
                             {/* Recommendations Section */}
-                            <div className="bg-white dark:bg-darkcard rounded-lg shadow p-4">
-                                <h2 className="text-xl font-bold mb-4">Personal Recommendations</h2>
+                            <div className="p-4 bg-eco-light dark:bg-darkcard rounded-xl border-l-4 border-eco-DEFAULT">
+                                <h2 className="text-xl font-bold mb-4">{t.recommendations.title}</h2>
                                 <div className="space-y-3">
                                     {generateRecommendations(totalFootprint, footprintData).map((rec, i) => (
                                         <div key={i} className="p-3 border border-gray-200 dark:border-gray-700 rounded-lg flex items-start">
@@ -517,37 +798,35 @@
                                     ))}
                                 </div>
                                 <button
-                                    className="mt-6 bg-primary text-white rounded-lg px-4 py-2 w-full font-medium hover:bg-opacity-90 transition"
-                                    onClick={() => { /* Commit action unchanged */
+                                    className="px-6 py-3 rounded-xl eco-gradient text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300"
+                                    onClick={() => {
                                         setUser(prev => ({
                                             ...prev,
                                             points: prev.points + 50,
                                             actions: prev.actions + 1
                                         }));
-                                        setModalContent("🎉 Commitment registered! +50 points");
+                                        setModalContent(t.recommendations.success);
                                         setShowModal(true);
                                         setTimeout(() => setShowModal(false), 2000);
                                     }}
                                 >
-                                    Commit to Taking Action
+                                    {t.recommendations.commit}
                                 </button>
                             </div>
 
-                            {/* Did You Know Section (Unchanged) */}
-                            <div className="bg-white dark:bg-darkcard rounded-lg shadow p-4 mt-6">
-                                {/* ... content unchanged ... */}
-                                 <h2 className="text-xl font-bold mb-4">Did You Know?</h2>
+                            {/* Did You Know Section */}
+                            <div className="bg-eco-water/10 dark:bg-eco-dark/20 rounded-xl p-6 border border-eco-water/20">
+                                <h2 className="text-xl font-bold mb-4">{t.didYouKnow.title}</h2>
                                 <div className="p-4 bg-blue-50 dark:bg-gray-800 rounded-lg">
                                     <p className="text-sm">
-                                        Reducing your carbon footprint by just 1 ton is equivalent to planting
-                                        16.5 trees or taking one car off the road for three months!
+                                        {t.didYouKnow.content}
                                         <a
                                             href="https://www.anthesisgroup.com/insights/what-exactly-is-1-tonne-of-co2/#:~:text=1%20tonne%20of%20CO2%20is%20equivalent%20to%3A,trips%20of%20300%20miles%20each."
                                             className="ml-2 text-primary hover:underline"
                                             target="_blank"
                                             rel="noopener noreferrer"
                                         >
-                                            Learn more
+                                            {t.didYouKnow.learnMore}
                                         </a>
                                     </p>
                                 </div>
@@ -555,7 +834,6 @@
                         </div>
                     </main>
 
-                    {/* Modal unchanged */}
                     {showModal && (
                         <div className="fixed bottom-20 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white rounded-lg py-2 px-4 shadow-lg">
                             {modalContent}
