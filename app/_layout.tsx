@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import '../global.css';
+import { hiddenTabs } from './hiddenTabs';
 
 // Keep splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
@@ -71,55 +72,16 @@ function RootLayoutNav() {
         }}
       />
       {/* Hidden screens for navigation purposes */}
-      <Tabs.Screen
-        name="welcome"
-        options={{
-          href: null,
-          tabBarStyle: { display: 'none' },
-        }}
-      />
-      <Tabs.Screen
-        name="auth/login"
-        options={{
-          href: null,
-          tabBarStyle: { display: 'none' },
-        }}
-      />
-      <Tabs.Screen
-        name="auth/signup"
-        options={{
-          href: null,
-          tabBarStyle: { display: 'none' },
-        }}
-      />
-      <Tabs.Screen
-        name="events/new"
-        options={{
-          href: null,
-          tabBarStyle: { display: 'none' },
-        }}
-      />
-      <Tabs.Screen
-        name="events/[id]"
-        options={{
-          href: null,
-          tabBarStyle: { display: 'none' },
-        }}
-      />
-      <Tabs.Screen
-        name="components/NewPost"
-        options={{
-          href: null,
-          tabBarStyle: { display: 'none' },
-        }}
-      />
-      <Tabs.Screen
-        name="components/SocialFeed"
-        options={{
-          href: null,
-          tabBarStyle: { display: 'none' },
-        }}
-      />
+      {hiddenTabs.map((tab) => (
+        <Tabs.Screen
+          key={tab}
+          name={tab}
+          options={{
+            href: null,
+            tabBarStyle: { display: 'none' },
+          }}
+        />
+      ))}
     </Tabs>
   );
 }
