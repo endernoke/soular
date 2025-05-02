@@ -61,16 +61,6 @@ function RootLayoutNav() {
         }}
       />
       <Tabs.Screen
-        name="social"
-        options={{
-          title: 'Social',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="people" size={size} color={color} />
-          ),
-          tabBarStyle: { display: 'flex' },
-        }}
-      />
-      <Tabs.Screen
         name="profile"
         options={{
           title: 'Profile',
@@ -111,6 +101,20 @@ function RootLayoutNav() {
       />
       <Tabs.Screen
         name="events/[id]"
+        options={{
+          href: null,
+          tabBarStyle: { display: 'none' },
+        }}
+      />
+      <Tabs.Screen
+        name="components/NewPost"
+        options={{
+          href: null,
+          tabBarStyle: { display: 'none' },
+        }}
+      />
+      <Tabs.Screen
+        name="components/SocialFeed"
         options={{
           href: null,
           tabBarStyle: { display: 'none' },
