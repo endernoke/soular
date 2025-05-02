@@ -19,12 +19,17 @@ export default function SignUp() {
 
     try {
       setIsLoading(true);
-      const { user } = await createUserWithEmailAndPassword(auth, email, password);
-      await updateProfile(user, {
+      const { user: firebaseUser } = await createUserWithEmailAndPassword(auth, email, password);
+      
+      // Update Firebase auth profile
+      await updateProfile(firebaseUser, {
         displayName: name
       });
+
+      // User document will be automatically created by AuthProvider
       router.replace('/');
     } catch (error: any) {
+      console.error('Signup error:', error);
       Alert.alert('Error', error.message);
     } finally {
       setIsLoading(false);

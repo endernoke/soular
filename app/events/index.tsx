@@ -6,7 +6,7 @@ import { db } from '@/lib/firebase';
 import { Event, EventStage } from '@/types';
 import { Ionicons } from '@expo/vector-icons';
 
-const EventCard = ({ event, onPress }) => (
+const EventCard = ({ event, onPress }: { event: Event; onPress: () => void }) => (
   <TouchableOpacity 
     onPress={onPress}
     className="bg-white p-4 rounded-lg shadow-sm mb-4"
@@ -23,7 +23,7 @@ const EventCard = ({ event, onPress }) => (
         <Text className="text-gray-600 ml-1">{event.date}</Text>
       </View>
     </View>
-    <View className="mt-2">
+    <View className="mt-2 flex-row justify-between items-center">
       <Text className={`text-sm ${
         event.stage === 'upcoming' ? 'text-green-600' :
         event.stage === 'in-development' ? 'text-blue-600' :
@@ -31,6 +31,16 @@ const EventCard = ({ event, onPress }) => (
       }`}>
         {event.stage.charAt(0).toUpperCase() + event.stage.slice(1)}
       </Text>
+      <View className="flex-row space-x-4">
+        <View className="flex-row items-center">
+          <Ionicons name="people" size={16} color="#666" />
+          <Text className="text-gray-600 ml-1">{event.participants.length}</Text>
+        </View>
+        <View className="flex-row items-center">
+          <Ionicons name="briefcase" size={16} color="#666" />
+          <Text className="text-gray-600 ml-1">{event.organizers.length}</Text>
+        </View>
+      </View>
     </View>
   </TouchableOpacity>
 );

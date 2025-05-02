@@ -2,19 +2,21 @@ export interface User {
   uid: string;
   email: string | null;
   displayName: string | null;
-  photoURL: string | null;
+  photoUrl: string | null;  // Changed from photoURL to match schema
+}
+
+export interface UserShort {
+  uid: string;
+  displayName: string | null;
+  photoUrl: string | null;
 }
 
 export interface Post {
   id: string;
-  userId: string;
   content: string;
   imageUrl?: string;
-  createdAt: number;
-  author: {
-    displayName: string;
-    photoURL: string | null;
-  };
+  createdAt: any; // Firebase Timestamp
+  author: UserShort;
 }
 
 export type EventStage = 'upcoming' | 'in-development' | 'completed';
@@ -27,8 +29,8 @@ export interface Event {
   time: string;
   venue: string;
   stage: EventStage;
-  createdAt: Date;
-  createdBy: string;
-  organizers: string[];
-  participants: string[];
+  createdAt: any; // Firebase Timestamp
+  author: UserShort;
+  organizers: UserShort[];
+  participants: UserShort[];
 }

@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { collection, query, orderBy, getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from '@/lib/auth';
-import type { Post } from '@/types';
+import type { Post, UserShort } from '@/types';
 
 export default function SocialScreen() {
   const { user } = useAuth();
@@ -35,14 +35,16 @@ export default function SocialScreen() {
 
     try {
       setIsLoading(true);
+      const author: UserShort = {
+        uid: user.uid,
+        displayName: user.displayName,
+        photoUrl: user.photoUrl
+      };
+
       await addDoc(collection(db, 'posts'), {
         content: newPost.trim(),
         createdAt: serverTimestamp(),
-        user: {
-          id: user.uid,
-          displayName: user?.displayName,
-          photoURL: user?.photoURL,
-        },
+        author
       });
       setNewPost('');
       fetchPosts(); // Refresh posts
@@ -57,17 +59,17 @@ export default function SocialScreen() {
     <View style={styles.postCard}>
       <View style={styles.postHeader}>
         <View style={styles.authorInfo}>
-          {item?.author?.photoURL ? (
-            <Image source={{ uri: item.author.photoURL }} style={styles.avatar} />
+          {item.author.photoUrl ? (
+            <Image source={{ uri: item.author.photoUrl }} style={styles.avatar} />
           ) : (
             <View style={[styles.avatar, styles.avatarPlaceholder]}>
               <Ionicons name="person" size={20} color="#fff" />
             </View>
           )}
-          <Text style={styles.authorName}>{item?.author?.displayName}</Text>
+          <Text style={styles.authorName}>{item.author.displayName}</Text>
         </View>
       </View>
-      <Text style={styles.postContent}>{item?.content}</Text>
+      <Text style={styles.postContent}>{item.content}</Text>
     </View>
   );
 

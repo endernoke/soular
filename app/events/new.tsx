@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { router } from 'expo-router';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from '@/lib/auth';
-import { EventStage } from '@/types';
+import { EventStage, UserShort } from '@/types';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function NewEventScreen() {
@@ -32,11 +32,17 @@ export default function NewEventScreen() {
 
     setLoading(true);
     try {
+      const author: UserShort = {
+        uid: user.uid,
+        displayName: user.displayName,
+        photoUrl: user.photoUrl
+      };
+
       await addDoc(collection(db, 'events'), {
         ...formData,
-        createdAt: new Date(),
-        createdBy: user.uid,
-        organizers: [user.uid],
+        createdAt: serverTimestamp(),
+        author,
+        organizers: [author],
         participants: [],
       });
       

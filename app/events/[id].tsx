@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
-import { doc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from '@/lib/auth';
-import { Event } from '@/types';
+import { Event, UserShort } from '@/types';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function EventDetailScreen() {
@@ -37,10 +37,19 @@ export default function EventDetailScreen() {
     setIsJoining(true);
     try {
       const eventRef = doc(db, 'events', event.id);
-      const isParticipant = event.participants.includes(user.uid);
+      const userShort: UserShort = {
+        uid: user.uid,
+        displayName: user.displayName,
+        photoUrl: user.photoUrl
+      };
+      
+      const isParticipant = event.participants.some(p => p.uid === user.uid);
+      const updatedParticipants = isParticipant
+        ? event.participants.filter(p => p.uid !== user.uid)
+        : [...event.participants, userShort];
       
       await updateDoc(eventRef, {
-        participants: isParticipant ? arrayRemove(user.uid) : arrayUnion(user.uid)
+        participants: updatedParticipants
       });
 
       // Refresh event data
@@ -63,10 +72,19 @@ export default function EventDetailScreen() {
     setIsJoining(true);
     try {
       const eventRef = doc(db, 'events', event.id);
-      const isOrganizer = event.organizers.includes(user.uid);
+      const userShort: UserShort = {
+        uid: user.uid,
+        displayName: user.displayName,
+        photoUrl: user.photoUrl
+      };
+      
+      const isOrganizer = event.organizers.some(o => o.uid === user.uid);
+      const updatedOrganizers = isOrganizer
+        ? event.organizers.filter(o => o.uid !== user.uid)
+        : [...event.organizers, userShort];
       
       await updateDoc(eventRef, {
-        organizers: isOrganizer ? arrayRemove(user.uid) : arrayUnion(user.uid)
+        organizers: updatedOrganizers
       });
 
       // Refresh event data
@@ -99,8 +117,8 @@ export default function EventDetailScreen() {
     );
   }
 
-  const isParticipant = user && event.participants.includes(user.uid);
-  const isOrganizer = user && event.organizers.includes(user.uid);
+  const isParticipant = user && event.participants.some(p => p.uid === user.uid);
+  const isOrganizer = user && event.organizers.some(o => o.uid === user.uid);
 
   return (
     <ScrollView className="flex-1 bg-gray-50">
