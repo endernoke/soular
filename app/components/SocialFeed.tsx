@@ -53,14 +53,13 @@ const SocialFeed = forwardRef((props, ref) => {
   );
 
   return (
-    <FlatList
-      data={posts}
-      renderItem={renderPost}
-      keyExtractor={item => item.id}
-      contentContainerStyle={styles.feed}
-      refreshing={isLoading}
-      onRefresh={fetchPosts}
-    />
+    <View style={styles.feed}>
+      {isLoading ? (
+        <Text>Loading...</Text>
+      ) : (
+        posts.map(post => renderPost({ item: post }))
+      )}
+    </View>
   );
 });
 

@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/lib/auth';
 import NewPost from './components/NewPost';
 import SocialFeed from './components/SocialFeed';
+import HomeWidgets from './components/HomeWidgets';
 
 export default function HomeScreen() {
   const { user } = useAuth();
@@ -14,24 +15,21 @@ export default function HomeScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Home</Text>
+    <ScrollView className='flex-1'>
+      <View className='flex-1 flex-row items-center justify-between p-4 bg-white border-b border-gray-200'>
+        <Text className="text-2xl font-bold">
+          Soular
+        </Text>
         <TouchableOpacity style={styles.iconButton}>
           <Ionicons name="mail" size={24} color="#007AFF" />
         </TouchableOpacity>
       </View>
-
-      <View style={styles.welcomeCard}>
-        <Text style={styles.welcomeText}>Welcome back, {user?.displayName}!</Text>
-        <Text style={styles.subtitle}>Share your thoughts with the community</Text>
-      </View>
-
+      <HomeWidgets />
       <NewPost onPostCreated={handlePostCreated} />
       <View style={styles.feedContainer}>
         <SocialFeed ref={socialFeedRef} />
       </View>
-    </View>
+    </ScrollView>
   );
 }
 

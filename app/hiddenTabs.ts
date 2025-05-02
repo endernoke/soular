@@ -10,4 +10,6 @@ export const hiddenTabs = [
   'events/[id]',
   'components/NewPost',
   'components/SocialFeed',
+  'components/HomeWidgets',
+  'greenOrganizations',
 ]
