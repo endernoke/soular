@@ -15,11 +15,11 @@ export default function HomeWidgets() {
   };
 
   return (
-    <View className="flex-row p-4 gap-4 bg-green-400 border-b border-gray-100 shadow-sm">
+    <View className="flex-row p-4 gap-4 bg-white border-b border-gray-100 shadow-sm">
       {/* Left side - Large Green Organization button */}
       <TouchableOpacity 
         onPress={handleGreenOrgPress}
-        className="flex-1 bg-green-700 rounded-xl p-4 justify-between width-[50%]"
+        className="flex-1 bg-green-400 rounded-xl p-4 justify-between width-[50%]"
       >
         <Text className="text-white text-2xl font-bold">Join a Green Organization</Text>
         <Text className="text-white text-xs opacity-80">Discover and connect with organizations that are making a difference.</Text>
