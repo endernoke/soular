@@ -8,7 +8,6 @@ The database uses a `userShort` object format to reference users in other tables
 - `userShort` (object)
   - `uid` (string) - Reference to the user's id from firebase auth
   - `displayName` (string | null) - Author's display name
-  - `photoUrl` (string | null) - Author's profile picture URL
 
 ## Collections
 
@@ -19,7 +18,7 @@ Fields:
 - `uid` (string) - Reference to the firebase auth identifier for the user
 - `email` (string | null) - User's email address
 - `displayName` (string | null) - User's display name
-- `photoUrl` (string | null) - URL to user's profile picture
+- `photoBase64` (string | null) - Base64 encoded string of the user's profile photo
 
 ### Posts
 Collection name: `posts`
@@ -27,7 +26,7 @@ Collection name: `posts`
 Fields:
 - `id` (string) - Unique identifier for the post
 - `content` (string) - The main text content of the post
-- `imageUrl` (string, optional) - URL to an attached image
+- `imageBase64` (string, optional) - Base64 encoded string of the post's image (if any)
 - `createdAt` (timestamp) - When the post was created
 - `author` (userShort) - Reference to the user who created the post
 
@@ -75,13 +74,12 @@ Fields:
 1. userShort:
    - uid: Required, non-empty string
    - displayName: Optional, can be null
-   - photoUrl: Optional, can be null
 
 2. Users:
    - uid: Required, non-empty string
    - email: Optional, can be null
    - displayName: Optional, can be null
-   - photoUrl: Optional, can be null
+   - photoBase64: Optional, can be null, but if present, resolution must be <= 96 x 96 pixels
 
 3. Posts:
    - content: Required, non-empty string

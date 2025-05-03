@@ -45,8 +45,8 @@ export default function ProfileScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        {user?.photoUrl ? (
-          <Image source={{ uri: user.photoUrl }} style={styles.avatar} />
+        {user?.photoBase64 ? (
+          <Image source={{ uri: user.photoBase64 }} style={styles.avatar} />
         ) : (
           <View style={[styles.avatar, styles.avatarPlaceholder]}>
             <Ionicons name="person" size={40} color="#fff" />

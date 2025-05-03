@@ -40,7 +40,6 @@ export default function EventDetailScreen() {
       const userShort: UserShort = {
         uid: user.uid,
         displayName: user.displayName,
-        photoUrl: user.photoUrl
       };
       
       const isParticipant = event.participants.some(p => p.uid === user.uid);
@@ -75,7 +74,6 @@ export default function EventDetailScreen() {
       const userShort: UserShort = {
         uid: user.uid,
         displayName: user.displayName,
-        photoUrl: user.photoUrl
       };
       
       const isOrganizer = event.organizers.some(o => o.uid === user.uid);

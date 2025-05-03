@@ -2,19 +2,18 @@ export interface User {
   uid: string;
   email: string | null;
   displayName: string | null;
-  photoUrl: string | null;  // Changed from photoURL to match schema
+  photoBase64: string | null;  // Changed from photoUrl to photoBase64
 }
 
 export interface UserShort {
   uid: string;
   displayName: string | null;
-  photoUrl: string | null;
 }
 
 export interface Post {
   id: string;
   content: string;
-  imageUrl?: string;
+  imageBase64?: string;  // Changed from imageUrl to imageBase64
   createdAt: any; // Firebase Timestamp
   author: UserShort;
 }

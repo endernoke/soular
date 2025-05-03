@@ -32,7 +32,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         uid: firebaseUser.uid,
         email: firebaseUser.email,
         displayName: firebaseUser.displayName,
-        photoUrl: firebaseUser.photoURL // Map Firebase's photoURL to our schema's photoUrl
+        photoBase64: null  // Initialize with null instead of using photoURL
       };
 
       if (!userDoc.exists()) {

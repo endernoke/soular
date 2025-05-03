@@ -35,7 +35,6 @@ export default function NewEventScreen() {
       const author: UserShort = {
         uid: user.uid,
         displayName: user.displayName,
-        photoUrl: user.photoUrl
       };
 
       await addDoc(collection(db, 'events'), {
