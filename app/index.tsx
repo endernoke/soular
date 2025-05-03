@@ -1,5 +1,8 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal } from 'react-native';
+import { useFocusEffect } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
+import { StatusBar, setStatusBarBackgroundColor } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/lib/auth';
 import NewPost from './components/NewPost';
@@ -16,32 +19,48 @@ export default function HomeScreen() {
     setNewPostModalVisible(false);
   };
 
+  // Change status bar color based on the screen
+  useFocusEffect(
+    useCallback(() => {
+      setStatusBarBackgroundColor('rgb(26, 234, 159)');
+      return () => {
+        setStatusBarBackgroundColor('rgb(255, 255, 255)');
+      };
+    }, [])
+  );
+
   return (
     <ScrollView className='flex-1 bg-white'>
-      <View className='flex-1 flex-row items-center justify-between p-4 bg-white border-b border-gray-200'>
-        <Text className="text-4xl font-bold ml-4">
-          Soular
-        </Text>
-        <TouchableOpacity className="p-4">
-          <Ionicons name="mail" size={24} color="#007AFF" />
-        </TouchableOpacity>
-      </View>
+      <LinearGradient
+        colors={['rgb(26, 234, 159)', 'rgb(255, 255, 255)']}
+        className='flex-1 justify-center items-center w-full h-full'
+      >
+        <View className='flex-1 flex-row items-center justify-between px-4 pt-4 w-full'>
+          <Text className="text-4xl font-bold ml-4">
+            Soular
+          </Text>
+          <TouchableOpacity className="p-4">
+            <Ionicons name="mail" size={24} color="#ffffff" />
+          </TouchableOpacity>
+        </View>
+        <HomeWidgets />
+      </LinearGradient>
       
-      <HomeWidgets />
-      
-      <View className="flex-row items-center justify-between mt-4 px-4 py-3 bg-white border-b border-gray-200">
-        <Text className="text-2xl font-bold">Our Soular Stories</Text>
-        <TouchableOpacity 
-          onPress={() => setNewPostModalVisible(true)}
-          className="flex-row bg-blue-500 rounded-full w-20 h-8 items-center justify-center"
-        >
-          <Ionicons name="add" size={24} color="#fff" />
-          <Text className="text-white text-md">New</Text>
-        </TouchableOpacity>
-      </View>
+      <View className="flex-1 bg-white border-t-2 border-gray-200">
+        <View className="flex-row items-center justify-between px-4 py-3 bg-white">
+          <Text className="text-2xl font-bold">Our Soular Stories</Text>
+          <TouchableOpacity 
+            onPress={() => setNewPostModalVisible(true)}
+            className="flex-row bg-blue-500 rounded-full w-20 h-8 items-center justify-center"
+          >
+            <Ionicons name="add" size={24} color="#fff" />
+            <Text className="text-white text-md">New</Text>
+          </TouchableOpacity>
+        </View>
 
-      <View className="flex-1 bg-white">
-        <SocialFeed ref={socialFeedRef} />
+        <View className="flex-1 bg-white">
+          <SocialFeed ref={socialFeedRef} nested={true} />
+        </View>
       </View>
 
       <Modal

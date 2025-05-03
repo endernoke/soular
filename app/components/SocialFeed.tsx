@@ -1,11 +1,11 @@
 import { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
-import { View, Text, StyleSheet, FlatList, Image } from 'react-native';
+import { View, Text, StyleSheet, FlatList, ScrollView, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { collection, query, orderBy, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import type { Post } from '@/types';
 
-const SocialFeed = forwardRef((props, ref) => {
+const SocialFeed = forwardRef(({ nested = false }: { nested?: boolean }, ref) => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -56,8 +56,18 @@ const SocialFeed = forwardRef((props, ref) => {
     <View style={styles.feed}>
       {isLoading ? (
         <Text>Loading...</Text>
+      ) : nested ? (
+        <ScrollView style={styles.scrollView}>
+          {posts.map(item => (
+            <View key={item.id}>{renderPost({ item })}</View>
+          ))}
+        </ScrollView>
       ) : (
-        posts.map(post => renderPost({ item: post }))
+        <FlatList
+          data={posts}
+          renderItem={renderPost}
+          keyExtractor={item => item.id}
+        />
       )}
     </View>
   );
@@ -104,5 +114,8 @@ const styles = StyleSheet.create({
   postContent: {
     fontSize: 16,
     lineHeight: 24,
+  },
+  scrollView: {
+    flexGrow: 1,
   },
 });

@@ -89,7 +89,7 @@ function RootLayoutNav() {
 export default function RootLayout() {
   return (
     <>
-      <StatusBar style="dark" />
+      <StatusBar translucent={true} backgroundColor='transparent' />
       <SafeAreaView className='flex-1' edges={['top', 'left', 'right', 'bottom']}>
         <AuthProvider>
           <RootLayoutNav />
