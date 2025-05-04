@@ -61,16 +61,6 @@ function RootLayoutNav() {
           tabBarStyle: { display: 'flex' },
         }}
       />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: 'Profile',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="person" size={size} color={color} />
-          ),
-          tabBarStyle: { display: 'flex' },
-        }}
-      />
       {/* Hidden screens for navigation purposes */}
       {hiddenTabs.map((tab) => (
         <Tabs.Screen

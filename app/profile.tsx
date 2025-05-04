@@ -49,6 +49,15 @@ export default function ProfileScreen() {
 
   return (
     <View style={styles.container}>
+      <View style={styles.topHeader}>
+        <TouchableOpacity 
+          style={styles.backButton}
+          onPress={() => router.back()}
+        >
+          <Ionicons name="chevron-back" size={24} color="#007AFF" />
+          <Text style={{ color: '#007AFF', fontSize: 16 }}>Back</Text>
+        </TouchableOpacity>
+      </View>
       <View style={styles.header}>
         {profile?.photo_url ? (
           <Image source={{ uri: profile.photo_url }} style={styles.avatar} />
@@ -146,6 +155,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  topHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  backButton: {
+    flexDirection: 'row',
+    padding: 8,
   },
   header: {
     alignItems: 'center',

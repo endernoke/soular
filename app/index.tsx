@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal } from 'react-native';
-import { useFocusEffect } from 'expo-router';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal, Image } from 'react-native';
+import { useFocusEffect, router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar, setStatusBarBackgroundColor } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,7 +10,7 @@ import SocialFeed from './components/SocialFeed';
 import HomeWidgets from './components/HomeWidgets';
 
 export default function HomeScreen() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const socialFeedRef = useRef<{ fetchPosts: () => Promise<void> }>();
   const [isNewPostModalVisible, setNewPostModalVisible] = useState(false);
 
@@ -39,9 +39,26 @@ export default function HomeScreen() {
           <Text className="text-4xl font-bold ml-4">
             Soular
           </Text>
-          <TouchableOpacity className="p-4">
-            <Ionicons name="mail" size={24} color="#ffffff" />
-          </TouchableOpacity>
+          <View className="flex-row items-center">
+            <TouchableOpacity className="p-4">
+              <Ionicons name="mail" size={24} color="#ffffff" />
+            </TouchableOpacity>
+            <TouchableOpacity 
+              onPress={() => router.push('/profile')}
+              className="p-1"
+            >
+              {profile?.photo_url ? (
+                <Image 
+                  source={{ uri: profile.photo_url }} 
+                  className="w-10 h-10 rounded-full"
+                />
+              ) : (
+                <View className="w-10 h-10 rounded-full bg-blue-500 items-center justify-center">
+                  <Ionicons name="person" size={20} color="#ffffff" />
+                </View>
+              )}
+            </TouchableOpacity>
+          </View>
         </View>
         <HomeWidgets />
       </LinearGradient>

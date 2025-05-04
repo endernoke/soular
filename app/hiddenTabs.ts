@@ -4,6 +4,7 @@
  */
 export const hiddenTabs = [
   'welcome',
+  'profile',
   'auth/login',
   'auth/signup',
   'events/new',
