@@ -1,24 +1,29 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, TextInput, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { signOut } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
 import { useAuth } from '@/lib/auth';
+import { supabase } from '@/lib/supabase';
 
 export default function ProfileScreen() {
-  const { user, updateUserProfile } = useAuth();
+  const { profile, user, updateUserProfile } = useAuth();
   const router = useRouter();
   const [isEditingProfile, setIsEditingProfile] = useState(false);
-  const [editedName, setEditedName] = useState(user?.displayName || '');
+  const [editedName, setEditedName] = useState(profile?.display_name || '');
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (profile) {
+      setEditedName(profile.display_name || '');
+    }
+  }, [profile]);
 
   const handleSignOut = async () => {
     try {
-      await signOut(auth);
-      router.replace('/welcome');
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
     } catch (error: any) {
-      Alert.alert('Error', error.message);
+      Alert.alert('Error', error.message || 'Failed to sign out');
     }
   };
 
@@ -31,12 +36,12 @@ export default function ProfileScreen() {
     setIsLoading(true);
     try {
       await updateUserProfile({
-        displayName: editedName.trim()
+        display_name: editedName.trim()
       });
       setIsEditingProfile(false);
       Alert.alert('Success', 'Profile updated successfully');
     } catch (error: any) {
-      Alert.alert('Error', 'Failed to update profile');
+      Alert.alert('Error', error.message || 'Failed to update profile');
     } finally {
       setIsLoading(false);
     }
@@ -45,14 +50,14 @@ export default function ProfileScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        {user?.photoBase64 ? (
-          <Image source={{ uri: user.photoBase64 }} style={styles.avatar} />
+        {profile?.photo_url ? (
+          <Image source={{ uri: profile.photo_url }} style={styles.avatar} />
         ) : (
           <View style={[styles.avatar, styles.avatarPlaceholder]}>
             <Ionicons name="person" size={40} color="#fff" />
           </View>
         )}
-        <Text style={styles.name}>{user?.displayName}</Text>
+        <Text style={styles.name}>{profile?.display_name || 'User'}</Text>
         <Text style={styles.email}>{user?.email}</Text>
         
         <TouchableOpacity 
@@ -113,7 +118,7 @@ export default function ProfileScreen() {
               <TouchableOpacity 
                 style={[styles.modalButton, styles.modalCancelButton]}
                 onPress={() => {
-                  setEditedName(user?.displayName || '');
+                  setEditedName(profile?.display_name || '');
                   setIsEditingProfile(false);
                 }}
               >

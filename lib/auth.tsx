@@ -1,86 +1,133 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { User } from '@/types';
-import { auth, db } from './firebase';
-import { onAuthStateChanged } from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { Session, User as SupabaseUser } from '@supabase/supabase-js';
+import { supabase } from './supabase';
+import { Profile } from '@/types';
 
 interface AuthContextType {
-  user: User | null;
+  session: Session | null;
+  user: SupabaseUser | null;
+  profile: Profile | null;
   isLoading: boolean;
-  updateUserProfile: (data: Partial<User>) => Promise<void>;
+  updateUserProfile: (data: Partial<Profile>) => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType>({ 
-  user: null, 
+const AuthContext = createContext<AuthContextType>({
+  session: null,
+  user: null,
+  profile: null,
   isLoading: true,
   updateUserProfile: async () => {},
 });
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [session, setSession] = useState<Session | null>(null);
+  const [user, setUser] = useState<SupabaseUser | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const createOrUpdateUserDocument = async (firebaseUser: any) => {
-    if (!firebaseUser) return null;
+  useEffect(() => {
+    const fetchSessionAndProfile = async () => {
+      try {
+        setIsLoading(true);
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        if (sessionError) throw sessionError;
+        setSession(session);
+        setUser(session?.user ?? null);
 
-    const userRef = doc(db, 'users', firebaseUser.uid);
-    
+        if (session?.user) {
+          const { data: profileData, error: profileError } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', session.user.id)
+            .single();
+
+          if (profileError && profileError.code !== 'PGRST116') { // PGRST116: row not found
+            console.error('Error fetching profile:', profileError);
+          } else {
+            setProfile(profileData);
+          }
+        }
+      } catch (error) {
+        console.error('Error in initial auth fetch:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchSessionAndProfile();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (_event, session) => {
+        setSession(session);
+        const currentUser = session?.user ?? null;
+        setUser(currentUser);
+
+        if (currentUser) {
+          // Fetch profile whenever auth state changes and user exists
+          const { data: profileData, error: profileError } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', currentUser.id)
+            .single();
+          
+          if (profileError && profileError.code !== 'PGRST116') {
+            console.error('Error fetching profile on auth change:', profileError);
+            setProfile(null); // Clear profile on error
+          } else {
+            setProfile(profileData);
+          }
+        } else {
+          // Clear profile if user logs out
+          setProfile(null);
+        }
+        // Ensure loading is false after initial check or auth change
+        if (isLoading) setIsLoading(false);
+      }
+    );
+
+    return () => {
+      authListener?.subscription.unsubscribe();
+    };
+  }, []); // Run only once on mount
+
+  const updateUserProfile = async (data: Partial<Profile>) => {
+    if (!user?.id) throw new Error('User not logged in');
+
     try {
-      // First check if the document exists
-      const userDoc = await getDoc(userRef);
-      let userData = {
-        uid: firebaseUser.uid,
-        email: firebaseUser.email,
-        displayName: firebaseUser.displayName,
-        photoBase64: null  // Initialize with null instead of using photoURL
+      const updates = {
+        ...data,
+        id: user.id, // Ensure the id is set for upsert/update
+        updated_at: new Date().toISOString(),
       };
 
-      if (!userDoc.exists()) {
-        // Create new user document if it doesn't exist
-        await setDoc(userRef, userData);
-      } else {
-        // Use stored doc data as source of truth
-        userData = {
-          ...userData,
-          ...userDoc.data(),
-        };
-      }
-      return userData;
-    } catch (error) {
-      console.error('Error managing user document:', error);
-      return null;
-    }
-  };
+      const { data: updatedProfile, error } = await supabase
+        .from('profiles')
+        .update(updates)
+        .eq('id', user.id)
+        .select()
+        .single();
 
-  const updateUserProfile = async (data: Partial<User>) => {
-    if (!user?.uid) return;
+      if (error) throw error;
 
-    try {
-      const userRef = doc(db, 'users', user.uid);
-      await setDoc(userRef, data, { merge: true });
-      setUser(curr => curr ? { ...curr, ...data } : null);
+      // Update local profile state
+      setProfile(updatedProfile);
+
     } catch (error) {
       console.error('Error updating user profile:', error);
       throw error;
     }
   };
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
-        const userData = await createOrUpdateUserDocument(firebaseUser);
-        setUser(userData);
-      } else {
-        setUser(null);
-      }
-      setIsLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, []);
+  const value = {
+    session,
+    user,
+    profile,
+    isLoading,
+    updateUserProfile,
+  };
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, updateUserProfile }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
