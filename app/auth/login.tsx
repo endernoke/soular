@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { supabase } from '@/lib/supabase'; // Import supabase client
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -18,10 +17,13 @@ export default function Login() {
 
     try {
       setIsLoading(true);
-      await signInWithEmailAndPassword(auth, email, password);
-      router.replace('/');
+      const { error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password,
+      });
+      if (error) throw error;
     } catch (error: any) {
-      Alert.alert('Error', error.message);
+      Alert.alert('Error', error.message || 'Failed to log in');
     } finally {
       setIsLoading(false);
     }

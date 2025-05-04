@@ -2,7 +2,7 @@
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
-## Get started
+## Setup
 
 1. Install dependencies
 
@@ -10,7 +10,24 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    npm install
    ```
 
-2. Start the app
+2. Configure environment variables
+
+   Copy `.env.example` to `.env` and fill in your Supabase credentials:
+   ```bash
+   cp .env.example .env
+   ```
+   
+   Then edit `.env` and add your Supabase project URL and anonymous key from your Supabase project settings.
+
+3. Initialize the database
+
+   Run the SQL commands in `supabase-setup.sql` in your Supabase project's SQL editor to set up:
+   - Database tables
+   - Row Level Security (RLS) policies
+   - Storage buckets
+   - Triggers and functions
+
+4. Start the app
 
    ```bash
     npx expo start
@@ -25,15 +42,25 @@ In the output, you'll find options to open the app in a
 
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
-## Get a fresh project
+## Project Structure
 
-When you're ready, run:
+- `app/` - Application screens and components
+  - `auth/` - Authentication screens (login/signup)
+  - `components/` - Reusable React components
+  - `events/` - Event-related screens
+- `assets/` - Static assets (images, fonts)
+- `lib/` - Core functionality and configuration
+  - `auth.tsx` - Authentication context and hooks
+  - `supabase.ts` - Supabase client configuration
+- `types/` - TypeScript type definitions
 
-```bash
-npm run reset-project
-```
+## Database Schema
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+See `llms/DATABASE.md` for detailed information about:
+- Database tables and relationships
+- Row Level Security (RLS) policies
+- Storage configuration
+- Data validation rules
 
 ## Learn more
 

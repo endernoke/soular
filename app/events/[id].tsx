@@ -1,63 +1,141 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth';
-import { Event, UserShort } from '@/types';
+import { Event, Profile } from '@/types';
 import { Ionicons } from '@expo/vector-icons';
+import { format } from 'date-fns';
 
 export default function EventDetailScreen() {
   const { id } = useLocalSearchParams();
   const { user } = useAuth();
   const [event, setEvent] = useState<Event | null>(null);
+  const [participants, setParticipants] = useState<Profile[]>([]);
+  const [organizers, setOrganizers] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
   const [isJoining, setIsJoining] = useState(false);
 
-  useEffect(() => {
-    loadEvent();
-  }, [id]);
-
-  const loadEvent = async () => {
+  const loadEventAndParticipants = async () => {
     try {
-      const eventDoc = await getDoc(doc(db, 'events', id as string));
-      if (eventDoc.exists()) {
-        setEvent({ id: eventDoc.id, ...eventDoc.data() } as Event);
-      }
-    } catch (error) {
+      setLoading(true);
+      // Fetch event details with author profile
+      const { data: eventData, error: eventError } = await supabase
+        .from('events')
+        .select(`
+          *,
+          profiles:author_id (
+            display_name
+          )
+        `)
+        .eq('id', id)
+        .single();
+
+      if (eventError) throw eventError;
+      if (!eventData) throw new Error('Event not found');
+
+      // Fetch participants with their profiles
+      const { data: participantData, error: participantError } = await supabase
+        .from('event_participants')
+        .select(`
+          profiles (
+            id,
+            display_name,
+            photo_url
+          )
+        `)
+        .eq('event_id', id);
+
+      if (participantError) throw participantError;
+
+      // Fetch organizers with their profiles
+      const { data: organizerData, error: organizerError } = await supabase
+        .from('event_organizers')
+        .select(`
+          profiles (
+            id,
+            display_name,
+            photo_url
+          )
+        `)
+        .eq('event_id', id);
+
+      if (organizerError) throw organizerError;
+
+      // Process and set the data
+      setEvent(eventData);
+      setParticipants(participantData?.flatMap(p => p.profiles ?? []) ?? []);
+      setOrganizers(organizerData?.flatMap(o => o.profiles ?? []) ?? []);
+
+    } catch (error: any) {
       console.error('Error loading event:', error);
+      Alert.alert('Error', error.message || 'Failed to load event details');
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadEventAndParticipants();
+
+    // Set up real-time subscriptions
+    const eventSubscription = supabase
+      .channel('event-details')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'events', filter: `id=eq.${id}` },
+        () => loadEventAndParticipants()
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'event_participants', filter: `event_id=eq.${id}` },
+        () => loadEventAndParticipants()
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'event_organizers', filter: `event_id=eq.${id}` },
+        () => loadEventAndParticipants()
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(eventSubscription);
+    };
+  }, [id]);
 
   const handleJoinEvent = async () => {
     if (!user || !event) return;
     
     setIsJoining(true);
     try {
-      const eventRef = doc(db, 'events', event.id);
-      const userShort: UserShort = {
-        uid: user.uid,
-        displayName: user.displayName,
-      };
+      const isParticipant = participants.some(p => p.id === user.id);
       
-      const isParticipant = event.participants.some(p => p.uid === user.uid);
-      const updatedParticipants = isParticipant
-        ? event.participants.filter(p => p.uid !== user.uid)
-        : [...event.participants, userShort];
-      
-      await updateDoc(eventRef, {
-        participants: updatedParticipants
-      });
+      if (isParticipant) {
+        // Leave event
+        const { error } = await supabase
+          .from('event_participants')
+          .delete()
+          .eq('event_id', event.id)
+          .eq('user_id', user.id);
 
-      // Refresh event data
-      await loadEvent();
-      Alert.alert(
-        'Success', 
-        isParticipant ? 'You have left the event' : 'You have joined the event'
-      );
-    } catch (error) {
+        if (error) throw error;
+        Alert.alert('Success', 'You have left the event');
+      } else {
+        // Join event
+        const { error } = await supabase
+          .from('event_participants')
+          .insert({
+            event_id: event.id,
+            user_id: user.id
+          });
+
+        if (error) throw error;
+        Alert.alert('Success', 'You have joined the event');
+      }
+
+      // Refresh event data (though real-time subscription should handle this)
+      await loadEventAndParticipants();
+    } catch (error: any) {
       console.error('Error joining/leaving event:', error);
       Alert.alert('Error', 'Failed to update event participation');
     } finally {
@@ -70,28 +148,34 @@ export default function EventDetailScreen() {
     
     setIsJoining(true);
     try {
-      const eventRef = doc(db, 'events', event.id);
-      const userShort: UserShort = {
-        uid: user.uid,
-        displayName: user.displayName,
-      };
+      const isOrganizer = organizers.some(o => o.id === user.id);
       
-      const isOrganizer = event.organizers.some(o => o.uid === user.uid);
-      const updatedOrganizers = isOrganizer
-        ? event.organizers.filter(o => o.uid !== user.uid)
-        : [...event.organizers, userShort];
-      
-      await updateDoc(eventRef, {
-        organizers: updatedOrganizers
-      });
+      if (isOrganizer) {
+        // Leave organizing team
+        const { error } = await supabase
+          .from('event_organizers')
+          .delete()
+          .eq('event_id', event.id)
+          .eq('user_id', user.id);
 
-      // Refresh event data
-      await loadEvent();
-      Alert.alert(
-        'Success', 
-        isOrganizer ? 'You have left the organizing team' : 'You have joined the organizing team'
-      );
-    } catch (error) {
+        if (error) throw error;
+        Alert.alert('Success', 'You have left the organizing team');
+      } else {
+        // Join organizing team
+        const { error } = await supabase
+          .from('event_organizers')
+          .insert({
+            event_id: event.id,
+            user_id: user.id
+          });
+
+        if (error) throw error;
+        Alert.alert('Success', 'You have joined the organizing team');
+      }
+
+      // Refresh event data (though real-time subscription should handle this)
+      await loadEventAndParticipants();
+    } catch (error: any) {
       console.error('Error joining/leaving team:', error);
       Alert.alert('Error', 'Failed to update team membership');
     } finally {
@@ -115,14 +199,14 @@ export default function EventDetailScreen() {
     );
   }
 
-  const isParticipant = user && event.participants.some(p => p.uid === user.uid);
-  const isOrganizer = user && event.organizers.some(o => o.uid === user.uid);
+  const isParticipant = user && participants.some(p => p.id === user.id);
+  const isOrganizer = user && organizers.some(o => o.id === user.id);
 
   return (
     <ScrollView className="flex-1 bg-gray-50">
       <View className="p-4">
         <TouchableOpacity 
-          onPress={() => router.back()}  // Might have to change this to router.push('/events') if you want to go back to the events list
+          onPress={() => router.back()}
           className="mb-4 flex-row items-center"
         >
           <Ionicons name="arrow-back" size={24} color="#000" />
@@ -135,11 +219,15 @@ export default function EventDetailScreen() {
           <View className="flex-row items-center mb-4">
             <View className="flex-row items-center mr-4">
               <Ionicons name="calendar" size={20} color="#666" />
-              <Text className="text-gray-600 ml-2">{event.date}</Text>
+              <Text className="text-gray-600 ml-2">
+                {format(new Date(event.event_timestamp), 'yyyy-MM-dd')}
+              </Text>
             </View>
             <View className="flex-row items-center">
               <Ionicons name="time" size={20} color="#666" />
-              <Text className="text-gray-600 ml-2">{event.time}</Text>
+              <Text className="text-gray-600 ml-2">
+                {format(new Date(event.event_timestamp), 'HH:mm')}
+              </Text>
             </View>
           </View>
 
@@ -154,15 +242,33 @@ export default function EventDetailScreen() {
               event.stage === 'in-development' ? 'bg-blue-100 text-blue-800' :
               'bg-gray-100 text-gray-800'
             }`}>
-              {event.stage.charAt(0).toUpperCase() + event.stage.slice(1)}
+              {event.stage.charAt(0).toUpperCase() + event.stage.replace('-', ' ').slice(1)}
             </Text>
           </View>
 
           <Text className="text-gray-800 mb-6 leading-6">{event.description}</Text>
 
           <View className="mb-4">
-            <Text className="text-gray-600 mb-2">Participants: {event.participants.length}</Text>
-            <Text className="text-gray-600 mb-4">Organizers: {event.organizers.length}</Text>
+            <Text className="text-gray-600 mb-2">
+              Created by: {event.profiles?.display_name || 'Unknown'}
+            </Text>
+            <Text className="text-gray-600 mb-2">Participants: {participants.length}</Text>
+            <Text className="text-gray-600 mb-4">Organizers: {organizers.length}</Text>
+
+            {/* Optional: Display lists of participants and organizers */}
+            <View className="mb-4">
+              <Text className="font-semibold mb-2">Organizers:</Text>
+              {organizers.map(org => (
+                <Text key={org.id} className="text-gray-600">{org.display_name}</Text>
+              ))}
+            </View>
+            
+            <View className="mb-4">
+              <Text className="font-semibold mb-2">Participants:</Text>
+              {participants.map(part => (
+                <Text key={part.id} className="text-gray-600">{part.display_name}</Text>
+              ))}
+            </View>
           </View>
 
           {event.stage === 'upcoming' && (

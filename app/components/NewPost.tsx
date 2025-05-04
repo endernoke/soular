@@ -1,73 +1,103 @@
 import { useState } from 'react';
-import { View, TextInput, TouchableOpacity, Text, StyleSheet, Image } from 'react-native';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { View, TextInput, TouchableOpacity, Text, StyleSheet, Image, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { db } from '@/lib/firebase';
+import { supabase } from '@/lib/supabase'; // Import supabase client
 import { useAuth } from '@/lib/auth';
-import type { UserShort } from '@/types';
 import { Ionicons } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system';
+import { decode } from 'base64-arraybuffer'; // For converting base64 to ArrayBuffer
+
+// Helper to get file extension
+const getFileExtension = (uri: string) => {
+  const match = uri.match(/\.(\w+)$/);
+  return match ? match[1] : null;
+};
+
+// Helper to guess MIME type
+const guessMimeType = (extension: string | null) => {
+  if (!extension) return 'application/octet-stream'; // Default
+  const lowerExt = extension.toLowerCase();
+  if (lowerExt === 'jpg' || lowerExt === 'jpeg') return 'image/jpeg';
+  if (lowerExt === 'png') return 'image/png';
+  if (lowerExt === 'gif') return 'image/gif';
+  // Add more types as needed
+  return `image/${lowerExt}`;
+};
 
 export default function NewPost({ onPostCreated }: { onPostCreated?: () => void }) {
-  const { user } = useAuth();
+  const { user } = useAuth(); // Get Supabase user
   const [newPost, setNewPost] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedImageUri, setSelectedImageUri] = useState<string | null>(null);
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 0.5, // Reduced quality to keep base64 string smaller
-      base64: true, // Request base64 data
+      quality: 0.7, // Adjust quality as needed
     });
 
-    if (!result.canceled) {
-      setSelectedImage(result.assets[0].uri);
-    }
-  };
-
-  const getBase64FromUri = async (uri: string) => {
-    try {
-      // Read the file as base64
-      const base64 = await FileSystem.readAsStringAsync(uri, {
-        encoding: FileSystem.EncodingType.Base64,
-      });
-      return `data:image/jpeg;base64,${base64}`;
-    } catch (error) {
-      console.error('Error converting image to base64:', error);
-      return null;
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      setSelectedImageUri(result.assets[0].uri);
     }
   };
 
   const handleCreatePost = async () => {
     if (!newPost.trim() || !user) return;
 
-    try {
-      setIsLoading(true);
-      const author: UserShort = {
-        uid: user.uid,
-        displayName: user.displayName,
-      };
+    setIsLoading(true);
+    let imageUrl: string | null = null;
 
-      let imageBase64;
-      if (selectedImage) {
-        imageBase64 = await getBase64FromUri(selectedImage);
+    try {
+      // 1. Upload image if selected
+      if (selectedImageUri) {
+        const fileExt = getFileExtension(selectedImageUri);
+        const mimeType = guessMimeType(fileExt);
+        const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+        const filePath = `posts/${fileName}`;
+
+        // Read the file into base64 first (required by expo-file-system)
+        const base64 = await FileSystem.readAsStringAsync(selectedImageUri, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
+
+        // Upload to Supabase Storage
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('images') // Assuming a bucket named 'images'
+          .upload(filePath, decode(base64), { contentType: mimeType });
+
+        if (uploadError) throw uploadError;
+
+        // Get public URL
+        const { data: urlData } = supabase.storage
+          .from('images')
+          .getPublicUrl(filePath);
+        
+        imageUrl = urlData?.publicUrl ?? null;
       }
 
-      await addDoc(collection(db, 'posts'), {
+      // 2. Insert post data into the database
+      const postData = {
         content: newPost.trim(),
-        imageBase64,
-        createdAt: serverTimestamp(),
-        author
-      });
+        image_url: imageUrl,
+        author_id: user.id, // Use Supabase user ID
+      };
+
+      const { error: insertError } = await supabase
+        .from('posts')
+        .insert(postData);
+
+      if (insertError) throw insertError;
       
+      // Reset state and notify parent
       setNewPost('');
-      setSelectedImage(null);
+      setSelectedImageUri(null);
       onPostCreated?.();
-    } catch (error) {
+
+    } catch (error: any) {
       console.error('Error creating post:', error);
+      Alert.alert('Error', error.message || 'Failed to create post');
     } finally {
       setIsLoading(false);
     }
@@ -83,12 +113,13 @@ export default function NewPost({ onPostCreated }: { onPostCreated?: () => void 
         multiline
       />
       
-      {selectedImage && (
+      {selectedImageUri && (
         <View style={styles.imagePreviewContainer}>
-          <Image source={{ uri: selectedImage }} style={styles.imagePreview} />
+          {/* Display selected image using its URI */}
+          <Image source={{ uri: selectedImageUri }} style={styles.imagePreview} />
           <TouchableOpacity 
             style={styles.removeImageButton}
-            onPress={() => setSelectedImage(null)}
+            onPress={() => setSelectedImageUri(null)}
           >
             <Ionicons name="close-circle" size={24} color="white" />
           </TouchableOpacity>

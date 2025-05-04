@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
-import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { supabase } from '@/lib/supabase'; // Import supabase client
 
 export default function SignUp() {
   const [name, setName] = useState('');
@@ -19,18 +18,35 @@ export default function SignUp() {
 
     try {
       setIsLoading(true);
-      const { user: firebaseUser } = await createUserWithEmailAndPassword(auth, email, password);
-      
-      // Update Firebase auth profile
-      await updateProfile(firebaseUser, {
-        displayName: name
+
+      const { data: authData, error: signUpError } = await supabase.auth.signUp({
+        email: email,
+        password: password,
+        options: {
+          data: {
+            // Store initial display_name in metadata, can be used by a trigger
+            // to populate the profiles table, or handled client-side after signup.
+            display_name: name.trim(),
+          }
+        }
       });
 
-      // User document will be automatically created by AuthProvider
-      router.replace('/');
+      if (signUpError) throw signUpError;
+
+      // Optional: Handle email confirmation if enabled in Supabase
+      if (authData.user && !authData.session) {
+        Alert.alert('Success', 'Please check your email to confirm your account!');
+        // Optionally navigate to login or a confirmation pending screen
+        router.push('/auth/login'); 
+      } else {
+        // If email confirmation is disabled or user is auto-confirmed,
+        // AuthProvider will handle the session and redirect.
+        // router.replace('/'); // Navigation handled by AuthProvider
+      }
+
     } catch (error: any) {
       console.error('Signup error:', error);
-      Alert.alert('Error', error.message);
+      Alert.alert('Error', error.message || 'Failed to sign up');
     } finally {
       setIsLoading(false);
     }

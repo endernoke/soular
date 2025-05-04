@@ -1,43 +1,60 @@
 import { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
-import { View, Text, StyleSheet, FlatList, ScrollView, Image, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, FlatList, ScrollView, Image, Dimensions, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { collection, query, orderBy, getDocs } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
-import type { Post } from '@/types';
+import { supabase } from '@/lib/supabase'; // Import supabase client
+import type { Post } from '@/types'; // Use updated Post type
+import { formatDistanceToNowStrict } from 'date-fns'; // Use date-fns for relative time
 
 const { width } = Dimensions.get('window');
 
-const formatRelativeTime = (timestamp: any) => {
+// Updated time formatting using date-fns
+const formatRelativeTime = (timestamp: string | null | undefined) => {
   if (!timestamp) return '';
-  
-  const now = new Date();
-  const date = timestamp.toDate();
-  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-  
-  if (diffInSeconds < 60) return 'just now';
-  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
-  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
-  if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`;
-  
-  return date.toLocaleDateString();
+  try {
+    return formatDistanceToNowStrict(new Date(timestamp), { addSuffix: true });
+  } catch (e) {
+    console.error("Error formatting date:", e);
+    return 'invalid date';
+  }
 };
 
 const SocialFeed = forwardRef(({ nested = false }: { nested?: boolean }, ref) => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchPosts = async () => {
     try {
       setIsLoading(true);
-      const q = query(collection(db, 'posts'), orderBy('createdAt', 'desc'));
-      const snapshot = await getDocs(q);
-      const fetchedPosts = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as Post[];
-      setPosts(fetchedPosts);
-    } catch (error) {
+      setError(null);
+      // Fetch posts and join with profiles table to get author info
+      const { data: fetchedPosts, error: fetchError } = await supabase
+        .from('posts')
+        .select(`
+          id,
+          content,
+          image_url,
+          created_at,
+          author_id,
+          profiles (
+            display_name,
+            photo_url
+          )
+        `)
+        .order('created_at', { ascending: false });
+
+      if (fetchError) throw fetchError;
+
+      // Map the fetched data to match the Post type structure
+      const formattedPosts = (fetchedPosts || []).map(post => ({
+        ...post,
+        profiles: post.profiles?.[0] || post.profiles || null // Take the first profile if multiple exist (which is probably impossible)
+      }));
+      setPosts(formattedPosts);
+
+    } catch (error: any) {
       console.error('Error fetching posts:', error);
+      setError(error.message || 'Failed to fetch posts');
     } finally {
       setIsLoading(false);
     }
@@ -49,39 +66,69 @@ const SocialFeed = forwardRef(({ nested = false }: { nested?: boolean }, ref) =>
 
   useEffect(() => {
     fetchPosts();
+    
+    // Optional: Set up real-time subscription for new posts
+    const postsSubscription = supabase
+      .channel('public:posts')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'posts' },
+        (payload) => {
+          console.log('New post received!', payload);
+          // Simple refetch for now, could be optimized to insert the new post
+          fetchPosts(); 
+        }
+      )
+      .subscribe();
+
+    // Cleanup subscription on unmount
+    return () => {
+      supabase.removeChannel(postsSubscription);
+    };
+
   }, []);
 
   const renderPost = ({ item }: { item: Post }) => (
     <View style={styles.postCard}>
       <View style={styles.postHeader}>
         <View style={styles.authorInfo}>
-          <View style={[styles.avatar, styles.avatarPlaceholder]}>
-            <Ionicons name="person" size={20} color="#fff" />
-          </View>
+          {/* Use author's photo_url from joined profiles data */}
+          {item.profiles?.photo_url ? (
+            <Image source={{ uri: item.profiles.photo_url }} style={styles.avatar} />
+          ) : (
+            <View style={[styles.avatar, styles.avatarPlaceholder]}>
+              <Ionicons name="person" size={20} color="#fff" />
+            </View>
+          )}
           <View>
-            <Text style={styles.authorName}>{item.author.displayName}</Text>
-            <Text style={styles.timestamp}>{formatRelativeTime(item.createdAt)}</Text>
+            {/* Use author's display_name from joined profiles data */}
+            <Text style={styles.authorName}>{item.profiles?.display_name || 'User'}</Text>
+            <Text style={styles.timestamp}>{formatRelativeTime(item.created_at)}</Text>
           </View>
         </View>
       </View>
       <Text style={styles.postContent}>{item.content}</Text>
       
-      {item.imageBase64 && (
+      {/* Use image_url from post data */}
+      {item.image_url && (
         <View style={styles.imageContainer}>
           <Image 
-            source={{ uri: item.imageBase64 }} 
+            source={{ uri: item.image_url }} 
             style={styles.postImage}
             resizeMode="cover"
           />
         </View>
       )}
+      {/* Add like/comment buttons or other interactions here */}
     </View>
   );
 
   return (
     <View style={styles.feed}>
-      {isLoading ? (
-        <Text>Loading...</Text>
+      {isLoading && posts.length === 0 ? (
+        <ActivityIndicator size="large" color="#007AFF" style={{ marginTop: 20 }} />
+      ) : error ? (
+        <Text style={styles.errorText}>Error: {error}</Text>
       ) : nested ? (
         <ScrollView style={styles.scrollView}>
           {posts.map(item => (
@@ -93,6 +140,11 @@ const SocialFeed = forwardRef(({ nested = false }: { nested?: boolean }, ref) =>
           data={posts}
           renderItem={renderPost}
           keyExtractor={item => item.id}
+          onRefresh={fetchPosts} // Add pull-to-refresh
+          refreshing={isLoading} // Show refresh indicator while loading
+          ListEmptyComponent={() => (
+            !isLoading && <Text style={styles.emptyText}>No posts yet. Be the first!</Text>
+          )}
         />
       )}
     </View>
@@ -103,6 +155,7 @@ export default SocialFeed;
 
 const styles = StyleSheet.create({
   feed: {
+    flex: 1, // Ensure feed takes available space
     padding: 16,
   },
   postCard: {
@@ -155,9 +208,20 @@ const styles = StyleSheet.create({
   postImage: {
     width: '100%',
     height: width * 0.6, // Maintain aspect ratio based on screen width
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#f0f0f0', // Placeholder color
   },
   scrollView: {
     flexGrow: 1,
+  },
+  errorText: {
+    textAlign: 'center',
+    color: 'red',
+    marginTop: 20,
+  },
+  emptyText: {
+    textAlign: 'center',
+    color: '#666',
+    marginTop: 40,
+    fontSize: 16,
   },
 });
