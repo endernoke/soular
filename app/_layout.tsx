@@ -52,6 +52,16 @@ function RootLayoutNav() {
         }}
       />
       <Tabs.Screen
+        name="learn/index"
+        options={{
+          title: 'Learn',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="book" size={size} color={color} />
+          ),
+          tabBarStyle: { display: 'flex' },
+        }}
+      />
+      <Tabs.Screen
         name="events/index"
         options={{
           title: 'Events',
