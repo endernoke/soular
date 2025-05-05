@@ -247,3 +247,37 @@ create policy "Users can delete their own images"
     bucket_id = 'images' and
     owner = auth.uid()
   );
+
+-- Create a storage bucket for profile pictures
+insert into storage.buckets (id, name)
+values ('profile-pictures', 'profile-pictures')
+on conflict do nothing;
+
+-- Allow authenticated users to upload profile pictures
+create policy "Authenticated users can upload profile pictures"
+  on storage.objects for insert
+  with check (
+    bucket_id = 'profile-pictures' and
+    auth.role() = 'authenticated'
+  );
+
+-- Allow authenticated users to update their own profile pictures
+create policy "Users can update their own profile pictures"
+  on storage.objects for update
+  using (
+    bucket_id = 'profile-pictures' and
+    owner = auth.uid()
+  );
+
+-- Allow authenticated users to delete their own profile pictures
+create policy "Users can delete their own profile pictures"
+  on storage.objects for delete
+  using (
+    bucket_id = 'profile-pictures' and
+    owner = auth.uid()
+  );
+
+-- Allow everyone to view profile pictures
+create policy "Profile pictures are viewable by everyone"
+  on storage.objects for select
+  using (bucket_id = 'profile-pictures');

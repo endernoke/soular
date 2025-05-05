@@ -14,6 +14,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
+import * as ImagePicker from "expo-image-picker";
 
 export default function ProfileScreen() {
   const { profile, user, updateUserProfile } = useAuth();
@@ -55,6 +56,62 @@ export default function ProfileScreen() {
     });
   };
 
+  const handlePickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1], // square aspect for profile images
+      quality: 0.7,
+    });
+
+    if (!result.canceled) {
+      return result.assets[0].uri; // URI of selected image
+    }
+    return null;
+  };
+
+  const uriToBlob = async (uri: string): Promise<Blob> => {
+    const response = await fetch(uri);
+    return await response.blob();
+  };
+
+  const handleUploadProfileImage = async (
+    uri: string,
+    userId: string | number
+  ) => {
+    try {
+      const blob = await uriToBlob(uri);
+      const fileExt = uri.split(".").pop();
+      const fileName = `${userId}.${fileExt}`;
+      const { error } = await supabase.storage
+        .from("profile-pictures")
+        .upload(fileName, blob, {
+          cacheControl: "3600",
+          upsert: true,
+          contentType: `image/${fileExt}`,
+        });
+
+      if (error) throw error;
+
+      const { data } = supabase.storage
+        .from("profile-pictures")
+        .getPublicUrl(fileName);
+      return data.publicUrl;
+    } catch (error) {
+      console.error("Upload failed:", error);
+      return null;
+    }
+  };
+
+  const updateUserProfilePhoto = async (photoUrl: string) => {
+    try {
+      await updateUserProfile({ photo_url: photoUrl });
+      Alert.alert("Success", "Profile image updated");
+    } catch (error) {
+      Alert.alert("Error", "Failed to update profile image");
+    }
+  };
+
   const handleUpdateProfile = async () => {
     if (!editedName.trim()) {
       Alert.alert("Error", "Name cannot be empty");
@@ -90,13 +147,31 @@ export default function ProfileScreen() {
         </TouchableOpacity>
       </View>
       <View style={styles.header}>
-        {profile?.photo_url ? (
-          <Image source={{ uri: profile.photo_url }} style={styles.avatar} />
-        ) : (
-          <View style={[styles.avatar, styles.avatarPlaceholder]}>
-            <Ionicons name="person" size={40} color="#fff" />
-          </View>
-        )}
+        <TouchableOpacity
+          onPress={async () => {
+            const uri = await handlePickImage();
+            if (uri) {
+              setIsLoading(true);
+              if (user?.id) {
+                const photoUrl = await handleUploadProfileImage(uri, user.id);
+                if (photoUrl) {
+                  await updateUserProfilePhoto(photoUrl);
+                }
+              } else {
+                Alert.alert("Error", "User ID is not available");
+              }
+              setIsLoading(false);
+            }
+          }}
+        >
+          {profile?.photo_url ? (
+            <Image source={{ uri: profile.photo_url }} style={styles.avatar} />
+          ) : (
+            <View style={[styles.avatar, styles.avatarPlaceholder]}>
+              <Ionicons name="person" size={40} color="#fff" />
+            </View>
+          )}
+        </TouchableOpacity>
         <Text style={styles.name}>{profile?.display_name || "User"}</Text>
         <Text style={styles.email}>{user?.email}</Text>
 
