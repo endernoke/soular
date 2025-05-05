@@ -11,7 +11,7 @@ export default function Welcome() {
     >
       <View className='flex-1 justify-center items-center min-h-[40%] w-full'>
         <Image
-          source={require("../assets/images/splash-icon.png")}
+          source={require("@/../assets/images/splash-icon.png")}
           className='absolute w-[100%] h-[100%] top-20 left-6 object-contain'
         />
       </View>
