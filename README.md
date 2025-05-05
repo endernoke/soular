@@ -35,8 +35,8 @@ Soular is a mobile application designed to raise awareness about climate change,
    - Storage buckets
    - Triggers and functions
 
-   > [!NOTE]
-   > If you are part of the dev team, the database schema is already set up. You can skip this step.
+> [!NOTE]
+> If you are part of the dev team, the database schema is already set up. You can skip this step.
 
 5. Start the app
 
@@ -46,8 +46,8 @@ Soular is a mobile application designed to raise awareness about climate change,
 
    This will start the Expo development server. Follow the instructions in the terminal to run the app on your device or emulator.
 
-   > [!NOTE]
-   > NativeWind is configured for the app, so you can directly use TailWindCSS classes in your components. Note that some classes may not work as expected on certain components, in which case you can simply switch back to using React Native styles.
+> [!TIP]
+> NativeWind is configured for the app, so you can directly use TailWindCSS classes in your components. Note that some classes may not work as expected on certain components, in which case you can simply switch back to using React Native styles.
 
 ## Project Structure
 
