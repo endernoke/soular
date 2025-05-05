@@ -105,9 +105,7 @@ const styles = StyleSheet.create({
 
   },
 
-  primaryButton:hover {
-      backgroundColor: '#1aea79'
-      },
+
 
   buttonText: {
     color: 'black',
