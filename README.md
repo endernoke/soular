@@ -1,25 +1,33 @@
-# Welcome to your Expo app 👋
+# Soular: Connect for a Positive Impact
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Soular is a mobile application designed to raise awareness about climate change, bring eco-conscious individuals together to take action, and provide users with personalized insights and recommendations. The app integrates features such as carbon footprint calculation, social media sharing, user-driven event participation system, and AI-powered advice.
+
 
 ## Setup
 
-1. Install dependencies
+1. Clone the repository
+
+   ```bash
+   git clone https://github.com/endernoke/soular.git
+   cd soular
+   ```
+
+2. Install dependencies
 
    ```bash
    npm install
    ```
 
-2. Configure environment variables
-
-   Copy `.env.example` to `.env` and fill in your Supabase credentials:
-   ```bash
-   cp .env.example .env
-   ```
+3. Configure environment variables
    
-   Then edit `.env` and add your Supabase project URL and anonymous key from your Supabase project settings.
+   Create a `.env` file in the project directory and add your Supabase credentials. You can find these in your Supabase project settings.
 
-3. Initialize the database
+   ```bash
+   EXPO_PUBLIC_SUPABASE_URL=https://your-supabase-url.supabase.co
+   EXPO_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+   ```
+
+4. Initialize the database
 
    Run the SQL commands in `supabase-setup.sql` in your Supabase project's SQL editor to set up:
    - Database tables
@@ -27,32 +35,40 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    - Storage buckets
    - Triggers and functions
 
-4. Start the app
+> [!NOTE]
+> If you are part of the dev team, the database schema is already set up. You can skip this step.
+
+5. Start the app
 
    ```bash
     npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+   This will start the Expo development server. Follow the instructions in the terminal to run the app on your device or emulator.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+> [!TIP]
+> NativeWind is configured for the app, so you can directly use TailWindCSS classes in your components. Note that some classes may not work as expected on certain components, in which case you can simply switch back to using React Native styles.
 
 ## Project Structure
 
-- `app/` - Application screens and components
-  - `auth/` - Authentication screens (login/signup)
+> [!IMPORTANT]
+> This project uses [Expo Router](https://docs.expo.dev/router/introduction) for file-based routing.
+
+- `src/` - Main source code directory
+  - `app/` - Application screens using file-based routing
+    - `(app)/` - Protected app routes (requires authentication to access)
+      - `(tabs)/` - Bottom tab navigation
+    - `auth/` - Authentication screens
   - `components/` - Reusable React components
-  - `events/` - Event-related screens
-- `assets/` - Static assets (images, fonts)
-- `lib/` - Core functionality and configuration
-  - `auth.tsx` - Authentication context and hooks
-  - `supabase.ts` - Supabase client configuration
-- `types/` - TypeScript type definitions
+  - `lib/` - Core functionality and configuration
+    - `auth.tsx` - Authentication context and hooks
+    - `supabase.ts` - Supabase client configuration
+  - `types/` - TypeScript type definitions
+  - `global.css` - Global styles using TailwindCSS/NativeWind
+- `assets/` - Static assets
+  - `images/` - App icons and images
+  - `fonts/` - Custom fonts
+- `docs/` - Documentation and schemas (mainly intended for LLMs)
 
 ## Database Schema
 
@@ -61,17 +77,3 @@ See `llms/DATABASE.md` for detailed information about:
 - Row Level Security (RLS) policies
 - Storage configuration
 - Data validation rules
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.

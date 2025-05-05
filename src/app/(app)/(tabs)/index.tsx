@@ -5,9 +5,9 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar, setStatusBarBackgroundColor } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/lib/auth';
-import NewPost from './components/NewPost';
-import SocialFeed from './components/SocialFeed';
-import HomeWidgets from './components/HomeWidgets';
+import NewPost from '@/components/NewPost';
+import SocialFeed from '@/components/SocialFeed';
+import HomeWidgets from '@/components/HomeWidgets';
 
 export default function HomeScreen() {
   const { user, profile } = useAuth();

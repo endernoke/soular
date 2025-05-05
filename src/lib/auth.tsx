@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState, ReactNode } from
 import { Session, User as SupabaseUser } from '@supabase/supabase-js';
 import { supabase } from './supabase';
 import { Profile } from '@/types';
+import { useRouter } from 'expo-router';
 
 interface AuthContextType {
   session: Session | null;
@@ -24,6 +25,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchSessionAndProfile = async () => {
@@ -75,6 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setProfile(null); // Clear profile on error
           } else {
             setProfile(profileData);
+            router.replace('/'); // Redirect to home on login
           }
         } else {
           // Clear profile if user logs out
