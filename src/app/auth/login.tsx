@@ -56,7 +56,7 @@ export default function Login() {
         disabled={isLoading}
       >
         <Text style={styles.buttonText}>
-          {isLoading ? 'Loading...' : 'Log In'}
+          {isLoading ? 'Loading...' : 'Log in'}
         </Text>
       </TouchableOpacity>
 
@@ -73,7 +73,7 @@ export default function Login() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 30,
     backgroundColor: '#fff',
   },
   title: {
@@ -81,30 +81,34 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginVertical: 20,
     textAlign: 'center',
+    marginBottom: 60,
   },
   input: {
     borderWidth: 1,
     borderColor: '#ddd',
-    borderRadius: 8,
+    borderRadius: 15,
     padding: 15,
-    marginBottom: 15,
+       height: 60,
+    marginBottom: 20,
     fontSize: 16,
   },
   button: {
-    backgroundColor: '#007AFF',
-    padding: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  buttonDisabled: {
-    opacity: 0.7,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
+      backgroundColor: '#007AFF',
+       borderRadius: 15,
+          height: 60,
+          textAlign: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginTop: 40,
+    },
+    buttonDisabled: {
+      opacity: 0.7,
+    },
+    buttonText: {
+      color: '#fff',
+      fontSize: 20,
+      fontWeight: '600',
+    },
   linkButton: {
     marginTop: 20,
     alignItems: 'center',

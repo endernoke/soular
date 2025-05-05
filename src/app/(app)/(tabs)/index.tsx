@@ -1,3 +1,5 @@
+// main page
+
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal, Image } from 'react-native';
 import { useFocusEffect, router } from 'expo-router';
@@ -33,9 +35,9 @@ export default function HomeScreen() {
     <ScrollView className='flex-1 bg-white'>
       <LinearGradient
         colors={['rgb(26, 234, 159)', 'rgb(255, 255, 255)']}
-        className='flex-1 justify-center items-center w-full h-full'
+        className='justify-center items-center w-full pb-10'
       >
-        <View className='flex-1 flex-row items-center justify-between px-4 pt-4 w-full'>
+        <View className='flex-1 flex-row items-center justify-between px-[30px] pt-6 w-full mb-5'>
           <Text className="text-4xl font-bold ml-4">
             Soular
           </Text>

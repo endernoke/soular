@@ -17,18 +17,18 @@ export default function HomeWidgets() {
   };
 
   return (
-    <View className="flex-row p-4 gap-4">
+    <View className="flex-row px-[30px] gap-4">
       {/* Left side - Large Green Organization button */}
       <TouchableOpacity 
         onPress={handleGreenOrgPress}
-        className="flex-1 rounded-xl justify-between w-[50%] h-full"
+        className="flex-1 rounded-[25px] justify-between w-[50%] h-full"
       >
         <LinearGradient
           colors={['#1E90FF', '#15f4ee']}
-          style={{ flex: 1, borderRadius: 12, padding: 16, paddingTop: 24 }}
+          style={{ flex: 1, borderRadius: 25, padding: 16, paddingTop: 24}}
         >
-          <Text className="text-white text-2xl font-bold">Join a Green Organization</Text>
-          <Text className="text-white text-xs font-bold">Discover organizations that are making a difference.</Text>
+          <Text className="text-white text-2xl font-bold">Act Now</Text>
+          <Text className="text-white text-xs font-bold">Join HK Green Organizations</Text>
         </LinearGradient>
         </TouchableOpacity>
 
@@ -36,16 +36,16 @@ export default function HomeWidgets() {
       <View className="w-[50%] gap-4">
         <TouchableOpacity 
           onPress={handleCalenderPress}
-          className="flex-1 bg-green-300 rounded-xl p-2 justify-center items-center border-2 border-white"
+          className="flex-1 bg-green-300 rounded-[100px] p-2 justify-center items-center border-2 border-white"
         >
-          <Text className="text-black text-lg font-semibold">View Calendar</Text>
+          <Text className="text-black text-lg font-semibold">Calendar</Text>
         </TouchableOpacity>
 
         <TouchableOpacity 
           onPress={handleTimeAuctionPress}
           className="flex-1 bg-green-300 rounded-xl p-2 justify-center items-center border-2 border-white align-middle"
         >
-          <Text className="text-black text-lg font-semibold">Volunteer your skills</Text>
+          <Text className="text-black text-lg font-semibold">Volunteer</Text>
         </TouchableOpacity>
       </View>
     </View>

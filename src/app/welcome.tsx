@@ -1,4 +1,7 @@
 import { View, Text, StyleSheet, TouchableOpacity, Image, Platform, Dimensions  } from 'react-native';
+
+
+
 import { Link } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -9,17 +12,20 @@ export default function Welcome() {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#E0F7FA', '#1aea79','#e1dd01']}
+        colors={['#fff', '#1aea79','#e1dd01']}
         style={styles.gradientBackground}
       >
         {/* Background Image */}
+
         <Image
           source={require("@/../assets/images/splash-icon.png")}
           style={styles.backgroundImage}
         />
 
         {/* Content Container */}
+<Text style={styles.banner}>Soular</Text>
         <View style={styles.contentContainer}>
+
           {/* Title */}
           <View style={styles.titleContainer}>
             <Text style={styles.title}>環保，</Text>
@@ -62,7 +68,7 @@ const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
     justifyContent: 'flex-end',
-    paddingBottom: 50,
+    paddingBottom: 40,
   },
   titleContainer: {
     paddingHorizontal: 30,
@@ -74,6 +80,15 @@ const styles = StyleSheet.create({
     color: 'black',
     textAlign: 'left',
   },
+
+    banner: {
+      fontSize: 40,
+      fontWeight: '100',
+      color: 'black',
+      textAlign: 'center',
+      marginTop: 20
+
+    },
   subtitle: {
     fontSize: 20,
     fontWeight: '500',
@@ -88,10 +103,10 @@ const styles = StyleSheet.create({
   },
   primaryButton: {
     backgroundColor: '#fff',
-    paddingVertical: 15,
-    borderRadius: 25,
-    marginBottom: 15,
+    paddingVertical: 0,
     width: '100%',
+
+    borderRadius: 25,
     height: 70,
     textAlign: 'center',
     alignItems: 'center',
