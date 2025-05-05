@@ -1,20 +1,30 @@
-import { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, TextInput, Modal } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import { useAuth } from '@/lib/auth';
-import { supabase } from '@/lib/supabase';
+import { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  Alert,
+  TextInput,
+  Modal,
+  Linking,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import { useAuth } from "@/lib/auth";
+import { supabase } from "@/lib/supabase";
 
 export default function ProfileScreen() {
   const { profile, user, updateUserProfile } = useAuth();
   const router = useRouter();
   const [isEditingProfile, setIsEditingProfile] = useState(false);
-  const [editedName, setEditedName] = useState(profile?.display_name || '');
+  const [editedName, setEditedName] = useState(profile?.display_name || "");
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (profile) {
-      setEditedName(profile.display_name || '');
+      setEditedName(profile.display_name || "");
     }
   }, [profile]);
 
@@ -22,26 +32,47 @@ export default function ProfileScreen() {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
-    } catch (error: any) {
-      Alert.alert('Error', error.message || 'Failed to sign out');
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to sign out";
+      Alert.alert("Error", errorMessage);
     }
+  };
+
+  const handleHelpAndSupport = () => {
+    const email = "support@soularapp.com"; // Placeholder email
+    const subject = "Help & Support Request";
+    const body = "Please describe your issue or question here.";
+    const mailto = `mailto:${email}?subject=${encodeURIComponent(
+      subject
+    )}&body=${encodeURIComponent(body)}`;
+
+    Linking.openURL(mailto).catch((error) => {
+      const errorMessage =
+        error instanceof Error ? error.message : "Unable to open email app";
+      Alert.alert("Error", errorMessage);
+      console.error("Error opening email app:", error);
+    });
   };
 
   const handleUpdateProfile = async () => {
     if (!editedName.trim()) {
-      Alert.alert('Error', 'Name cannot be empty');
+      Alert.alert("Error", "Name cannot be empty");
       return;
     }
 
     setIsLoading(true);
     try {
       await updateUserProfile({
-        display_name: editedName.trim()
+        display_name: editedName.trim(),
       });
       setIsEditingProfile(false);
-      Alert.alert('Success', 'Profile updated successfully');
-    } catch (error: any) {
-      Alert.alert('Error', error.message || 'Failed to update profile');
+      Alert.alert("Success", "Profile updated successfully");
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to update profile";
+      console.error("Error updating profile:", error);
+      Alert.alert("Error", errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -50,12 +81,12 @@ export default function ProfileScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.topHeader}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.backButton}
           onPress={() => router.back()}
         >
           <Ionicons name="chevron-back" size={24} color="#007AFF" />
-          <Text style={{ color: '#007AFF', fontSize: 16 }}>Back</Text>
+          <Text style={{ color: "#007AFF", fontSize: 16 }}>Back</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.header}>
@@ -66,10 +97,10 @@ export default function ProfileScreen() {
             <Ionicons name="person" size={40} color="#fff" />
           </View>
         )}
-        <Text style={styles.name}>{profile?.display_name || 'User'}</Text>
+        <Text style={styles.name}>{profile?.display_name || "User"}</Text>
         <Text style={styles.email}>{user?.email}</Text>
-        
-        <TouchableOpacity 
+
+        <TouchableOpacity
           style={styles.editButton}
           onPress={() => setIsEditingProfile(true)}
         >
@@ -96,7 +127,10 @@ export default function ProfileScreen() {
           <Ionicons name="chevron-forward" size={24} color="#666" />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.menuItem}>
+        <TouchableOpacity
+          style={styles.menuItem}
+          onPress={handleHelpAndSupport}
+        >
           <Ionicons name="help-circle-outline" size={24} color="#666" />
           <Text style={styles.menuText}>Help & Support</Text>
           <Ionicons name="chevron-forward" size={24} color="#666" />
@@ -115,7 +149,7 @@ export default function ProfileScreen() {
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Edit Profile</Text>
-            
+
             <TextInput
               style={styles.modalInput}
               placeholder="Display Name"
@@ -124,23 +158,23 @@ export default function ProfileScreen() {
             />
 
             <View style={styles.modalButtons}>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[styles.modalButton, styles.modalCancelButton]}
                 onPress={() => {
-                  setEditedName(profile?.display_name || '');
+                  setEditedName(profile?.display_name || "");
                   setIsEditingProfile(false);
                 }}
               >
                 <Text style={styles.modalButtonText}>Cancel</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[styles.modalButton, styles.modalSaveButton]}
                 onPress={handleUpdateProfile}
                 disabled={isLoading}
               >
                 <Text style={styles.modalButtonText}>
-                  {isLoading ? 'Saving...' : 'Save'}
+                  {isLoading ? "Saving..." : "Save"}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -154,24 +188,24 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   topHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    borderBottomColor: "#f0f0f0",
   },
   backButton: {
-    flexDirection: 'row',
+    flexDirection: "row",
     padding: 8,
   },
   header: {
-    alignItems: 'center',
+    alignItems: "center",
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    borderBottomColor: "#f0f0f0",
   },
   avatar: {
     width: 100,
@@ -180,40 +214,40 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   avatarPlaceholder: {
-    backgroundColor: '#007AFF',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#007AFF",
+    alignItems: "center",
+    justifyContent: "center",
   },
   name: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 8,
   },
   email: {
     fontSize: 16,
-    color: '#666',
+    color: "#666",
     marginBottom: 16,
   },
   editButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: "#007AFF",
     paddingHorizontal: 20,
     paddingVertical: 8,
     borderRadius: 20,
   },
   editButtonText: {
-    color: '#fff',
-    fontWeight: '600',
+    color: "#fff",
+    fontWeight: "600",
   },
   content: {
     flex: 1,
     padding: 16,
   },
   menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    borderBottomColor: "#f0f0f0",
   },
   menuText: {
     flex: 1,
@@ -223,60 +257,60 @@ const styles = StyleSheet.create({
   signOutButton: {
     margin: 16,
     padding: 16,
-    backgroundColor: '#ff3b30',
+    backgroundColor: "#ff3b30",
     borderRadius: 8,
-    alignItems: 'center',
+    alignItems: "center",
   },
   signOutText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   modalContainer: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
   },
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 12,
     padding: 20,
-    width: '80%',
+    width: "80%",
   },
   modalTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
-    textAlign: 'center',
+    textAlign: "center",
   },
   modalInput: {
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: "#ddd",
     borderRadius: 8,
     padding: 12,
     marginBottom: 20,
   },
   modalButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   modalButton: {
     flex: 1,
     padding: 12,
     borderRadius: 8,
-    alignItems: 'center',
+    alignItems: "center",
   },
   modalCancelButton: {
-    backgroundColor: '#ddd',
+    backgroundColor: "#ddd",
     marginRight: 8,
   },
   modalSaveButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: "#007AFF",
     marginLeft: 8,
   },
   modalButtonText: {
-    color: '#fff',
-    fontWeight: '600',
+    color: "#fff",
+    fontWeight: "600",
   },
 });
