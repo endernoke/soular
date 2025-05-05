@@ -1,51 +1,44 @@
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, Platform, Dimensions  } from 'react-native';
 import { Link } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';  // gradient in nativewind doesn't seem to work
+import { LinearGradient } from 'expo-linear-gradient';
+
+const { width: screenWidth } = Dimensions.get('window');
+const { height: screenHeight } = Dimensions.get('window');
 
 export default function Welcome() {
   return (
-    <View className='flex-1 justify-center items-center w-full h-full'>
-    <LinearGradient
-      colors={['#ffffff', '#8df5cf', '#1aea9f', '#10e1c9']}
-      className='flex-1 justify-center items-center w-full h-full'
-    >
-      <View className='flex-1 justify-center items-center min-h-[40%] w-full'>
-        <Image
-          source={require("@/../assets/images/splash-icon.png")}
-          className='absolute w-[100%] h-[100%] top-20 left-6 object-contain'
-        />
-      </View>
-      {/* Title */}
-      <View className='mb-4 px-3 text-left'>
-        <Text className='text-5xl font-bold mb-1 text-left'>
-          Connect {'\u2022'}
-        </Text>
-        <Text className='text-4xl font-bold mb-3 text-left'>
-          For a Positive Impact
-        </Text>
-        <Text className='text-lg text-gray-600 text-left'>
-          Connect with friends and fight climate change together.
-        </Text>
-      </View>
+    <View style={styles.container}>
+      <LinearGradient
+        colors={['#E0F7FA', '#1aea79','#e1dd01']}
+        style={styles.gradientBackground}
+      >
+        {/* Logo */}
+        <View style={styles.logoContainer}>
+          <Image
+            source={require("@/../assets/images/splash-icon.png")}
+            style={styles.logo}
+          />
+        </View>
 
-      <View className='flex-1 gap-3 w-full px-4 items-center justify-center text-center'>
-        <Link href="/auth/signup" asChild>
-          <TouchableOpacity className='flex-1 bg-blue-500 rounded-lg px-4 py-3 mb-4 w-[80%] max-h-[50px] items-center justify-center'>
-            <Text className='text-white text-lg font-semibold'>
-              Sign Up
-            </Text>
-          </TouchableOpacity>
-        </Link>
-        
-        <Link href="/auth/login" asChild>
-          <TouchableOpacity className='flex-1 bg-transparent border border-blue-500 rounded-lg px-4 py-3 mb-4 w-[80%] max-h-[50px] items-center justify-center'>
-            <Text className='text-blue-500 text-lg font-semibold'>
-              Log In
-            </Text>
-          </TouchableOpacity>
-        </Link>
-      </View>
-    </LinearGradient>
+        {/* Title */}
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>環保，</Text>
+          <Text style={styles.title}>聯繫世界</Text>
+          <Text style={styles.subtitle}>在這個為地球而建設的避風港，您可以探索即環保資訊，了解環境變化的趨勢；加入志同道合的社群，一起分享行動計劃，攜手守護我們的地球家園。</Text>
+
+        </View>
+
+        {/* Buttons */}
+        <View style={styles.buttonContainer}>
+          <Link href="/auth/signup" asChild>
+            <TouchableOpacity style={styles.primaryButton}>
+              <Text style={styles.buttonText}>START NOW</Text>
+            </TouchableOpacity>
+          </Link>
+
+
+        </View>
+      </LinearGradient>
     </View>
   );
 }
@@ -53,46 +46,73 @@ export default function Welcome() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    width: '100%',
+    height: '100%',
   },
-  header: {
-    marginBottom: 40,
-    textAlign: 'left'
+  gradientBackground: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  logoContainer: {
+    marginBottom: 20,
+  },
+  logo: {
+    width: screenWidth * 1,
+    height: screenHeight * 0.4,
+
+    resizeMode: 'center',
+  },
+  titleContainer: {
+    paddingHorizontal: 30,
+    marginBottom: 30,
   },
   title: {
-    fontSize: 32,
+    fontSize: 60,
     fontWeight: 'bold',
-    marginBottom: 10,
+    color: 'black',
     textAlign: 'left',
   },
   subtitle: {
+    fontSize: 20,
+    fontWeight: '500',
+    color: '#333',
+    textAlign: 'left',
+    marginTop: 10,
+  },
+  description: {
     fontSize: 16,
     color: '#666',
     textAlign: 'left',
+    marginTop: 10,
   },
   buttonContainer: {
-    gap: 15,
-  },
-  button: {
-    padding: 16,
-    borderRadius: 8,
+    width: '100%',
     alignItems: 'center',
+    paddingHorizontal: 30,
   },
   primaryButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#fff',
+    paddingVertical: 15,
+//     paddingHorizontal: 30,
+    borderRadius: 25,
+    marginBottom: 15,
+    width: '100%',
+    height: 70,
+    textAlign: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+
   },
-  secondaryButton: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: '#007AFF',
-  },
+
+  primaryButton:hover {
+      backgroundColor: '#1aea79'
+      },
+
   buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  secondaryButtonText: {
-    color: '#007AFF',
-  },
+    color: 'black',
+    fontSize: 25,
+    fontWeight: 'bold',
+  }
+
 });
