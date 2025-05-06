@@ -179,16 +179,38 @@ export default function ChatScreen() {
 
   if (loading) {
     return (
-      <View className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" color="#0000ff" />
+      <View className="flex-1">
+        <View className="bg-white p-4 border-b border-gray-200 flex-row items-center">
+          <TouchableOpacity 
+            onPress={() => router.back()}
+            className="mr-4"
+          >
+            <Ionicons name="arrow-back" size={24} color="#000" />
+          </TouchableOpacity>
+        </View>
+
+        <View className="flex-1 items-center justify-center">
+          <ActivityIndicator size="large" color="#0000ff" />
+          <Text className="text-gray-500 mt-2">Loading chat...</Text>
+        </View>
       </View>
     );
   }
 
   if (!chat) {
     return (
-      <View className="flex-1 justify-center items-center">
-        <Text>Chat not found</Text>
+      <View className="flex-1">
+        <View className="bg-white p-4 border-b border-gray-200 flex-row items-center">
+          <TouchableOpacity 
+            onPress={() => router.back()}
+            className="mr-4"
+          >
+            <Ionicons name="arrow-back" size={24} color="#000" />
+          </TouchableOpacity>
+        </View>
+        <View className="flex-1 justify-center items-center">
+          <Text className="text-gray-500">Chat not found</Text>
+        </View>
       </View>
     );
   }
@@ -207,16 +229,27 @@ export default function ChatScreen() {
           <Ionicons name="arrow-back" size={24} color="#000" />
         </TouchableOpacity>
 
-        {chat.icon_url ? (
-          <Image
-            source={{ uri: chat.icon_url }}
-            className="w-10 h-10 rounded-full mr-3"
-          />
-        ) : (
-          <View className="w-10 h-10 rounded-full bg-gray-500 items-center justify-center mr-3">
-            <Ionicons name="chatbubbles" size={20} color="#fff" />
-          </View>
-        )}
+        {chat.type === 'direct' ? 
+          chat.other_user?.photo_url ? (
+            <Image
+              source={{ uri: chat.other_user.photo_url }}
+              className="w-10 h-10 rounded-full mr-3"
+            />
+          ) : (
+            <View className="w-10 h-10 rounded-full bg-blue-500 items-center justify-center mr-3">
+              <Ionicons name="person" size={20} color="#fff" />
+            </View>
+          ) :
+          chat.icon_url ? (
+            <Image
+              source={{ uri: chat.icon_url }}
+              className="w-10 h-10 rounded-full mr-3"
+            />
+          ) : (
+            <View className="w-10 h-10 rounded-full bg-gray-500 items-center justify-center mr-3">
+              <Ionicons name="chatbubbles" size={20} color="#fff" />
+            </View>
+          )}
 
         <View className="flex-1">
           <Text className="text-lg font-semibold">

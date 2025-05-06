@@ -39,7 +39,13 @@ export default function HomeScreen() {
           <Text className="text-4xl font-bold ml-4">
             Soular
           </Text>
-          <View className="flex-row items-center">
+          <View className="flex-row items-center gap-4">
+            <TouchableOpacity
+              onPress={() => router.push('/chats')}
+              className="p-1"
+            >
+              <Ionicons name="mail" size={28} color="#fff" />
+            </TouchableOpacity>
             <TouchableOpacity 
               onPress={() => router.push('/profile')}
               className="p-1"

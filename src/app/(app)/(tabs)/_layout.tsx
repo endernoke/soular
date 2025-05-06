@@ -7,7 +7,10 @@ export default function RootLayoutNav() {
       screenOptions={{
         tabBarActiveTintColor: '#007AFF',
         headerShown: false,
-      }}>
+      }}
+       initialRouteName="index"
+       backBehavior="history"
+    >
       <Tabs.Screen
         name="learn/index"
         options={{
@@ -24,16 +27,6 @@ export default function RootLayoutNav() {
           title: 'Home',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home" size={size} color={color} />
-          ),
-          tabBarStyle: { display: 'flex' },
-        }}
-      />
-      <Tabs.Screen
-        name="chats"
-        options={{
-          title: 'Messages',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="chatbubbles" size={size} color={color} />
           ),
           tabBarStyle: { display: 'flex' },
         }}

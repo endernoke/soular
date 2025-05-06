@@ -231,7 +231,7 @@ export default function EventDetailScreen() {
       Alert.alert('Error', 'Chat room not found');
       return;
     }
-    router.push(`/chats/${chatId}`, { withAnchor: true });
+    router.push(`/chats/${chatId}`);
   };
 
   if (loading) {
