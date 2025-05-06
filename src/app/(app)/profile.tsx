@@ -9,12 +9,16 @@ import {
   TextInput,
   Modal,
   Linking,
+  ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from 'expo-file-system';
+import { decode } from 'base64-arraybuffer'; // For converting base64 to ArrayBuffer
+import * as utils from "@/lib/utils";
 
 export default function ProfileScreen() {
   const { profile, user, updateUserProfile } = useAuth();
@@ -64,7 +68,7 @@ export default function ProfileScreen() {
       quality: 0.7,
     });
 
-    if (!result.canceled) {
+    if (!result.canceled && result.assets && result.assets.length > 0) {
       return result.assets[0].uri; // URI of selected image
     }
     return null;
@@ -80,15 +84,19 @@ export default function ProfileScreen() {
     userId: string | number
   ) => {
     try {
-      const blob = await uriToBlob(uri);
-      const fileExt = uri.split(".").pop();
+      const fileExt = utils.getFileExtension(uri);
+      const mimeType = utils.guessMimeType(fileExt);
       const fileName = `${userId}.${fileExt}`;
+      // Read the file into base64 first (required by expo-file-system)
+      const base64 = await FileSystem.readAsStringAsync(uri, {
+        encoding: FileSystem.EncodingType.Base64
+      });
+      // Upload to Supabase Storage
       const { error } = await supabase.storage
         .from("profile-pictures")
-        .upload(fileName, blob, {
-          cacheControl: "3600",
+        .upload(fileName, decode(base64), {
           upsert: true,
-          contentType: `image/${fileExt}`,
+          contentType: mimeType
         });
 
       if (error) throw error;
@@ -153,8 +161,9 @@ export default function ProfileScreen() {
             if (uri) {
               setIsLoading(true);
               if (user?.id) {
-                const photoUrl = await handleUploadProfileImage(uri, user.id);
+                let photoUrl = await handleUploadProfileImage(uri, user.id);
                 if (photoUrl) {
+                  photoUrl += `?t=${new Date().getTime()}`; // Cache-busting
                   await updateUserProfilePhoto(photoUrl);
                 }
               } else {
@@ -164,13 +173,20 @@ export default function ProfileScreen() {
             }
           }}
         >
-          {profile?.photo_url ? (
-            <Image source={{ uri: profile.photo_url }} style={styles.avatar} />
+          {!isLoading ? (
+            profile?.photo_url ? (
+              <Image source={{ uri: profile.photo_url }} style={styles.avatar} />
+            ) : (
+              <View style={[styles.avatar, styles.avatarPlaceholder]}>
+                <Ionicons name="person" size={40} color="#fff" />
+              </View>
+            )
           ) : (
             <View style={[styles.avatar, styles.avatarPlaceholder]}>
-              <Ionicons name="person" size={40} color="#fff" />
+              <ActivityIndicator size="large" color="#007AFF" />
             </View>
           )}
+
         </TouchableOpacity>
         <Text style={styles.name}>{profile?.display_name || "User"}</Text>
         <Text style={styles.email}>{user?.email}</Text>

@@ -6,23 +6,7 @@ import { useAuth } from '@/lib/auth';
 import { Ionicons } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system';
 import { decode } from 'base64-arraybuffer'; // For converting base64 to ArrayBuffer
-
-// Helper to get file extension
-const getFileExtension = (uri: string) => {
-  const match = uri.match(/\.(\w+)$/);
-  return match ? match[1] : null;
-};
-
-// Helper to guess MIME type
-const guessMimeType = (extension: string | null) => {
-  if (!extension) return 'application/octet-stream'; // Default
-  const lowerExt = extension.toLowerCase();
-  if (lowerExt === 'jpg' || lowerExt === 'jpeg') return 'image/jpeg';
-  if (lowerExt === 'png') return 'image/png';
-  if (lowerExt === 'gif') return 'image/gif';
-  // Add more types as needed
-  return `image/${lowerExt}`;
-};
+import * as utils from '@/lib/utils';
 
 export default function NewPost({ onPostCreated }: { onPostCreated?: () => void }) {
   const { user } = useAuth(); // Get Supabase user
@@ -52,8 +36,8 @@ export default function NewPost({ onPostCreated }: { onPostCreated?: () => void 
     try {
       // 1. Upload image if selected
       if (selectedImageUri) {
-        const fileExt = getFileExtension(selectedImageUri);
-        const mimeType = guessMimeType(fileExt);
+        const fileExt = utils.getFileExtension(selectedImageUri);
+        const mimeType = utils.guessMimeType(fileExt);
         const fileName = `${user.id}-${Date.now()}.${fileExt}`;
         const filePath = `posts/${fileName}`;
 
