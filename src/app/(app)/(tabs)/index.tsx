@@ -40,9 +40,6 @@ export default function HomeScreen() {
             Soular
           </Text>
           <View className="flex-row items-center">
-            <TouchableOpacity className="p-4">
-              <Ionicons name="mail" size={24} color="#ffffff" />
-            </TouchableOpacity>
             <TouchableOpacity 
               onPress={() => router.push('/profile')}
               className="p-1"

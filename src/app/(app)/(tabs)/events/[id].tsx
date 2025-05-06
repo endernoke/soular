@@ -13,6 +13,7 @@ export default function EventDetailScreen() {
   const [event, setEvent] = useState<Event | null>(null);
   const [participants, setParticipants] = useState<Profile[]>([]);
   const [organizers, setOrganizers] = useState<Profile[]>([]);
+  const [chatRooms, setChatRooms] = useState<{ organizers?: string; participants?: string }>({});
   const [loading, setLoading] = useState(true);
   const [isJoining, setIsJoining] = useState(false);
 
@@ -33,6 +34,21 @@ export default function EventDetailScreen() {
 
       if (eventError) throw eventError;
       if (!eventData) throw new Error('Event not found');
+
+      // Fetch chat rooms for this event
+      const { data: chatRoomsData, error: chatError } = await supabase
+        .from('chat_rooms')
+        .select('id, type')
+        .eq('event_id', id);
+
+      if (chatError) throw chatError;
+
+      // Map chat rooms by type
+      const chatRoomsMap = (chatRoomsData || []).reduce((acc, room) => ({
+        ...acc,
+        [room.type === 'event_organizers' ? 'organizers' : 'participants']: room.id
+      }), {});
+      setChatRooms(chatRoomsMap);
 
       // Fetch participants with their profiles
       const { data: participantData, error: participantError } = await supabase
@@ -183,6 +199,15 @@ export default function EventDetailScreen() {
     }
   };
 
+  const navigateToChat = (type: 'organizers' | 'participants') => {
+    const chatId = chatRooms[type];
+    if (!chatId) {
+      Alert.alert('Error', 'Chat room not found');
+      return;
+    }
+    router.push(`/chats/${chatId}`);
+  };
+
   if (loading) {
     return (
       <View className="flex-1 justify-center items-center">
@@ -294,6 +319,27 @@ export default function EventDetailScreen() {
                 {isJoining ? 'Processing...' : 
                  isOrganizer ? 'Leave Organizing Team' : 'Join Organizing Team'}
               </Text>
+            </TouchableOpacity>
+          )}
+
+          {/* Chat buttons */}
+          {event.stage === 'in-development' && isOrganizer && chatRooms.organizers && (
+            <TouchableOpacity 
+              className="bg-purple-500 p-4 rounded-lg mb-3"
+              onPress={() => navigateToChat('organizers')}
+            >
+              <Text className="text-white text-center font-semibold">Organizers Chat</Text>
+            </TouchableOpacity>
+          )}
+
+          {((event.stage === 'upcoming' && isParticipant) || 
+            (event.stage === 'in-development' && isOrganizer)) && 
+           chatRooms.participants && (
+            <TouchableOpacity 
+              className="bg-purple-500 p-4 rounded-lg mb-3"
+              onPress={() => navigateToChat('participants')}
+            >
+              <Text className="text-white text-center font-semibold">Event Chat</Text>
             </TouchableOpacity>
           )}
 

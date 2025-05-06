@@ -29,6 +29,16 @@ export default function RootLayoutNav() {
         }}
       />
       <Tabs.Screen
+        name="chats"
+        options={{
+          title: 'Messages',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="chatbubbles" size={size} color={color} />
+          ),
+          tabBarStyle: { display: 'flex' },
+        }}
+      />
+      <Tabs.Screen
         name="events"
         options={{
           title: 'Events',
