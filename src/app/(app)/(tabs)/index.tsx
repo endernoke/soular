@@ -38,14 +38,14 @@ export default function HomeScreen() {
 colors={['white','white','white']}
         className='justify-center items-center w-full pb-10'
       >
-        <View className='flex-1 flex-row items-center justify-between px-[30px] pt-6 w-full mb-5'>
+        <View className='flex-1 flex-row items-center justify-between px-[20px] pt-0 w-full mb-5'>
           <View className='flex-1 flex-col'>
-          <Text className="text-[25px] font-bold text-[#1aea9f] mb-[-10px]">
-                      Welcome,
-                    </Text>
-          <Text className="text-[50px] font-bold">
-            Soular
-          </Text>
+         <Text style={{ fontSize: 20, fontWeight: '500', color: '#1aea9f', marginTop: 15, marginBottom: -10 }}>
+                     Welcome,
+                   </Text>
+                   <Text style={{ fontSize: 40, fontWeight: 'bold', color: 'black', marginTop: 0, marginBottom: 0 }}>
+                               Soular
+                             </Text>
           </View>
           <View className="flex-row items-center">
             <TouchableOpacity className="p-4">
@@ -72,7 +72,7 @@ colors={['white','white','white']}
       </LinearGradient>
       
       <View className="flex-1 bg-white border-t-2 border-gray-200">
-        <View className="flex-row items-center justify-between px-[30px] pt-[20px] bg-white">
+        <View className="flex-row items-center justify-between px-[20px] pt-[20px] bg-white">
           <Text className="text-2xl">Our Soular Stories</Text>
           <TouchableOpacity
             onPress={() => setNewPostModalVisible(true)}

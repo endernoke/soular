@@ -29,7 +29,7 @@ export default function RootLayoutNav() {
           />
         ),
         tabBarItemStyle: {
-          paddingTop: 15,
+          paddingTop: 7.5,
           borderRadius: 10,
           marginHorizontal: 5,
 

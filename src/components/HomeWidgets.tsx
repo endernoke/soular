@@ -17,18 +17,18 @@ export default function HomeWidgets() {
   };
 
   return (
-    <View className="flex-row px-[30px] gap-4 w-full">
+    <View className="flex-row px-[20px] gap-4 w-full">
       {/* Left side - Large Green Organization button */}
       <TouchableOpacity 
         onPress={handleGreenOrgPress}
         className="flex-1 rounded-[25px] justify-between w-[60%] h-full"
       >
         <LinearGradient
-          colors={['#6366f1', '#0ea5e9']}
+          colors={['#0077fa', '#0077fa']}
           style={{ flex: 1, borderRadius: 15, padding: 16, paddingTop: 24}}
         >
           <Text className="text-white text-2xl font-bold">Act Now</Text>
-          <Text className="text-white text-s font-semibold">Join HK Green Organizations</Text>
+          <Text className="text-white text-s font-normal">Join HK Green Organizations</Text>
         </LinearGradient>
         </TouchableOpacity>
 
@@ -38,10 +38,10 @@ export default function HomeWidgets() {
           onPress={handleCalenderPress}
               >
           <LinearGradient
-                  colors={['#1aea9f', '#10d9c7']}
+                  colors={['#1aea9f20', '#10d9c720']}
                   style={{ flex: 1, borderRadius: 15, padding: '10px',justifyContent: 'center', alignItems: 'center'}}
                 >
-          <Text className="text-white text-[20px] font-bold">Calendar</Text>
+          <Text className="text-[#1aea9f] text-[20px] font-semibold">Calendar</Text>
           </LinearGradient>
         </TouchableOpacity>
 
@@ -49,10 +49,10 @@ export default function HomeWidgets() {
           onPress={handleTimeAuctionPress}
             >
         <LinearGradient
-                          colors={['#1aea9f', '#10d9c7']}
+                          colors={['#1aea9f20', '#10d9c720']}
                           style={{ flex: 1, borderRadius: 15, padding: '10px',justifyContent: 'center', alignItems: 'center'}}
                         >
-          <Text className="text-white text-[20px] font-bold">Volunteer</Text>
+          <Text className="text-[#1aea9f] text-[20px] font-semibold">Volunteer</Text>
           </LinearGradient>
         </TouchableOpacity>
       </View>
