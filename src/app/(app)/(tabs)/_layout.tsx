@@ -1,3 +1,5 @@
+// This is the bottom pane
+
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
@@ -8,15 +10,16 @@ export default function RootLayoutNav() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: '#007AFF',
-        tabBarInactiveTintColor: '#8E8E93',
+        tabBarInactiveTintColor: '#00000020',
         headerShown: false,
         tabBarStyle: {
           position: 'absolute',
           borderTopWidth: 0,
           backgroundColor: 'transparent',
           elevation: 0,
-          height: 40, // Increased height
-          paddingBottom: 75, // Extra padding at the bottom
+          height: 50, // Increased height
+          paddingBottom: 0, // Extra padding at the bottom
+
         },
         tabBarBackground: () => (
           <BlurView
@@ -26,17 +29,17 @@ export default function RootLayoutNav() {
           />
         ),
         tabBarItemStyle: {
-          paddingTop: 20,
+          paddingTop: 15,
           borderRadius: 10,
           marginHorizontal: 5,
-          marginBottom: 10, // Increased margin
-          height: 50, // Increased item height
+
+          height: 40, // Increased item height
         },
       }}>
       <Tabs.Screen
         name="learn/index"
         options={{
-          title: 'Learn',
+          title: '',
           tabBarIcon: ({ color, size, focused }) => (
             <View style={focused ? styles.iconContainerFocused : null}>
               <Ionicons name="book" size={24} color={color} />
@@ -51,7 +54,7 @@ export default function RootLayoutNav() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
+          title: '',
           tabBarIcon: ({ color, size, focused }) => (
             <View style={focused ? styles.iconContainerFocused : null}>
               <Ionicons name="home" size={24} color={color} />
@@ -66,7 +69,7 @@ export default function RootLayoutNav() {
       <Tabs.Screen
         name="events"
         options={{
-          title: 'Events',
+          title: '',
           tabBarIcon: ({ color, size, focused }) => (
             <View style={focused ? styles.iconContainerFocused : null}>
               <Ionicons name="calendar" size={24} color={color} />
@@ -84,8 +87,8 @@ export default function RootLayoutNav() {
 
 const styles = StyleSheet.create({
   iconContainerFocused: {
-    backgroundColor: 'rgba(0, 122, 255, 0.1)',
-    padding: 12, // Increased padding
+//     backgroundColor: 'rgba(0, 122, 255, 0.1)',
+    padding: 5, // Increased padding
     borderRadius: 15,
   },
 });

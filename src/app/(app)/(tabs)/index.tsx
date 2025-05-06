@@ -1,4 +1,4 @@
-// main page
+// This is the main page
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal, Image } from 'react-native';
@@ -34,13 +34,19 @@ export default function HomeScreen() {
   return (
     <ScrollView className='flex-1 bg-white'>
       <LinearGradient
-        colors={['rgb(26, 234, 159)', 'rgb(255, 255, 255)']}
+//         colors={['#1aea79','#e1dd0170','#fff']}
+colors={['white','white','white']}
         className='justify-center items-center w-full pb-10'
       >
         <View className='flex-1 flex-row items-center justify-between px-[30px] pt-6 w-full mb-5'>
-          <Text className="text-4xl font-bold ml-4">
+          <View className='flex-1 flex-col'>
+          <Text className="text-[25px] font-bold text-[#1aea9f] mb-[-10px]">
+                      Welcome,
+                    </Text>
+          <Text className="text-[50px] font-bold">
             Soular
           </Text>
+          </View>
           <View className="flex-row items-center">
             <TouchableOpacity className="p-4">
               <Ionicons name="mail" size={24} color="#ffffff" />
@@ -66,13 +72,13 @@ export default function HomeScreen() {
       </LinearGradient>
       
       <View className="flex-1 bg-white border-t-2 border-gray-200">
-        <View className="flex-row items-center justify-between px-4 py-3 bg-white">
-          <Text className="text-2xl font-bold">Our Soular Stories</Text>
-          <TouchableOpacity 
+        <View className="flex-row items-center justify-between px-[30px] pt-[20px] bg-white">
+          <Text className="text-2xl">Our Soular Stories</Text>
+          <TouchableOpacity
             onPress={() => setNewPostModalVisible(true)}
-            className="flex-row bg-blue-500 rounded-full w-20 h-8 items-center justify-center"
+            className="flex-row bg-[black] rounded-full w-20 h-8 items-center justify-center"
           >
-            <Ionicons name="add" size={24} color="#fff" />
+            <Ionicons name="add" size={15} color="#fff" />
             <Text className="text-white text-md">New</Text>
           </TouchableOpacity>
         </View>

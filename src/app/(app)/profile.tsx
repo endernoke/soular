@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    padding: 16,
+    padding: 30,
   },
   menuItem: {
     flexDirection: 'row',
@@ -221,10 +221,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   signOutButton: {
-    margin: 16,
+    margin: 30,
     padding: 16,
     backgroundColor: '#ff3b30',
-    borderRadius: 8,
+    borderRadius: 15,
     alignItems: 'center',
   },
   signOutText: {
@@ -241,7 +241,7 @@ const styles = StyleSheet.create({
   modalContent: {
     backgroundColor: '#fff',
     borderRadius: 12,
-    padding: 20,
+    padding: 30,
     width: '80%',
   },
   modalTitle: {
