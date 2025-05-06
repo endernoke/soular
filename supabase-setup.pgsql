@@ -199,11 +199,17 @@ create policy "Users can join/leave events as organizers"
 create policy "Event authors and self can remove organizers"
   on event_organizers for delete
   using (
-    exists (
-      select 1 from events
-      where id = event_id and author_id = auth.uid()
-    ) or
-    user_id = auth.uid()
+    (
+      exists (
+        select 1 from events
+        where id = event_id and author_id = auth.uid()
+      ) or
+      user_id = auth.uid()
+    ) and
+    -- Prevent removing author from organizers
+    user_id != (
+      select author_id from events where id = event_id
+    )
   );
 
 -- Event participants policies
@@ -400,11 +406,12 @@ create trigger on_event_created
   after insert on events
   for each row execute procedure handle_new_event();
 
--- Trigger to auto-add organizers to organizer chat
+-- Trigger to auto-add organizers to both organizer and participant chats
 create or replace function handle_new_organizer()
 returns trigger as $$
 declare
   organizer_chat_id uuid;
+  participant_chat_id uuid;
 begin
   -- Get organizer chat id for this event
   select id into organizer_chat_id
@@ -418,6 +425,18 @@ begin
     values (organizer_chat_id, new.user_id);
   end if;
 
+  -- Get participant chat id for this event
+  select id into participant_chat_id
+  from chat_rooms
+  where event_id = new.event_id
+  and type = 'event_participants';
+
+  -- Add to participant chat if not already a member
+  if not is_chat_member(participant_chat_id, new.user_id) then
+    insert into chat_members (chat_id, user_id)
+    values (participant_chat_id, new.user_id);
+  end if;
+
   return new;
 end;
 $$ language plpgsql security definer;
@@ -425,6 +444,97 @@ $$ language plpgsql security definer;
 create trigger on_organizer_added
   after insert on event_organizers
   for each row execute procedure handle_new_organizer();
+
+-- Trigger to auto-add participants to participant chat
+create or replace function handle_new_participant()
+returns trigger as $$
+declare
+  participant_chat_id uuid;
+begin
+  -- Get participant chat id for this event
+  select id into participant_chat_id
+  from chat_rooms
+  where event_id = new.event_id
+  and type = 'event_participants';
+
+  -- Add to participant chat if not already a member
+  if not is_chat_member(participant_chat_id, new.user_id) then
+    insert into chat_members (chat_id, user_id)
+    values (participant_chat_id, new.user_id);
+  end if;
+
+  return new;
+end;
+$$ language plpgsql security definer;
+
+create trigger on_participant_added
+  after insert on event_participants
+  for each row execute procedure handle_new_participant();
+
+-- Trigger to auto-remove organizers from chats when they leave
+create or replace function handle_organizer_removed()
+returns trigger as $$
+declare
+  organizer_chat_id uuid;
+  participant_chat_id uuid;
+begin
+  -- Get organizer chat id for this event
+  select id into organizer_chat_id
+  from chat_rooms
+  where event_id = old.event_id
+  and type = 'event_organizers';
+
+  -- Remove from organizer chat if they are a member
+  if is_chat_member(organizer_chat_id, old.user_id) then
+    delete from chat_members
+    where chat_id = organizer_chat_id and user_id = old.user_id;
+  end if;
+
+  -- Get participant chat id for this event
+  select id into participant_chat_id
+  from chat_rooms
+  where event_id = old.event_id
+  and type = 'event_participants';
+
+  -- Remove from participant chat if they are a member
+  if is_chat_member(participant_chat_id, old.user_id) then
+    delete from chat_members
+    where chat_id = participant_chat_id and user_id = old.user_id;
+  end if;
+
+  return old;
+end;
+$$ language plpgsql security definer;
+
+create trigger on_organizer_removed
+  after delete on event_organizers
+  for each row execute procedure handle_organizer_removed();
+
+-- Trigger to auto-remove participants from chat when they leave
+create or replace function handle_participant_removed()
+returns trigger as $$
+declare
+  participant_chat_id uuid;
+begin
+  -- Get participant chat id for this event
+  select id into participant_chat_id
+  from chat_rooms
+  where event_id = old.event_id
+  and type = 'event_participants';
+
+  -- Remove from participant chat if they are a member
+  if is_chat_member(participant_chat_id, old.user_id) then
+    delete from chat_members
+    where chat_id = participant_chat_id and user_id = old.user_id;
+  end if;
+
+  return old;
+end;
+$$ language plpgsql security definer;
+
+create trigger on_participant_removed
+  after delete on event_participants
+  for each row execute procedure handle_participant_removed();
 
 -- Create storage bucket for images
 insert into storage.buckets (id, name)

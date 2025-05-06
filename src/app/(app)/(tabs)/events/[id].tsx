@@ -35,19 +35,40 @@ export default function EventDetailScreen() {
       if (eventError) throw eventError;
       if (!eventData) throw new Error('Event not found');
 
+      let chatRoomsData: any[] | null = [];
+      
       // Fetch chat rooms for this event
-      const { data: chatRoomsData, error: chatError } = await supabase
+      // NOTE: Errors indicate unauthorized access, not necessarily a failure
+      const { data: organizersChatRoomData, error: organizersChatError } = await supabase
         .from('chat_rooms')
         .select('id, type')
-        .eq('event_id', id);
+        .eq('event_id', id)
+        .eq('type', 'event_organizers')
+        .eq('is_enabled', true)
+        .single();
 
-      if (chatError) throw chatError;
+      if (!organizersChatError) {
+        chatRoomsData.push(organizersChatRoomData);
+      }
+
+      const { data: participantsChatRoomData, error: participantsChatError } = await supabase
+        .from('chat_rooms')
+        .select('id, type')
+        .eq('event_id', id)
+        .eq('type', 'event_participants')
+        .eq('is_enabled', true)
+        .single();
+      
+      if (!participantsChatError) {
+        chatRoomsData.push(participantsChatRoomData);
+      }
 
       // Map chat rooms by type
-      const chatRoomsMap = (chatRoomsData || []).reduce((acc, room) => ({
-        ...acc,
-        [room.type === 'event_organizers' ? 'organizers' : 'participants']: room.id
-      }), {});
+      const chatRoomsMap = (chatRoomsData || [])
+        .reduce((acc, room) => ({
+          ...acc,
+          [room.type === 'event_organizers' ? 'organizers' : 'participants']: room.id
+        }), {});
       setChatRooms(chatRoomsMap);
 
       // Fetch participants with their profiles
@@ -167,6 +188,11 @@ export default function EventDetailScreen() {
       const isOrganizer = organizers.some(o => o.id === user.id);
       
       if (isOrganizer) {
+        // Check if user is author
+        if (event.author_id === user.id) {
+          Alert.alert('Error', 'You cannot leave the organizing team as the event author');
+          return;
+        }
         // Leave organizing team
         const { error } = await supabase
           .from('event_organizers')
@@ -205,7 +231,7 @@ export default function EventDetailScreen() {
       Alert.alert('Error', 'Chat room not found');
       return;
     }
-    router.push(`/chats/${chatId}`);
+    router.push(`/chats/${chatId}`, { withAnchor: true });
   };
 
   if (loading) {
@@ -323,7 +349,7 @@ export default function EventDetailScreen() {
           )}
 
           {/* Chat buttons */}
-          {event.stage === 'in-development' && isOrganizer && chatRooms.organizers && (
+          {isOrganizer && chatRooms.organizers && (
             <TouchableOpacity 
               className="bg-purple-500 p-4 rounded-lg mb-3"
               onPress={() => navigateToChat('organizers')}
@@ -333,7 +359,7 @@ export default function EventDetailScreen() {
           )}
 
           {((event.stage === 'upcoming' && isParticipant) || 
-            (event.stage === 'in-development' && isOrganizer)) && 
+            isOrganizer) && 
            chatRooms.participants && (
             <TouchableOpacity 
               className="bg-purple-500 p-4 rounded-lg mb-3"
@@ -342,13 +368,6 @@ export default function EventDetailScreen() {
               <Text className="text-white text-center font-semibold">Event Chat</Text>
             </TouchableOpacity>
           )}
-
-          <TouchableOpacity 
-            className="bg-purple-500 p-4 rounded-lg"
-            onPress={() => Alert.alert('Coming Soon', 'Discussion groups will be available soon!')}
-          >
-            <Text className="text-white text-center font-semibold">Join Discussion Group</Text>
-          </TouchableOpacity>
         </View>
       </View>
     </ScrollView>
