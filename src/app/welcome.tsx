@@ -1,7 +1,4 @@
 import { View, Text, StyleSheet, TouchableOpacity, Image, Platform, Dimensions  } from 'react-native';
-
-
-
 import { Link } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 

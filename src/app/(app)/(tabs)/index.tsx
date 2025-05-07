@@ -24,7 +24,7 @@ export default function HomeScreen() {
   // Change status bar color based on the screen
   useFocusEffect(
     useCallback(() => {
-      setStatusBarBackgroundColor('rgb(26, 234, 159)');
+      setStatusBarBackgroundColor('#1aea79');
       return () => {
         setStatusBarBackgroundColor('rgb(255, 255, 255)');
       };
@@ -34,22 +34,25 @@ export default function HomeScreen() {
   return (
     <ScrollView className='flex-1 bg-white'>
       <LinearGradient
-//         colors={['#1aea79','#e1dd0170','#fff']}
-colors={['white','white','white']}
+        // colors={['#1aea79','#e1dd0170','#fff']}
+        colors={['white','white','white']}
         className='justify-center items-center w-full pb-10'
       >
         <View className='flex-1 flex-row items-center justify-between px-[30px] pt-6 w-full mb-5'>
           <View className='flex-1 flex-col'>
-          <Text className="text-[25px] font-bold text-[#1aea9f] mb-[-10px]">
-                      Welcome,
-                    </Text>
-          <Text className="text-[50px] font-bold">
-            Soular
-          </Text>
+            <Text className="text-[25px] font-bold text-[#1aea9f] mb-[-10px]">
+              Welcome,
+            </Text>
+            <Text className="text-[50px] font-bold">
+              Soular
+            </Text>
           </View>
           <View className="flex-row items-center">
-            <TouchableOpacity className="p-4">
-              <Ionicons name="mail" size={24} color="#ffffff" />
+            <TouchableOpacity
+              onPress={() => router.push("/chats")}
+              className="p-4"
+            >
+              <Ionicons name="mail" size={24} color="#00f" />
             </TouchableOpacity>
             <TouchableOpacity 
               onPress={() => router.push('/profile')}

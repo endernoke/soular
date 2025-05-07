@@ -58,24 +58,11 @@ export default function NewEventScreen() {
       if (insertError) throw insertError;
       if (!newEvent) throw new Error('Failed to create event or retrieve ID');
 
-      const organizerData = {
-        event_id: newEvent.id,
-        user_id: user.id,
-      };
+      // Author will automatically be added as an organizer from event creation trigger
 
-      const { error: organizerError } = await supabase
-        .from('event_organizers')
-        .insert(organizerData);
+      Alert.alert('Success', 'Event created successfully');
 
-      if (organizerError) {
-        console.error('Error adding initial organizer:', organizerError);
-        Alert.alert('Warning', 'Event created, but failed to set you as organizer. Please check the event details.');
-      } else {
-        Alert.alert('Success', 'Event created successfully');
-      }
-      
       router.back();
-
     } catch (error: any) {
       console.error('Error creating event:', error);
       Alert.alert('Error', error.message || 'Failed to create event');

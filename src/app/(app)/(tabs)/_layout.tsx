@@ -19,7 +19,6 @@ export default function RootLayoutNav() {
           elevation: 0,
           height: 50, // Increased height
           paddingBottom: 0, // Extra padding at the bottom
-
         },
         tabBarBackground: () => (
           <BlurView
@@ -32,10 +31,12 @@ export default function RootLayoutNav() {
           paddingTop: 15,
           borderRadius: 10,
           marginHorizontal: 5,
-
           height: 40, // Increased item height
         },
-      }}>
+      }}
+      initialRouteName="index"
+      backBehavior="history"
+    >
       <Tabs.Screen
         name="learn/index"
         options={{
@@ -88,7 +89,7 @@ export default function RootLayoutNav() {
 const styles = StyleSheet.create({
   iconContainerFocused: {
 //     backgroundColor: 'rgba(0, 122, 255, 0.1)',
-    padding: 5, // Increased padding
-    borderRadius: 15,
+  padding: 5, // Increased padding
+  borderRadius: 15,
   },
 });
