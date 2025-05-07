@@ -289,7 +289,7 @@ export default function LearnScreen() {
   // Handle green event generation request
   const handleGreenEventRequest = async (message: string) => {
     // Here we tell the AI to respond in JSON format for green events
-    const formattedMsg = message + " (.. For the above idea, please respond with a JSON array of a highly related and targeted event, each with title, description, date, location, and impact fields. For date, use a date relative to today. Today is May 10, 2025.)";
+    const formattedMsg = message + " (.. For the above idea, please respond with a JSON array of one highly related and targeted event only, with title, description, date, location, and impact fields. For date, use a date relative to today. Today is May 10, 2025.)";
 
     const response = await fetch('https://server-ef04.onrender.com/api/chat/message', {
       method: 'POST',

@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase'; // Import supabase client
 import type { Post } from '@/types'; // Use updated Post type
 import { formatDistanceToNowStrict } from 'date-fns'; // Use date-fns for relative time
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get('window');n
 
 // Updated time formatting using date-fns
 const formatRelativeTime = (timestamp: string | null | undefined) => {
