@@ -63,6 +63,38 @@ Columns:
 - `joined_at` (TIMESTAMPTZ, default `now()`) - When the user joined as a participant.
 - Primary Key: (`event_id`, `user_id`)
 
+### `chat_rooms`
+Stores chat rooms for direct messages and event groups.
+
+Columns:
+- `id` (UUID, Primary Key, default `uuid_generate_v4()`) - Unique identifier for the chat room.
+- `type` (TEXT, not null) - Type of chat room: 'direct', 'event_organizers', or 'event_participants'.
+- `icon_url` (TEXT, nullable) - Optional URL to chat room icon for group chats.
+- `event_id` (UUID, nullable) - Foreign key referencing `events.id`. NULL for direct messages.
+- `is_enabled` (BOOLEAN, default `true`) - Whether the chat room is active. Can be disabled by event author.
+- `created_at` (TIMESTAMPTZ, default `now()`) - When the chat room was created.
+- `updated_at` (TIMESTAMPTZ, default `now()`) - Last update timestamp.
+
+### `chat_members`
+Junction table tracking chat room membership.
+
+Columns:
+- `chat_id` (UUID) - Foreign key referencing `chat_rooms.id`. Part of the composite primary key.
+- `user_id` (UUID) - Foreign key referencing `profiles.id`. Part of the composite primary key.
+- `last_read_at` (TIMESTAMPTZ, default `now()`) - Timestamp of user's last read message.
+- `joined_at` (TIMESTAMPTZ, default `now()`) - When the user joined the chat.
+- Primary Key: (`chat_id`, `user_id`)
+
+### `chat_messages`
+Stores messages sent in chat rooms.
+
+Columns:
+- `id` (UUID, Primary Key, default `uuid_generate_v4()`) - Unique identifier for the message.
+- `chat_id` (UUID) - Foreign key referencing `chat_rooms.id`.
+- `sender_id` (UUID) - Foreign key referencing `profiles.id`.
+- `content` (TEXT, not null) - Message content.
+- `created_at` (TIMESTAMPTZ, default `now()`) - When the message was sent.
+
 ## Relationships
 
 1.  **Profiles <-> Auth Users:** One-to-one relationship via the `id` field. A `profile` entry should exist for every relevant `auth.users` entry.
@@ -70,6 +102,10 @@ Columns:
 3.  **Events <-> Profiles (Author):** One-to-Many. A profile (`author_id`) can create many events. Each event has one author.
 4.  **Events <-> Profiles (Organizers):** Many-to-Many via `event_organizers`. An event can have multiple organizers, and a profile can organize multiple events.
 5.  **Events <-> Profiles (Participants):** Many-to-Many via `event_participants`. An event can have multiple participants, and a profile can participate in multiple events.
+6.  **Events <-> Chat Rooms:** One-to-Many. An event has two chat rooms (organizers and participants).
+7.  **Chat Rooms <-> Profiles:** Many-to-Many via `chat_members`. Users can be members of multiple chat rooms.
+8.  **Chat Messages <-> Profiles:** One-to-Many. A profile can send many messages. Each message has one sender.
+9.  **Chat Messages <-> Chat Rooms:** One-to-Many. A chat room can have many messages.
 
 ## Security Rules Considerations (Row Level Security - RLS)
 
@@ -91,6 +127,11 @@ Supabase uses PostgreSQL's Row Level Security (RLS). Policies need to be defined
     - Users should be able to read organizer/participant lists for events they can see.
     - Users should be able to insert/delete entries corresponding to themselves (`user_id = auth.uid()`) based on event stage and rules (e.g., can only join 'upcoming' events as participant).
     - Event authors/organizers might have broader permissions to manage these lists.
+- **`chat_rooms`, `chat_members`, `chat_messages`:**
+    - Users should only be able to view chats they are members of.
+    - Users can send messages in enabled chats they are members of.
+    - Event authors can manage event group chats.
+    - Direct messages are visible only to participants.
 
 ## Data Validation Rules
 
@@ -98,6 +139,8 @@ Supabase uses PostgreSQL's Row Level Security (RLS). Policies need to be defined
 - Use `CHECK` constraints for fields like `events.stage`.
 - Foreign key constraints ensure relational integrity.
 - Consider adding database-level validation for formats like email (though Supabase Auth handles this) or URL formats if needed.
+- Chat messages must have content and valid sender/chat references.
+- Chat room types must be one of: 'direct', 'event_organizers', 'event_participants'.
 
 ## Indexing Recommendations
 
@@ -105,3 +148,7 @@ Supabase uses PostgreSQL's Row Level Security (RLS). Policies need to be defined
 - Index `posts.created_at` (descending) for the social feed.
 - Index `events.event_timestamp` (descending or ascending depending on query needs).
 - Index `events.stage` if frequently filtering by stage. Consider a compound index on (`stage`, `event_timestamp`).
+- Index `chat_rooms.event_id` for quick lookup of event-related chats.
+- Index `chat_rooms.updated_at` for chat list ordering.
+- Compound index on `chat_messages(chat_id, created_at)` for message history.
+- Index `chat_messages.sender_id` for user message history.
