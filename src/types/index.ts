@@ -2,6 +2,7 @@ export interface Profile {
   id: string; // UUID
   display_name: string | null;
   photo_url: string | null;
+  bio: string | null; // User's self-description
   updated_at?: string; // ISO 8601 timestamp string
   created_at?: string; // ISO 8601 timestamp string
 }

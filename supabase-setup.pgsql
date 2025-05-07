@@ -10,6 +10,7 @@ create table if not exists profiles (
   id uuid references auth.users on delete cascade primary key,
   display_name text,
   photo_url text,
+  bio text,
   updated_at timestamptz default now(),
   created_at timestamptz default now()
 );

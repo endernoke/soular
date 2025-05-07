@@ -19,6 +19,7 @@ Columns:
 - `id` (UUID, Primary Key) - Foreign key referencing `auth.users.id`. Set up via trigger or manually after signup.
 - `display_name` (TEXT) - User's display name. Can be updated by the user.
 - `photo_url` (TEXT, nullable) - URL to the user's profile photo in Supabase Storage.
+- `bio` (TEXT, nullable) - Short biography or description of the user.
 - `created_at` (TIMESTAMPTZ, default `now()`) - Timestamp of profile creation.
 - `updated_at` (TIMESTAMPTZ, default `now()`) - Timestamp of last profile update.
 

@@ -10,11 +10,13 @@ export default function ProfileScreen() {
   const router = useRouter();
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [editedName, setEditedName] = useState(profile?.display_name || '');
+  const [editedBio, setEditedBio] = useState(profile?.bio || '');
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (profile) {
       setEditedName(profile.display_name || '');
+      setEditedBio(profile.bio || '');
     }
   }, [profile]);
 
@@ -36,7 +38,8 @@ export default function ProfileScreen() {
     setIsLoading(true);
     try {
       await updateUserProfile({
-        display_name: editedName.trim()
+        display_name: editedName.trim(),
+        bio: editedBio.trim() || null
       });
       setIsEditingProfile(false);
       Alert.alert('Success', 'Profile updated successfully');
@@ -66,8 +69,13 @@ export default function ProfileScreen() {
             <Ionicons name="person" size={40} color="#fff" />
           </View>
         )}
+        
         <Text style={styles.name}>{profile?.display_name || 'User'}</Text>
         <Text style={styles.email}>{user?.email}</Text>
+        
+        {profile?.bio && (
+          <Text style={styles.bio}>{profile.bio}</Text>
+        )}
         
         <TouchableOpacity 
           style={styles.editButton}
@@ -123,11 +131,22 @@ export default function ProfileScreen() {
               onChangeText={setEditedName}
             />
 
+            <TextInput
+              style={[styles.modalInput, styles.bioInput]}
+              placeholder="Bio - Tell us about yourself..."
+              value={editedBio}
+              onChangeText={setEditedBio}
+              multiline
+              numberOfLines={4}
+              maxLength={500}
+            />
+
             <View style={styles.modalButtons}>
               <TouchableOpacity 
                 style={[styles.modalButton, styles.modalCancelButton]}
                 onPress={() => {
                   setEditedName(profile?.display_name || '');
+                  setEditedBio(profile?.bio || '');
                   setIsEditingProfile(false);
                 }}
               >
@@ -192,7 +211,13 @@ const styles = StyleSheet.create({
   email: {
     fontSize: 16,
     color: '#666',
+    marginBottom: 8,
+  },
+  bio: {
+    fontSize: 16,
+    color: '#333',
     marginBottom: 16,
+    textAlign: 'center',
   },
   editButton: {
     backgroundColor: '#007AFF',
@@ -256,6 +281,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 12,
     marginBottom: 20,
+  },
+  bioInput: {
+    height: 100,
+    textAlignVertical: 'top',
   },
   modalButtons: {
     flexDirection: 'row',
