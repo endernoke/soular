@@ -1,3 +1,5 @@
+// This is the main page
+
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal, Image } from 'react-native';
 import { useFocusEffect, router } from 'expo-router';
@@ -22,7 +24,7 @@ export default function HomeScreen() {
   // Change status bar color based on the screen
   useFocusEffect(
     useCallback(() => {
-      setStatusBarBackgroundColor('rgb(26, 234, 159)');
+      setStatusBarBackgroundColor('#1aea79');
       return () => {
         setStatusBarBackgroundColor('rgb(255, 255, 255)');
       };
@@ -32,19 +34,25 @@ export default function HomeScreen() {
   return (
     <ScrollView className='flex-1 bg-white'>
       <LinearGradient
-        colors={['rgb(26, 234, 159)', 'rgb(255, 255, 255)']}
-        className='flex-1 justify-center items-center w-full h-full'
+        // colors={['#1aea79','#e1dd0170','#fff']}
+        colors={['white','white','white']}
+        className='justify-center items-center w-full pb-10'
       >
-        <View className='flex-1 flex-row items-center justify-between px-4 pt-4 w-full'>
-          <Text className="text-4xl font-bold ml-4">
-            Soular
-          </Text>
-          <View className="flex-row items-center gap-4">
+        <View className='flex-1 flex-row items-center justify-between px-[30px] pt-6 w-full mb-5'>
+          <View className='flex-1 flex-col'>
+            <Text className="text-[25px] font-bold text-[#1aea9f] mb-[-10px]">
+              Welcome,
+            </Text>
+            <Text className="text-[50px] font-bold">
+              Soular
+            </Text>
+          </View>
+          <View className="flex-row items-center">
             <TouchableOpacity
-              onPress={() => router.push('/chats')}
-              className="p-1"
+              onPress={() => router.push("/chats")}
+              className="p-4"
             >
-              <Ionicons name="mail" size={28} color="#fff" />
+              <Ionicons name="mail" size={24} color="#00f" />
             </TouchableOpacity>
             <TouchableOpacity 
               onPress={() => router.push('/profile')}
@@ -67,13 +75,13 @@ export default function HomeScreen() {
       </LinearGradient>
       
       <View className="flex-1 bg-white border-t-2 border-gray-200">
-        <View className="flex-row items-center justify-between px-4 py-3 bg-white">
-          <Text className="text-2xl font-bold">Our Soular Stories</Text>
-          <TouchableOpacity 
+        <View className="flex-row items-center justify-between px-[30px] pt-[20px] bg-white">
+          <Text className="text-2xl">Our Soular Stories</Text>
+          <TouchableOpacity
             onPress={() => setNewPostModalVisible(true)}
-            className="flex-row bg-blue-500 rounded-full w-20 h-8 items-center justify-center"
+            className="flex-row bg-[black] rounded-full w-20 h-8 items-center justify-center"
           >
-            <Ionicons name="add" size={24} color="#fff" />
+            <Ionicons name="add" size={15} color="#fff" />
             <Text className="text-white text-md">New</Text>
           </TouchableOpacity>
         </View>

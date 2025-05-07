@@ -17,35 +17,43 @@ export default function HomeWidgets() {
   };
 
   return (
-    <View className="flex-row p-4 gap-4">
+    <View className="flex-row px-[30px] gap-4 w-full">
       {/* Left side - Large Green Organization button */}
       <TouchableOpacity 
         onPress={handleGreenOrgPress}
-        className="flex-1 rounded-xl justify-between w-[50%] h-full"
+        className="flex-1 rounded-[25px] justify-between w-[60%] h-full"
       >
         <LinearGradient
-          colors={['#1E90FF', '#15f4ee']}
-          style={{ flex: 1, borderRadius: 12, padding: 16, paddingTop: 24 }}
+          colors={['#6366f1', '#0ea5e9']}
+          style={{ flex: 1, borderRadius: 15, padding: 16, paddingTop: 24}}
         >
-          <Text className="text-white text-2xl font-bold">Join a Green Organization</Text>
-          <Text className="text-white text-xs font-bold">Discover organizations that are making a difference.</Text>
+          <Text className="text-white text-2xl font-bold">Act Now</Text>
+          <Text className="text-white text-s font-semibold">Join HK Green Organizations</Text>
         </LinearGradient>
         </TouchableOpacity>
 
       {/* Right side - Two stacked buttons */}
-      <View className="w-[50%] gap-4">
+      <View className="w-[40%] gap-4">
         <TouchableOpacity 
           onPress={handleCalenderPress}
-          className="flex-1 bg-green-300 rounded-xl p-2 justify-center items-center border-2 border-white"
-        >
-          <Text className="text-black text-lg font-semibold">View Calendar</Text>
+              >
+          <LinearGradient
+                  colors={['#1aea9f', '#10d9c7']}
+                  style={{ flex: 1, borderRadius: 15, padding: '10px',justifyContent: 'center', alignItems: 'center'}}
+                >
+          <Text className="text-white text-[20px] font-bold">Calendar</Text>
+          </LinearGradient>
         </TouchableOpacity>
 
         <TouchableOpacity 
           onPress={handleTimeAuctionPress}
-          className="flex-1 bg-green-300 rounded-xl p-2 justify-center items-center border-2 border-white align-middle"
-        >
-          <Text className="text-black text-lg font-semibold">Volunteer your skills</Text>
+            >
+        <LinearGradient
+                          colors={['#1aea9f', '#10d9c7']}
+                          style={{ flex: 1, borderRadius: 15, padding: '10px',justifyContent: 'center', alignItems: 'center'}}
+                        >
+          <Text className="text-white text-[20px] font-bold">Volunteer</Text>
+          </LinearGradient>
         </TouchableOpacity>
       </View>
     </View>
