@@ -26,6 +26,7 @@ export default function RootLayoutNav() {
             intensity={100}
             tint="extraLight"
             style={StyleSheet.absoluteFill}
+
           />
         ),
         tabBarItemStyle: {

@@ -1,7 +1,5 @@
-// This is the main page
-
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal, Image, ImageBackground } from 'react-native';
 import { useFocusEffect, router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar, setStatusBarBackgroundColor } from 'expo-status-bar';
@@ -32,50 +30,45 @@ export default function HomeScreen() {
   );
 
   return (
-    <ScrollView className='flex-1 bg-white'>
-      <LinearGradient
-        // colors={['#1aea79','#e1dd0170','#fff']}
-        colors={['white','white','white']}
-        className='justify-center items-center w-full pb-10'
+    <ScrollView className="flex-1 bg-[white]">
+      <ImageBackground
+        source={require('@/../assets/images/Abstract4.png')} // Ensure your abstract.png is in the assets folder
+        resizeMode="stretch"
+        style={{ width: '100%' }}
       >
-        <View className='flex-1 flex-row items-center justify-between px-[30px] pt-6 w-full mb-5'>
-          <View className='flex-1 flex-col'>
-            <Text className="text-[25px] font-bold text-[#1aea9f] mb-[-10px]">
-              Welcome,
-            </Text>
-            <Text className="text-[50px] font-bold">
-              Soular
-            </Text>
+        <LinearGradient
+          colors={['#ffffff', '#ffffff50', '#ffffff50', '#1aea9f30']}
+          className="justify-center items-center w-full pb-10"
+        >
+          <View className="flex-1 flex-row items-center justify-between px-[30px] w-full pt-6 mb-5">
+            <View className="flex-1 flex-col">
+              <Text className="text-[20px] font-bold text-[#000000]">Welcome,</Text>
+              <Text className="text-[30px] font-bold text-black">Christopher</Text>
+            </View>
+            <View className="flex-row items-center">
+              <TouchableOpacity
+                onPress={() => router.push('/profile')}
+                className="p-1"
+              >
+                {profile?.photo_url ? (
+                  <Image
+                    source={{ uri: profile.photo_url }}
+                    className="w-10 h-10 rounded-full"
+                  />
+                ) : (
+                  <View className="w-10 h-10 rounded-full bg-blue-500 items-center justify-center">
+                    <Ionicons name="person" size={20} color="#ffffff" />
+                  </View>
+                )}
+              </TouchableOpacity>
+            </View>
           </View>
-          <View className="flex-row items-center">
-            <TouchableOpacity
-              onPress={() => router.push("/chats")}
-              className="p-4"
-            >
-              <Ionicons name="mail" size={24} color="#00f" />
-            </TouchableOpacity>
-            <TouchableOpacity 
-              onPress={() => router.push('/profile')}
-              className="p-1"
-            >
-              {profile?.photo_url ? (
-                <Image 
-                  source={{ uri: profile.photo_url }} 
-                  className="w-10 h-10 rounded-full"
-                />
-              ) : (
-                <View className="w-10 h-10 rounded-full bg-blue-500 items-center justify-center">
-                  <Ionicons name="person" size={20} color="#ffffff" />
-                </View>
-              )}
-            </TouchableOpacity>
-          </View>
-        </View>
-        <HomeWidgets />
-      </LinearGradient>
-      
-      <View className="flex-1 bg-white border-t-2 border-gray-200">
-        <View className="flex-row items-center justify-between px-[30px] pt-[20px] bg-white">
+          <HomeWidgets />
+        </LinearGradient>
+      </ImageBackground>
+
+      <View className="flex-1 bg-[#1aea9f30]">
+        <View className="flex-row items-center justify-between px-[30px] pt-[25px] bg-white rounded-t-[40px] border-black border-t-2">
           <Text className="text-2xl">Our Soular Stories</Text>
           <TouchableOpacity
             onPress={() => setNewPostModalVisible(true)}
