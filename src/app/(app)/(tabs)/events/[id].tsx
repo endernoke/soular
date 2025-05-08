@@ -254,8 +254,8 @@ export default function EventDetailScreen() {
   const isOrganizer = user && organizers.some(o => o.id === user.id);
 
   return (
-    <ScrollView className="flex-1 bg-gray-50">
-      <View className="p-4">
+    <ScrollView className="flex-1 bg-gray-50 pb-[50px]">
+      <View className="p-[30px]">
         <TouchableOpacity 
           onPress={() => router.back()}
           className="mb-4 flex-row items-center"
@@ -264,7 +264,7 @@ export default function EventDetailScreen() {
           <Text className="ml-2">Back to Events</Text>
         </TouchableOpacity>
 
-        <View className="bg-white p-6 rounded-lg shadow-sm">
+        <View className="bg-white p-6 rounded-[24px] border-2 border-[black]">
           <Text className="text-3xl font-bold mb-4">{event.title}</Text>
           
           <View className="flex-row items-center mb-4">
@@ -337,11 +337,11 @@ export default function EventDetailScreen() {
 
           {event.stage === 'in-development' && (
             <TouchableOpacity 
-              className={`p-4 rounded-lg mb-3 ${isOrganizer ? 'bg-red-500' : 'bg-blue-500'}`}
+              className={`p-4 rounded-[16px] mb-3 ${isOrganizer ? 'bg-red-500' : 'bg-blue-500'}`}
               onPress={handleJoinTeam}
               disabled={isJoining}
             >
-              <Text className="text-white text-center font-semibold">
+              <Text className="text-white text-center text-[16px] font-semibold">
                 {isJoining ? 'Processing...' : 
                  isOrganizer ? 'Leave Organizing Team' : 'Join Organizing Team'}
               </Text>
@@ -351,10 +351,10 @@ export default function EventDetailScreen() {
           {/* Chat buttons */}
           {isOrganizer && chatRooms.organizers && (
             <TouchableOpacity 
-              className="bg-purple-500 p-4 rounded-lg mb-3"
+              className="bg-purple-500 p-4 rounded-[16px] mb-3"
               onPress={() => navigateToChat('organizers')}
             >
-              <Text className="text-white text-center font-semibold">Organizers Chat</Text>
+              <Text className="text-white text-center text-[16px]  font-semibold">Organizers Chat</Text>
             </TouchableOpacity>
           )}
 
@@ -362,10 +362,10 @@ export default function EventDetailScreen() {
             isOrganizer) && 
            chatRooms.participants && (
             <TouchableOpacity 
-              className="bg-purple-500 p-4 rounded-lg mb-3"
+              className="bg-purple-500 p-4 rounded-[16px] mb-0"
               onPress={() => navigateToChat('participants')}
             >
-              <Text className="text-white text-center font-semibold">Event Chat</Text>
+              <Text className="text-white text-center text-[16px] font-semibold">Event Chat</Text>
             </TouchableOpacity>
           )}
         </View>

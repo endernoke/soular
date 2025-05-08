@@ -72,8 +72,8 @@ export default function NewEventScreen() {
   };
 
   return (
-    <ScrollView className="flex-1 bg-gray-50">
-      <View className="p-4">
+    <ScrollView className="flex-1 bg-gray-50 pb-8">
+      <View className="p-[30px]">
         <TouchableOpacity 
           onPress={() => router.back()} 
           className="mb-4 flex-row items-center"
@@ -86,61 +86,61 @@ export default function NewEventScreen() {
 
         <View className="space-y-4">
           <View>
-            <Text className="text-gray-600 mb-1">Title</Text>
+            <Text className="text-gray-600 mb-2">Title</Text>
             <TextInput
               value={formData.title}
               onChangeText={(text) => setFormData(prev => ({ ...prev, title: text }))}
               placeholder="Enter event title"
-              className="bg-white p-3 rounded-lg border border-gray-200"
+              className="bg-white p-4 rounded-[16px] h-[50px] border border-gray-200"
             />
           </View>
 
           <View>
-            <Text className="text-gray-600 mb-1">Description</Text>
+            <Text className="text-gray-600 mb-2">Description</Text>
             <TextInput
               value={formData.description}
               onChangeText={(text) => setFormData(prev => ({ ...prev, description: text }))}
               placeholder="Enter event description"
               multiline
               numberOfLines={4}
-              className="bg-white p-3 rounded-lg border border-gray-200"
+              className="bg-white p-4 rounded-[16px] border border-gray-200"
               textAlignVertical="top"
             />
           </View>
 
           <View>
-            <Text className="text-gray-600 mb-1">Date</Text>
+            <Text className="text-gray-600 mb-2">Date</Text>
             <TextInput
               value={formData.date}
               onChangeText={(text) => setFormData(prev => ({ ...prev, date: text }))}
               placeholder="YYYY-MM-DD"
-              className="bg-white p-3 rounded-lg border border-gray-200"
+              className="bg-white p-4 rounded-[16px] h-[50px] border border-gray-200"
               keyboardType="numeric"
             />
           </View>
 
           <View>
-            <Text className="text-gray-600 mb-1">Time</Text>
+            <Text className="text-gray-600 mb-2">Time</Text>
             <TextInput
               value={formData.time}
               onChangeText={(text) => setFormData(prev => ({ ...prev, time: text }))}
               placeholder="HH:MM (24-hour format)"
-              className="bg-white p-3 rounded-lg border border-gray-200"
+              className="bg-white p-4 rounded-[16px] h-[50px] border border-gray-200"
             />
           </View>
 
           <View>
-            <Text className="text-gray-600 mb-1">Venue</Text>
+            <Text className="text-gray-600 mb-2">Venue</Text>
             <TextInput
               value={formData.venue}
               onChangeText={(text) => setFormData(prev => ({ ...prev, venue: text }))}
               placeholder="Enter venue"
-              className="bg-white p-3 rounded-lg border border-gray-200"
+              className="bg-white p-4 rounded-[16px] h-[50px] border border-gray-200"
             />
           </View>
 
-          <View>
-            <Text className="text-gray-600 mb-1">Stage</Text>
+          <View style={{marginBottom: 10}}>
+            <Text className="text-gray-600 mb-3">Stage</Text>
             <View className="flex-row space-x-2">
               {(['in-development', 'upcoming'] as EventStage[]).map((stage) => (
                 <TouchableOpacity
@@ -161,10 +161,10 @@ export default function NewEventScreen() {
           <TouchableOpacity
             onPress={handleSubmit}
             disabled={loading}
-            className={`mt-6 p-4 rounded-lg flex-row justify-center items-center ${loading ? 'bg-gray-400' : 'bg-blue-500'}`}
+            className={`mt-6 p-4 rounded-[16px] flex-row justify-center items-center ${loading ? 'bg-gray-400' : 'bg-blue-500'}`}
           >
             {loading && <ActivityIndicator size="small" color="#fff" className="mr-2" />}
-            <Text className="text-white text-center font-semibold">
+            <Text className="text-white  text-[20px] font-semibold text-center">
               {loading ? 'Creating...' : 'Create Event'}
             </Text>
           </TouchableOpacity>

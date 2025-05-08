@@ -753,7 +753,7 @@ handleTabChange('events'); // Ensures the gradient and animations are updated
           <Text style={{ fontSize: 20, fontWeight: '500', color: '#1aea9f', marginTop: 15, marginBottom: -10 }}>
             Soular
           </Text>
-          <Text style={{ fontSize: 40, fontWeight: 'bold', color: 'black', marginTop: 0, marginBottom: 0 }}>
+          <Text style={{fontSize: 40, fontWeight: 'bold', color: 'black', marginTop: 0, marginBottom: 0 }}>
                       Learning
                     </Text>
         </Animated.View>
