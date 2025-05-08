@@ -73,8 +73,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 60,
-    // fontWeight: 'bold',
-    fontFamily: "Yozai-Medium",
+    fontWeight: 'bold',
+//     fontFamily: "Yozai-Medium",
     color: 'black',
     textAlign: 'left',
   },
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
     color: '#333',
     textAlign: 'left',
     marginTop: 10,
-    fontFamily: "Yozai-Medium",
+//     fontFamily: "Yozai-Medium",
   },
   buttonContainer: {
     width: '100%',
