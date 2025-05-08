@@ -67,7 +67,7 @@ const OrganizationCard = ({ org }: { org: Organization }) => (
     onPress={() => Linking.openURL(org.website)}
     className="bg-white p-4 rounded-[16px] mb-[24px] border-2 border-black shadow-md"
     style={{
-      shadowColor: "#2b2b2b",
+      shadowColor: "#4b5563",
       shadowOffset: {
         width: 0,
         height: 3,

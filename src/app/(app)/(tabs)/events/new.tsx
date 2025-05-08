@@ -164,7 +164,7 @@ export default function NewEventScreen() {
             className={`mt-6 p-4 rounded-[16px] flex-row justify-center items-center ${loading ? 'bg-gray-400' : 'bg-blue-500'}`}
           >
             {loading && <ActivityIndicator size="small" color="#fff" className="mr-2" />}
-            <Text className="text-white  text-[16px] font-semibold text-center">
+            <Text className="text-white  text-[20px] font-semibold text-center">
               {loading ? 'Creating...' : 'Create Event'}
             </Text>
           </TouchableOpacity>
