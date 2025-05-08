@@ -126,6 +126,7 @@ export default function HomeScreen() {
               </TouchableOpacity>
             </View>
           </View>
+
           <HomeWidgets />
         </LinearGradient>
       </ImageBackground>

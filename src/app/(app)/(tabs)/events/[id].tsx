@@ -1,11 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
-import { useLocalSearchParams, router } from 'expo-router';
-import { supabase } from '@/lib/supabase';
-import { useAuth } from '@/lib/auth';
-import { Event, Profile } from '@/types';
-import { Ionicons } from '@expo/vector-icons';
-import { format } from 'date-fns';
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+  Alert,
+} from "react-native";
+import { useLocalSearchParams, router } from "expo-router";
+import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/lib/auth";
+import { Event, Profile } from "@/types";
+import { Ionicons } from "@expo/vector-icons";
+import { format } from "date-fns";
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function EventDetailScreen() {
   const { id } = useLocalSearchParams();
@@ -13,7 +21,10 @@ export default function EventDetailScreen() {
   const [event, setEvent] = useState<Event | null>(null);
   const [participants, setParticipants] = useState<Profile[]>([]);
   const [organizers, setOrganizers] = useState<Profile[]>([]);
-  const [chatRooms, setChatRooms] = useState<{ organizers?: string; participants?: string }>({});
+  const [chatRooms, setChatRooms] = useState<{
+    organizers?: string;
+    participants?: string;
+  }>({});
   const [loading, setLoading] = useState(true);
   const [isJoining, setIsJoining] = useState(false);
 
@@ -22,91 +33,106 @@ export default function EventDetailScreen() {
       setLoading(true);
       // Fetch event details with author profile
       const { data: eventData, error: eventError } = await supabase
-        .from('events')
-        .select(`
+        .from("events")
+        .select(
+          `
           *,
           profiles:author_id (
             display_name
           )
-        `)
-        .eq('id', id)
+        `
+        )
+        .eq("id", id)
         .single();
 
       if (eventError) throw eventError;
-      if (!eventData) throw new Error('Event not found');
+      if (!eventData) throw new Error("Event not found");
 
       let chatRoomsData: any[] | null = [];
-      
+
       // Fetch chat rooms for this event
       // NOTE: Errors indicate unauthorized access, not necessarily a failure
-      const { data: organizersChatRoomData, error: organizersChatError } = await supabase
-        .from('chat_rooms')
-        .select('id, type')
-        .eq('event_id', id)
-        .eq('type', 'event_organizers')
-        .eq('is_enabled', true)
+      const {
+        data: organizersChatRoomData,
+        error: organizersChatError,
+      } = await supabase
+        .from("chat_rooms")
+        .select("id, type")
+        .eq("event_id", id)
+        .eq("type", "event_organizers")
+        .eq("is_enabled", true)
         .single();
 
       if (!organizersChatError) {
         chatRoomsData.push(organizersChatRoomData);
       }
 
-      const { data: participantsChatRoomData, error: participantsChatError } = await supabase
-        .from('chat_rooms')
-        .select('id, type')
-        .eq('event_id', id)
-        .eq('type', 'event_participants')
-        .eq('is_enabled', true)
+      const {
+        data: participantsChatRoomData,
+        error: participantsChatError,
+      } = await supabase
+        .from("chat_rooms")
+        .select("id, type")
+        .eq("event_id", id)
+        .eq("type", "event_participants")
+        .eq("is_enabled", true)
         .single();
-      
+
       if (!participantsChatError) {
         chatRoomsData.push(participantsChatRoomData);
       }
 
       // Map chat rooms by type
-      const chatRoomsMap = (chatRoomsData || [])
-        .reduce((acc, room) => ({
+      const chatRoomsMap = (chatRoomsData || []).reduce(
+        (acc, room) => ({
           ...acc,
-          [room.type === 'event_organizers' ? 'organizers' : 'participants']: room.id
-        }), {});
+          [room.type === "event_organizers"
+            ? "organizers"
+            : "participants"]: room.id,
+        }),
+        {}
+      );
       setChatRooms(chatRoomsMap);
 
       // Fetch participants with their profiles
       const { data: participantData, error: participantError } = await supabase
-        .from('event_participants')
-        .select(`
+        .from("event_participants")
+        .select(
+          `
           profiles (
             id,
             display_name,
             photo_url
           )
-        `)
-        .eq('event_id', id);
+        `
+        )
+        .eq("event_id", id);
 
       if (participantError) throw participantError;
 
       // Fetch organizers with their profiles
       const { data: organizerData, error: organizerError } = await supabase
-        .from('event_organizers')
-        .select(`
+        .from("event_organizers")
+        .select(
+          `
           profiles (
             id,
             display_name,
             photo_url
           )
-        `)
-        .eq('event_id', id);
+        `
+        )
+        .eq("event_id", id);
 
       if (organizerError) throw organizerError;
 
       // Process and set the data
       setEvent(eventData);
-      setParticipants(participantData?.flatMap(p => p.profiles ?? []) ?? []);
-      setOrganizers(organizerData?.flatMap(o => o.profiles ?? []) ?? []);
-
-    } catch (error: any) {
-      console.error('Error loading event:', error);
-      Alert.alert('Error', error.message || 'Failed to load event details');
+      setParticipants(participantData?.flatMap((p) => p.profiles ?? []) ?? []);
+      setOrganizers(organizerData?.flatMap((o) => o.profiles ?? []) ?? []);
+    } catch (error) {
+      console.error("Error loading event:", error);
+      Alert.alert("Error", error.message || "Failed to load event details");
     } finally {
       setLoading(false);
     }
@@ -117,20 +143,35 @@ export default function EventDetailScreen() {
 
     // Set up real-time subscriptions
     const eventSubscription = supabase
-      .channel('event-details')
+      .channel("event-details")
       .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'events', filter: `id=eq.${id}` },
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "events",
+          filter: `id=eq.${id}`,
+        },
         () => loadEventAndParticipants()
       )
       .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'event_participants', filter: `event_id=eq.${id}` },
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "event_participants",
+          filter: `event_id=eq.${id}`,
+        },
         () => loadEventAndParticipants()
       )
       .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'event_organizers', filter: `event_id=eq.${id}` },
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "event_organizers",
+          filter: `event_id=eq.${id}`,
+        },
         () => loadEventAndParticipants()
       )
       .subscribe();
@@ -142,39 +183,37 @@ export default function EventDetailScreen() {
 
   const handleJoinEvent = async () => {
     if (!user || !event) return;
-    
+
     setIsJoining(true);
     try {
-      const isParticipant = participants.some(p => p.id === user.id);
-      
+      const isParticipant = participants.some((p) => p.id === user.id);
+
       if (isParticipant) {
         // Leave event
         const { error } = await supabase
-          .from('event_participants')
+          .from("event_participants")
           .delete()
-          .eq('event_id', event.id)
-          .eq('user_id', user.id);
+          .eq("event_id", event.id)
+          .eq("user_id", user.id);
 
         if (error) throw error;
-        Alert.alert('Success', 'You have left the event');
+        Alert.alert("Success", "You have left the event");
       } else {
         // Join event
-        const { error } = await supabase
-          .from('event_participants')
-          .insert({
-            event_id: event.id,
-            user_id: user.id
-          });
+        const { error } = await supabase.from("event_participants").insert({
+          event_id: event.id,
+          user_id: user.id,
+        });
 
         if (error) throw error;
-        Alert.alert('Success', 'You have joined the event');
+        Alert.alert("Success", "You have joined the event");
       }
 
       // Refresh event data (though real-time subscription should handle this)
       await loadEventAndParticipants();
-    } catch (error: any) {
-      console.error('Error joining/leaving event:', error);
-      Alert.alert('Error', 'Failed to update event participation');
+    } catch (error) {
+      console.error("Error joining/leaving event:", error);
+      Alert.alert("Error", "Failed to update event participation");
     } finally {
       setIsJoining(false);
     }
@@ -182,53 +221,54 @@ export default function EventDetailScreen() {
 
   const handleJoinTeam = async () => {
     if (!user || !event) return;
-    
+
     setIsJoining(true);
     try {
-      const isOrganizer = organizers.some(o => o.id === user.id);
-      
+      const isOrganizer = organizers.some((o) => o.id === user.id);
+
       if (isOrganizer) {
         // Check if user is author
         if (event.author_id === user.id) {
-          Alert.alert('Error', 'You cannot leave the organizing team as the event author');
+          Alert.alert(
+            "Error",
+            "You cannot leave the organizing team as the event author"
+          );
           return;
         }
         // Leave organizing team
         const { error } = await supabase
-          .from('event_organizers')
+          .from("event_organizers")
           .delete()
-          .eq('event_id', event.id)
-          .eq('user_id', user.id);
+          .eq("event_id", event.id)
+          .eq("user_id", user.id);
 
         if (error) throw error;
-        Alert.alert('Success', 'You have left the organizing team');
+        Alert.alert("Success", "You have left the organizing team");
       } else {
         // Join organizing team
-        const { error } = await supabase
-          .from('event_organizers')
-          .insert({
-            event_id: event.id,
-            user_id: user.id
-          });
+        const { error } = await supabase.from("event_organizers").insert({
+          event_id: event.id,
+          user_id: user.id,
+        });
 
         if (error) throw error;
-        Alert.alert('Success', 'You have joined the organizing team');
+        Alert.alert("Success", "You have joined the organizing team");
       }
 
       // Refresh event data (though real-time subscription should handle this)
       await loadEventAndParticipants();
-    } catch (error: any) {
-      console.error('Error joining/leaving team:', error);
-      Alert.alert('Error', 'Failed to update team membership');
+    } catch (error) {
+      console.error("Error joining/leaving team:", error);
+      Alert.alert("Error", "Failed to update team membership");
     } finally {
       setIsJoining(false);
     }
   };
 
-  const navigateToChat = (type: 'organizers' | 'participants') => {
+  const navigateToChat = (type: "organizers" | "participants") => {
     const chatId = chatRooms[type];
     if (!chatId) {
-      Alert.alert('Error', 'Chat room not found');
+      Alert.alert("Error", "Chat room not found");
       return;
     }
     router.push(`/chats/${chatId}`);
@@ -250,13 +290,13 @@ export default function EventDetailScreen() {
     );
   }
 
-  const isParticipant = user && participants.some(p => p.id === user.id);
-  const isOrganizer = user && organizers.some(o => o.id === user.id);
+  const isParticipant = user && participants.some((p) => p.id === user.id);
+  const isOrganizer = user && organizers.some((o) => o.id === user.id);
 
   return (
     <ScrollView className="flex-1 bg-gray-50 pb-[50px]">
       <View className="p-[30px]">
-        <TouchableOpacity 
+        <TouchableOpacity
           onPress={() => router.back()}
           className="mb-4 flex-row items-center"
         >
@@ -266,18 +306,18 @@ export default function EventDetailScreen() {
 
         <View className="bg-white p-6 rounded-[24px] border-2 border-[black]">
           <Text className="text-3xl font-bold mb-4">{event.title}</Text>
-          
+
           <View className="flex-row items-center mb-4">
             <View className="flex-row items-center mr-4">
               <Ionicons name="calendar" size={20} color="#666" />
               <Text className="text-gray-600 ml-2">
-                {format(new Date(event.event_timestamp), 'yyyy-MM-dd')}
+                {format(new Date(event.event_timestamp), "yyyy-MM-dd")}
               </Text>
             </View>
             <View className="flex-row items-center">
               <Ionicons name="time" size={20} color="#666" />
               <Text className="text-gray-600 ml-2">
-                {format(new Date(event.event_timestamp), 'HH:mm')}
+                {format(new Date(event.event_timestamp), "HH:mm")}
               </Text>
             </View>
           </View>
@@ -288,86 +328,124 @@ export default function EventDetailScreen() {
           </View>
 
           <View className="mb-6">
-            <Text className={`text-sm px-3 py-1 rounded-full inline-flex ${
-              event.stage === 'upcoming' ? 'bg-green-100 text-green-800' :
-              event.stage === 'in-development' ? 'bg-blue-100 text-blue-800' :
-              'bg-gray-100 text-gray-800'
-            }`}>
-              {event.stage.charAt(0).toUpperCase() + event.stage.replace('-', ' ').slice(1)}
+            <Text
+              className={`text-sm px-3 py-1 rounded-full inline-flex ${
+                event.stage === "upcoming"
+                  ? "bg-green-100 text-green-800"
+                  : event.stage === "in-development"
+                  ? "bg-blue-100 text-blue-800"
+                  : "bg-gray-100 text-gray-800"
+              }`}
+            >
+              {event.stage.charAt(0).toUpperCase() +
+                event.stage.replace("-", " ").slice(1)}
             </Text>
           </View>
 
-          <Text className="text-gray-800 mb-6 leading-6">{event.description}</Text>
+          <Text className="text-gray-800 mb-6 leading-6">
+            {event.description}
+          </Text>
 
           <View className="mb-4">
             <Text className="text-gray-600 mb-2">
-              Created by: {event.profiles?.display_name || 'Unknown'}
+              Created by: {event.profiles?.display_name || "Unknown"}
             </Text>
-            <Text className="text-gray-600 mb-2">Participants: {participants.length}</Text>
-            <Text className="text-gray-600 mb-4">Organizers: {organizers.length}</Text>
+            <Text className="text-gray-600 mb-2">
+              Participants: {participants.length}
+            </Text>
+            <Text className="text-gray-600 mb-4">
+              Organizers: {organizers.length}
+            </Text>
 
             {/* Optional: Display lists of participants and organizers */}
             <View className="mb-4">
               <Text className="font-semibold mb-2">Organizers:</Text>
-              {organizers.map(org => (
-                <Text key={org.id} className="text-gray-600">{org.display_name}</Text>
+              {organizers.map((org) => (
+                <Text key={org.id} className="text-gray-600">
+                  {org.display_name}
+                </Text>
               ))}
             </View>
-            
+
             <View className="mb-4">
               <Text className="font-semibold mb-2">Participants:</Text>
-              {participants.map(part => (
-                <Text key={part.id} className="text-gray-600">{part.display_name}</Text>
+              {participants.map((part) => (
+                <Text key={part.id} className="text-gray-600">
+                  {part.display_name}
+                </Text>
               ))}
             </View>
           </View>
 
-          {event.stage === 'upcoming' && (
-            <TouchableOpacity 
-              className={`p-4 rounded-lg mb-3 ${isParticipant ? 'bg-red-500' : 'bg-green-500'}`}
+          {event.stage === "upcoming" && (
+            <TouchableOpacity
+              className={`p-4 rounded-[16px] mb-3 ${
+                isParticipant ? "bg-red-500" : "bg-blue-500"
+              }`}
               onPress={handleJoinEvent}
               disabled={isJoining}
             >
-              <Text className="text-white text-center font-semibold">
-                {isJoining ? 'Processing...' : 
-                 isParticipant ? 'Leave Event' : 'Register for Event'}
+              <Text className="text-white text-center text-[16px] font-semibold">
+                {isJoining
+                  ? "Processing..."
+                  : isParticipant
+                  ? "Leave Event"
+                  : "Register for Event"}
               </Text>
             </TouchableOpacity>
           )}
 
-          {event.stage === 'in-development' && (
-            <TouchableOpacity 
-              className={`p-4 rounded-[16px] mb-3 ${isOrganizer ? 'bg-red-500' : 'bg-blue-500'}`}
+          {event.stage === "in-development" && (
+            <TouchableOpacity
+              className={`p-4 rounded-[16px] mb-3 ${
+                isOrganizer ? "bg-red-500" : "bg-blue-500"
+              }`}
               onPress={handleJoinTeam}
               disabled={isJoining}
             >
               <Text className="text-white text-center text-[16px] font-semibold">
-                {isJoining ? 'Processing...' : 
-                 isOrganizer ? 'Leave Organizing Team' : 'Join Organizing Team'}
+                {isJoining
+                  ? "Processing..."
+                  : isOrganizer
+                  ? "Leave Organizing Team"
+                  : "Join Organizing Team"}
               </Text>
             </TouchableOpacity>
           )}
 
           {/* Chat buttons */}
           {isOrganizer && chatRooms.organizers && (
-            <TouchableOpacity 
-              className="bg-purple-500 p-4 rounded-[16px] mb-3"
-              onPress={() => navigateToChat('organizers')}
+            <TouchableOpacity
+              className=""
+              onPress={() => navigateToChat("organizers")}
             >
-              <Text className="text-white text-center text-[16px]  font-semibold">Organizers Chat</Text>
+              <LinearGradient
+                colors={["#1aea9f", "#10d9c7"]}
+                className="bg-[#1aea9f] p-4 rounded-[16px] mb-3"
+              >
+                <Text className="text-white text-center text-[16px] font-semibold">
+                  Organizers Chat
+                </Text>
+              </LinearGradient>
             </TouchableOpacity>
           )}
 
-          {((event.stage === 'upcoming' && isParticipant) || 
-            isOrganizer) && 
-           chatRooms.participants && (
-            <TouchableOpacity 
-              className="bg-purple-500 p-4 rounded-[16px] mb-0"
-              onPress={() => navigateToChat('participants')}
-            >
-              <Text className="text-white text-center text-[16px] font-semibold">Event Chat</Text>
-            </TouchableOpacity>
-          )}
+          {((event.stage === "upcoming" && isParticipant) || isOrganizer) &&
+            chatRooms.participants && (
+              <TouchableOpacity
+                className=""
+                onPress={() => navigateToChat("participants")}
+              >
+                <LinearGradient
+                  colors={["#1aea9f", "#10d9c7"]}
+                  className="bg-[#1aea9f] p-4 rounded-[16px] mb-0"
+                >
+                  <Text className="text-white text-center text-[16px] font-semibold">
+                    Event Chat
+                  </Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            )}
         </View>
       </View>
     </ScrollView>
