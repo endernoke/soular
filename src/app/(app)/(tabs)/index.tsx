@@ -90,7 +90,7 @@ export default function HomeScreen() {
           <View className="flex-row items-center justify-between px-[30px] w-full pt-6 mb-5">
             <View className="flex-1 flex-col">
               <Text className="text-[35px] font-bold text-[black]" style ={{fontFamily: 'Priestacy', marginBottom: '-10px'}} >Bonjour,</Text>
-              <Text className="text-[30px] font-bold text-[black]" style={{}}>
+              <Text className="text-[30px] font-bold text-[black]" style={{marginBottom: 10}}>
                 {profile?.display_name || 'Soular'}
               </Text>
             </View>
@@ -111,7 +111,10 @@ export default function HomeScreen() {
                 )}
               </TouchableOpacity>
             </View>
+
           </View>
+
+
           <HomeWidgets />
         </LinearGradient>
       </ImageBackground>
