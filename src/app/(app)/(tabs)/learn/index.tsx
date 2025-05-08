@@ -395,6 +395,14 @@ export default function LearnScreen() {
       Haptics.selectionAsync();
     }
 
+    // If switching to chat tab, scroll to bottom after a brief delay
+    if (tab === "chat" && activeTab !== "chat") {
+      // Set a timeout to ensure the scroll happens after the tab has fully switched
+      setTimeout(() => {
+        scrollViewRef.current?.scrollToEnd({ animated: false });
+      }, 100);
+    }
+
     setActiveTab(tab);
 
     // Animate tab indicator
@@ -451,14 +459,14 @@ export default function LearnScreen() {
           />
           <Text
             style={{
-              fontSize: 30,
+              fontSize: 24,
               fontWeight: "bold",
               color: "#6C757D",
               marginBottom: 4,
               textAlign: isUser ? "right" : "left",
             }}
           >
-            {isUser ? "You" : "Soular AI"}
+            {isUser ? "You" : "Soular Assistant"}
           </Text>
         </View>
         {/* Message Content */}
@@ -467,7 +475,7 @@ export default function LearnScreen() {
 
           {/* Message Bubble */}
           <LinearGradient
-            colors={isUser ? ["#1aea9f", "#10d9c7"] : ["white", "white"]}
+            colors={isUser ? ["#1aea9fb0", "#10d9c7b0"] : ["white", "white"]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={{
@@ -485,7 +493,9 @@ export default function LearnScreen() {
             }}
           >
             {isUser ? (
-              <Text style={{ color: "white", fontSize: 16, fontWeight: "500" }}>
+              <Text
+                style={{ color: "#212529", fontSize: 16, fontWeight: "500" }}
+              >
                 {message.text}
               </Text>
             ) : (
@@ -613,7 +623,7 @@ export default function LearnScreen() {
               fontWeight: "500",
               textAlign: "center",
               color: "#212529",
-              marginBottom: 0,
+              marginBottom: -10,
             }}
           >
             Result
@@ -623,7 +633,6 @@ export default function LearnScreen() {
             style={{
               backgroundColor: "white",
               paddingTop: 0,
-
               borderRadius: 12,
               marginBottom: 16,
               alignItems: "center",
@@ -633,24 +642,26 @@ export default function LearnScreen() {
               style={{
                 fontSize: 100,
                 fontWeight: "bold",
-                color: "#1aea9f",
-                marginBottom: 30,
+                color: "transparent",
+                backgroundClip: "text",
+                backgroundImage: "linear-gradient(45deg, #00f260, #0575e6)",
               }}
             >
               {carbonData.footprint}
             </Text>
             <View
               style={{
-                backgroundColor: "black",
                 padding: 10,
                 borderRadius: 50,
                 marginBottom: 20,
+                borderWidth: 2,
+                borderColor: "#00000020",
               }}
             >
               <Text
                 style={{
                   fontSize: 18,
-                  color: "white",
+                  color: "#212529",
                   marginRight: 10,
                   marginLeft: 10,
                 }}
@@ -736,7 +747,7 @@ export default function LearnScreen() {
                     width: 24,
                     height: 24,
                     borderRadius: 12,
-                    backgroundColor: "#1aea9f",
+                    backgroundColor: "#2e8b57",
                     justifyContent: "center",
                     alignItems: "center",
                     marginRight: 12,
@@ -963,8 +974,8 @@ export default function LearnScreen() {
             style={{
               fontFamily: "Priestacy",
               fontSize: 40,
-              fontWeight: "500",
-              color: "#1aea9f",
+              fontWeight: "700",
+              color: "#388e3c",
               marginLeft: -10,
               marginTop: 0,
               marginBottom: -40,
@@ -976,7 +987,8 @@ export default function LearnScreen() {
           <Text
             style={{
               fontSize: 40,
-              fontWeight: "bold",
+              fontWeight: "800",
+              opacity: 0.85,
               color: "black",
               marginTop: 0,
               marginBottom: 0,
@@ -1087,7 +1099,7 @@ export default function LearnScreen() {
             <View
               style={{
                 flexDirection: "row",
-                alignItems: "center",
+                alignItems: "flex-end", // Changed from "center" to "flex-end" to align with the bottom
                 padding: 12,
                 borderTopWidth: 2,
                 borderTopColor: "#1aea9f",
@@ -1098,14 +1110,19 @@ export default function LearnScreen() {
                 value={inputMessage}
                 onChangeText={setInputMessage}
                 placeholder="Ask a question..."
+                multiline={true} // Enable multiline input
                 style={{
                   flex: 1,
-                  height: 40,
+                  minHeight: 40, // Changed from fixed height to minHeight
+                  maxHeight: 120, // Add a maximum height to prevent too much expansion
                   backgroundColor: "#F1F3F5",
                   borderRadius: 20,
                   paddingHorizontal: 16,
+                  paddingTop: 10, // Add padding to the top
+                  paddingBottom: 10, // Add padding to the bottom
                   marginRight: 8,
                   fontSize: 16,
+                  textAlignVertical: "center", // Center text vertically
                 }}
                 placeholderTextColor="#ADB5BD"
               />
@@ -1121,6 +1138,7 @@ export default function LearnScreen() {
                   backgroundColor: inputMessage.trim() ? "#1aea9f" : "#E9ECEF",
                   justifyContent: "center",
                   alignItems: "center",
+                  marginBottom: 5, // Add a small margin at the bottom to align with text
                 }}
               >
                 <Ionicons
