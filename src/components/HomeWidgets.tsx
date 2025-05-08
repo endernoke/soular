@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { View, Text, TouchableOpacity, Alert, Linking } from 'react-native';
 import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -17,42 +18,42 @@ export default function HomeWidgets() {
   };
 
   return (
-    <View className="flex-row px-[30px] gap-4 w-full">
+    <View className="flex-row px-[30px] gap-4 w-full" style={{fontFamily: 'Arial'}}>
       {/* Left side - Large Green Organization button */}
-      <TouchableOpacity 
+      <TouchableOpacity
         onPress={handleGreenOrgPress}
-        className="flex-1 rounded-[25px] justify-between w-[60%] h-full"
+        className="flex-1 rounded-[25px] justify-between w-[50%] h-full"
       >
         <LinearGradient
-          colors={['#6366f1', '#0ea5e9']}
-          style={{ flex: 1, borderRadius: 15, padding: 16, paddingTop: 24}}
+          colors={['#1aea9f', '#10d9c7']}
+          style={{ flex: 1, borderRadius: 15, padding: 10}}
         >
-          <Text className="text-white text-2xl font-bold">Act Now</Text>
-          <Text className="text-white text-s font-semibold">Join HK Green Organizations</Text>
-        </LinearGradient>
+        <Ionicons name="add-circle-outline" size={50} color="#ffffff" />
+          <Text className="text-white text-2xl font-bold ml-1">Act Now</Text>
+         </LinearGradient>
         </TouchableOpacity>
 
       {/* Right side - Two stacked buttons */}
-      <View className="w-[40%] gap-4">
-        <TouchableOpacity 
+      <View className="w-[50%] flex-1 gap-4">
+        <TouchableOpacity
           onPress={handleCalenderPress}
               >
           <LinearGradient
-                  colors={['#1aea9f', '#10d9c7']}
-                  style={{ flex: 1, borderRadius: 15, padding: '10px',justifyContent: 'center', alignItems: 'center'}}
+                  colors={['#00000010', '#00000010']}
+                  style={{ flex: 1, borderRadius: 15, padding: '10px',justifyContent: 'center', alignItems: 'center',height:'10px'}}
                 >
-          <Text className="text-white text-[20px] font-bold">Calendar</Text>
+          <Text className="text-black text-[20px] font-400">Calendar</Text>
           </LinearGradient>
         </TouchableOpacity>
 
-        <TouchableOpacity 
+        <TouchableOpacity
           onPress={handleTimeAuctionPress}
             >
         <LinearGradient
-                          colors={['#1aea9f', '#10d9c7']}
+                          colors={['#00000010', '#00000010']}
                           style={{ flex: 1, borderRadius: 15, padding: '10px',justifyContent: 'center', alignItems: 'center'}}
                         >
-          <Text className="text-white text-[20px] font-bold">Volunteer</Text>
+          <Text className="text-black text-[20px] font-100">Volunteer</Text>
           </LinearGradient>
         </TouchableOpacity>
       </View>

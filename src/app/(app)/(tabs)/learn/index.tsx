@@ -205,7 +205,7 @@ export default function LearnScreen() {
   // Handle carbon footprint calculation request
   const handleCarbonFootprintRequest = async (message: string) => {
     // Here we tell the AI to respond in JSON format for carbon footprint
-    const formattedMsg = message + " (Please respond in JSON format with footprint as number, unit as string, breakdown as array of objects with category and amount, and tips as string array)";
+    const formattedMsg = message + " (Please respond in a JSON format with footprint as number, unit as string, breakdown as array of objects with category and amount, and tips as string array). Just a json, no other things like code symbols.";
 
     const response = await fetch('https://server-ef04.onrender.com/api/chat/message', {
       method: 'POST',
@@ -410,7 +410,7 @@ handleTabChange('events'); // Ensures the gradient and animations are updated
           }}
         />
          <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#6C757D', marginBottom: 4, textAlign: isUser ? 'right' : 'left' }}>
-                    {isUser ? 'You' : 'Soul AI'}
+                    {isUser ? 'You' : 'Soular AI'}
                   </Text>
 </View>
         {/* Message Content */}
@@ -427,7 +427,9 @@ handleTabChange('events'); // Ensures the gradient and animations are updated
               borderRadius: 18,
               paddingHorizontal: 16,
               paddingVertical: 10,
-              border: isUser ? 'none': '2px solid #00000010',
+              borderWidth: isUser ? 0: 2,
+              borderColor: "#00000020",
+
 //               shadowColor: isUser ? undefined : '#000',
 //               shadowOffset: isUser ? undefined : { width: 0, height: 2 },
 //               shadowOpacity: isUser ? undefined : 0.1,
@@ -507,7 +509,8 @@ handleTabChange('events'); // Ensures the gradient and animations are updated
           backgroundColor: 'white',
           borderRadius: 24,
           padding: 20,
-          border: '2px solid black',
+          borderColor: 'black',
+          borderWidth: 2,
           shadowColor: '#000',
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: 0.1,
@@ -565,7 +568,8 @@ handleTabChange('events'); // Ensures the gradient and animations are updated
           backgroundColor: 'white',
           borderRadius: 24,
           padding: 20,
-          border: '2px solid black',
+          borderWidth: 2,
+          borderColor: 'black',
           shadowColor: '#000',
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: 0.1,
@@ -651,7 +655,8 @@ handleTabChange('events'); // Ensures the gradient and animations are updated
             activeOpacity={0.7}
             style={{
               backgroundColor: 'white',
-              border: '2px solid black',
+              borderWidth: 2,
+              borderColor: 'black',
               borderRadius: 24,
               marginBottom: 30,
                shadowColor: '#000',

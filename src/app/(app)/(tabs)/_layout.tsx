@@ -23,10 +23,9 @@ export default function RootLayoutNav() {
         },
         tabBarBackground: () => (
           <BlurView
-            intensity={50}
+            intensity={100}
             tint="extraLight"
             style={StyleSheet.absoluteFill}
-            experimentalBlurMethod="dimezisBlurView"
           />
         ),
         tabBarItemStyle: {
