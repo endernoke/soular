@@ -2,9 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal, Image } from 'react-native';
-import { useFocusEffect, router } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
-import { StatusBar, setStatusBarBackgroundColor } from 'expo-status-bar';
+import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/lib/auth';
 import NewPost from '@/components/NewPost';
@@ -21,29 +19,14 @@ export default function HomeScreen() {
     setNewPostModalVisible(false);
   };
 
-  // Change status bar color based on the screen
-  useFocusEffect(
-    useCallback(() => {
-      setStatusBarBackgroundColor('#1aea79');
-      return () => {
-        setStatusBarBackgroundColor('rgb(255, 255, 255)');
-      };
-    }, [])
-  );
-
   return (
     <ScrollView className='flex-1 bg-white'>
-      <LinearGradient
-        // colors={['#1aea79','#e1dd0170','#fff']}
-        colors={['white','white','white']}
-        className='justify-center items-center w-full pb-10'
-      >
         <View className='flex-1 flex-row items-center justify-between px-[30px] pt-6 w-full mb-5'>
           <View className='flex-1 flex-col'>
             <Text className="text-[25px] font-bold text-[#1aea9f] mb-[-10px]">
               Welcome,
             </Text>
-            <Text className="text-[50px] font-bold">
+            <Text className="text-8xl font-[BlackMountain-vmlBZ]">
               Soular
             </Text>
           </View>
@@ -72,7 +55,6 @@ export default function HomeScreen() {
           </View>
         </View>
         <HomeWidgets />
-      </LinearGradient>
       
       <View className="flex-1 bg-white border-t-2 border-gray-200">
         <View className="flex-row items-center justify-between px-[30px] pt-[20px] bg-white">

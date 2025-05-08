@@ -73,25 +73,26 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 60,
-    fontWeight: 'bold',
+    // fontWeight: 'bold',
+    fontFamily: "Yozai-Medium",
     color: 'black',
     textAlign: 'left',
   },
+  banner: {
+    fontSize: 40,
+    fontWeight: '100',
+    color: 'black',
+    textAlign: 'center',
+    marginTop: 20
 
-    banner: {
-      fontSize: 40,
-      fontWeight: '100',
-      color: 'black',
-      textAlign: 'center',
-      marginTop: 20
-
-    },
+  },
   subtitle: {
     fontSize: 20,
     fontWeight: '500',
     color: '#333',
     textAlign: 'left',
     marginTop: 10,
+    fontFamily: "Yozai-Medium",
   },
   buttonContainer: {
     width: '100%',

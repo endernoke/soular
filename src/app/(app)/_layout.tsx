@@ -3,7 +3,7 @@ import { Stack, Tabs } from 'expo-router';
 import { useRouter, Slot, SplashScreen } from 'expo-router';
 import { AuthProvider, useAuth } from '@/lib/auth';
 import { Ionicons } from '@expo/vector-icons';
-import { hiddenTabs } from './hiddenTabs';
+import { useFonts } from 'expo-font';
 
 // Keep splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
@@ -11,9 +11,14 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const { user, isLoading } = useAuth();
   const router = useRouter();
+  const [fontsLoaded, fontsError] = useFonts({
+    'BlackMountain-vmlBZ': require('@/../assets/fonts/BlackMountain-vmlBZ.ttf'),
+    'SpaceMono-Regular': require('@/../assets/fonts/SpaceMono-Regular.ttf'),
+    'Yozai-Medium': require('@/../assets/fonts/Yozai-Medium.ttf'),
+  });
 
   useEffect(() => {
-    if (!isLoading) {
+    if (!isLoading && (fontsLoaded || fontsError)) {
       // Hide splash screen once we've checked auth state
       SplashScreen.hideAsync();
       
@@ -22,9 +27,9 @@ export default function RootLayout() {
         router.replace('/welcome');
       }
     }
-  }, [user, isLoading]);
+  }, [user, isLoading, fontsLoaded, fontsError]);
 
-  if (isLoading) {
+  if (isLoading || !fontsLoaded) {
     return <Slot />;
   }
 
