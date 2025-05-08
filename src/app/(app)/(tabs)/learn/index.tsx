@@ -244,6 +244,8 @@ export default function LearnScreen() {
           setCarbonData(footprintData);
           setActiveTab('carbon');
 
+          handleTabChange('carbon'); // Ensures the gradient and animations are updated
+
           // Add formatted response to chat
           let breakdownText = '';
           if (Array.isArray(footprintData.breakdown)) {
@@ -289,7 +291,7 @@ export default function LearnScreen() {
   // Handle green event generation request
   const handleGreenEventRequest = async (message: string) => {
     // Here we tell the AI to respond in JSON format for green events
-    const formattedMsg = message + " (.. For the above idea, please respond with a JSON array of one highly related and targeted event only, with title, description, date, location, and impact fields. For date, use a date relative to today. Today is May 10, 2025.)";
+    const formattedMsg = message + " (.. For the above idea, please respond with a JSON array of 3 highly related and targeted events, each with title, description, date, location, and impact fields. For date, use a date relative to today. Today is May 10, 2025.)";
 
     const response = await fetch('https://server-ef04.onrender.com/api/chat/message', {
       method: 'POST',
@@ -318,6 +320,7 @@ export default function LearnScreen() {
 
           setGreenEvents(validEventsData);
           setActiveTab('events');
+handleTabChange('events'); // Ensures the gradient and animations are updated
 
           // Add formatted response to chat
           const aiMessage: Message = {
@@ -359,6 +362,7 @@ export default function LearnScreen() {
     }
 
     setActiveTab(tab);
+
 
     // Animate tab indicator
     const position = tab === 'chat' ? 0 : tab === 'carbon' ? width / 3 : (width / 3) * 2;
@@ -432,16 +436,17 @@ export default function LearnScreen() {
             }}
           >
             {isUser ? (
-              <Text style={{ color: 'white', fontSize: 16 }}>{message.text}</Text>
+              <Text style={{ color: 'white', fontSize: 16, fontWeight: '500' }}>{message.text}</Text>
             ) : (
               <Markdown
                 style={{
+
                   body: { color: '#212529', fontSize: 16 },
                   heading1: { color: '#212529', fontSize: 22, fontWeight: 'bold', marginBottom: 8 },
                   heading2: { color: '#212529', fontSize: 20, fontWeight: 'bold', marginBottom: 8 },
                   heading3: { color: '#212529', fontSize: 18, fontWeight: 'bold', marginBottom: 6 },
                   heading4: { color: '#212529', fontSize: 16, fontWeight: 'bold', marginBottom: 4 },
-                  paragraph: { marginBottom: 8 },
+                  paragraph: { marginBottom: 8,fontWeight: '500' ,},
                   link: { color: '#1aea9f' },
                   blockquote: { borderLeftColor: '#1aea9f', backgroundColor: '#F1F3F5', paddingLeft: 8 },
                   list_item: { marginBottom: 4 },
@@ -453,16 +458,7 @@ export default function LearnScreen() {
           </LinearGradient>
 
           {/* Timestamp */}
-          <Text
-            style={{
-              fontSize: 12,
-              color: '#ADB5BD',
-              marginTop: 4,
-              alignSelf: isUser ? 'flex-end' : 'flex-start',
-            }}
-          >
-            {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-          </Text>
+
         </View>
       </Animated.View>
     );
@@ -473,7 +469,23 @@ export default function LearnScreen() {
     if (!carbonData) {
       return (
         <View style={{ flex: 1, marginBottom: 50, justifyContent: 'center', alignItems: 'center', padding: 30 }}>
-          <Text style={{ fontSize: 16, color: '#6C757D', textAlign: 'center' }}>
+
+          <Image
+                    source={
+                      require('@/../assets/images/splash-icon.png') // Replace with your user image path
+
+                    }
+                    style={{
+                      width: 200,
+                      height: 200,
+                      borderRadius: 50,
+                      marginBottom: 0
+
+
+                    }}
+                  />
+
+          <Text style={{ fontSize: 14, color: '#6C757D', textAlign: 'left' }}>
             Ask me to calculate your carbon footprint in the chat. For example, try asking:
             "What's my carbon footprint if I drive 20km daily, use air conditioning for 5 hours, and eat meat twice a week?"
           </Text>
@@ -493,29 +505,33 @@ export default function LearnScreen() {
       >
         <View style={{
           backgroundColor: 'white',
-          borderRadius: 16,
+          borderRadius: 24,
           padding: 20,
+          border: '2px solid black',
           shadowColor: '#000',
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: 0.1,
           shadowRadius: 20,
           elevation: 2,
-          marginBottom: 16
+          marginBottom: 24
 
         }}>
-          <Text style={{ fontSize: 24, fontWeight: 'bold', textAlign: 'left', color: '#212529', marginBottom: 0 }}>
-            Carbon Footprint Result
+          <Text style={{ fontSize: 16, fontWeight: '500', textAlign: 'center', color: '#212529', marginBottom: 0 }}>
+            Carbon Footprint
           </Text>
+          <Text style={{ fontSize: 50, fontWeight: '500', textAlign: 'center', color: '#212529', marginBottom: 0 }}>
+                      Result
+                    </Text>
 
           <View style={{
             backgroundColor: 'white',
-            paddingTop: 20,
+            paddingTop: 0,
 
             borderRadius: 12,
             marginBottom: 16,
             alignItems: 'center',
           }}>
-            <Text style={{ fontSize: 100, fontWeight: 'bold', color: '#1aea9f', marginBottom: 20 }}>
+            <Text style={{ fontSize: 100, fontWeight: 'bold', color: '#1aea9f', marginBottom: 30 }}>
               {carbonData.footprint}
             </Text>
             <View style={{backgroundColor: 'black', padding: 10, borderRadius: 50, marginBottom: 20}} >
@@ -534,7 +550,7 @@ export default function LearnScreen() {
               flexDirection: 'row',
               justifyContent: 'space-between',
               paddingVertical: 12,
-              borderBottomWidth: index < carbonData.breakdown.length - 1 ? 1 : 0,
+              borderBottomWidth: index < carbonData.breakdown.length - 1 ? 3 : 3,
               borderBottomColor: '#1aea9f'
             }}>
               <Text style={{ fontSize: 16, color: '#495057' }}>{item.category}</Text>
@@ -547,8 +563,9 @@ export default function LearnScreen() {
 
         <View style={{
           backgroundColor: 'white',
-          borderRadius: 16,
+          borderRadius: 24,
           padding: 20,
+          border: '2px solid black',
           shadowColor: '#000',
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: 0.1,
@@ -591,8 +608,25 @@ export default function LearnScreen() {
   const renderGreenEvents = () => {
     if (greenEvents.length === 0) {
       return (
-        <View style={{ flex: 1, marginBottom: 50, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
-          <Text style={{ fontSize: 16, color: '#6C757D', textAlign: 'center' }}>
+        <View style={{ flex: 1, marginBottom: 50, justifyContent: 'center', alignItems: 'center', padding: 30 }}>
+
+
+           <Image
+                              source={
+                                require('@/../assets/images/splash-icon.png') // Replace with your user image path
+
+                              }
+                              style={{
+                                width: 200,
+                                height: 200,
+                                borderRadius: 50,
+                                marginBottom: 0
+
+
+                              }}
+                            />
+
+          <Text style={{ fontSize: 14, color: '#6C757D', textAlign: 'left' }}>
             Ask me to suggest green events in the chat. For example, try asking:
             "Generate green events for this weekend in Hong Kong" or
             "What environmental activities can I join this month?"
@@ -617,7 +651,8 @@ export default function LearnScreen() {
             activeOpacity={0.7}
             style={{
               backgroundColor: 'white',
-              borderRadius: 16,
+              border: '2px solid black',
+              borderRadius: 24,
               marginBottom: 30,
                shadowColor: '#000',
                   shadowOffset: { width: 0, height: 2 },
@@ -645,7 +680,7 @@ export default function LearnScreen() {
             </View>
 
             <View style={{ padding: 20}}>
-              <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#212529', marginBottom: 20 }}>
+              <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#212529', marginBottom: 20 }}>
                 {event.title}
               </Text>
 
@@ -669,11 +704,12 @@ export default function LearnScreen() {
                 backgroundColor: '#E8F5E9',
                 borderRadius: 8,
                 padding: 8,
-                flexDirection: 'row',
-                alignItems: 'center'
+                flexDirection: 'column',
+                alignItems: 'left',
+                textAlign: 'left',
+                marginTop: 10,
               }}>
-                <Ionicons name="trending-up" size={16} color="#2E7D32" style={{ marginRight: 4 }} />
-                <Text style={{ fontSize: 14, color: '#2E7D32', flex: 1 }}>
+                <Text style={{ fontSize: 14, color: '#2E7D32', flex: 1, fontWeight: 700}}>
                   {event.impact}
                 </Text>
               </View>
@@ -686,24 +722,27 @@ export default function LearnScreen() {
 
   // Main render
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: 'white', alignItems: 'center' }}>
       <StatusBar barStyle="dark-content" backgroundColor="white" />
 
       {/* Header */}
       <LinearGradient
-        colors={['white', 'white']}
+        colors={['#1aea9f50', 'white']}
         start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
+        end={{ x: 0, y: 1 }}
         style={{
           paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
           paddingHorizontal: 20,
-          paddingBottom: 16
+          paddingBottom: 16,
+          alignItems: 'center',
+          width: '100%'
         }}
       >
         <Animated.View
           style={{
             opacity: fadeAnim,
-            transform: [{ translateY: slideAnim }]
+            transform: [{ translateY: slideAnim }],
+        textAlign: 'center'
           }}
         >
           <Text style={{ fontSize: 20, fontWeight: '500', color: '#1aea9f', marginTop: 15, marginBottom: -10 }}>
@@ -716,35 +755,44 @@ export default function LearnScreen() {
       </LinearGradient>
 
       {/* Tab Navigation */}
-      <View style={{ flexDirection: 'row', backgroundColor: 'white' }}>
-        <Animated.View
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            width: width / 3,
-            height: 3,
-            backgroundColor: '#1aea9f',
-            transform: [{ translateX: tabIndicatorPosition }],
-          }}
-        />
-
-        {['chat', 'carbon', 'events'].map((tab) => (
+      {/* Tab Navigation */}
+      <View style={{ flexDirection: 'row', backgroundColor: 'white', borderRadius: 50, width: '80%', overflow: 'hidden', borderWidth: 2, borderColor: '#00000010', padding: 5 }}>
+        {['chat', 'carbon', 'events'].map((tab, index) => (
           <TouchableOpacity
             key={tab}
             onPress={() => handleTabChange(tab as 'chat' | 'carbon' | 'events')}
             style={{
               flex: 1,
-              paddingVertical: 14,
               alignItems: 'center',
               justifyContent: 'center',
+              paddingVertical: 5,
             }}
           >
+            {/* Gradient Background for Active Tab */}
+            {activeTab === tab ? (
+              <LinearGradient
+                colors={['#fdf80070', '#fdf80070']}
+//  colors={['black', 'black']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  borderRadius: 100,
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                }}
+              />
+            ) : null}
+
+            {/* Tab Text */}
             <Text
               style={{
                 fontSize: 16,
                 fontWeight: activeTab === tab ? '600' : 'normal',
-                color: activeTab === tab ? '#212529' : '#ADB5BD',
+                color: activeTab === tab ? 'black' : '#ADB5BD',
+                zIndex: 1,
               }}
             >
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -764,7 +812,7 @@ export default function LearnScreen() {
           <View style={{ flex: 1, marginBottom: 50 }}>
             <ScrollView
               ref={scrollViewRef}
-              contentContainerStyle={{ padding: 16, paddingBottom: 20 }}
+              contentContainerStyle={{ padding: 20, paddingBottom: 20 }}
               style={{ flex: 1 }}
             >
               {messages.map(renderMessage)}

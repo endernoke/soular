@@ -162,11 +162,10 @@ const styles = StyleSheet.create({
   },
   postCard: {
     backgroundColor: '#fff',
-    borderRadius: 12,
+    borderRadius: 16,
     padding: 0,
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: '#f0f0f0',
+    marginBottom: 24,
+    border: '2px solid #00000010',
   },
   postHeader: {
       padding: 16,

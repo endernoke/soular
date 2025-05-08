@@ -348,15 +348,15 @@ const styles = StyleSheet.create({
   signOutButton: {
     margin: 30,
     padding: 16,
-<<<<<<< HEAD
+
     backgroundColor: "#ff3b30",
     borderRadius: 8,
     alignItems: "center",
-=======
+
     backgroundColor: '#ff3b30',
     borderRadius: 15,
     alignItems: 'center',
->>>>>>> origin
+
   },
   signOutText: {
     color: "#fff",
@@ -372,13 +372,13 @@ const styles = StyleSheet.create({
   modalContent: {
     backgroundColor: "#fff",
     borderRadius: 12,
-<<<<<<< HEAD
+
     padding: 20,
     width: "80%",
-=======
+
     padding: 30,
     width: '80%',
->>>>>>> origin
+
   },
   modalTitle: {
     fontSize: 20,
