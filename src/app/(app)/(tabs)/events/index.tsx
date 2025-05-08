@@ -46,7 +46,7 @@ const EventCard = ({
       shadowRadius: 3.14, // easter egg?
     }}
   >
-    <Text className="text-xl font-bold mb-2">{event.title}</Text>
+    <Text className="text-black text-xl font-bold mb-2">{event.title}</Text>
     <Text className="text-gray-600 mb-4" numberOfLines={2}>
       {event.description}
     </Text>
@@ -67,10 +67,10 @@ const EventCard = ({
       <Text
         className={`text-sm font-medium ${
           event.stage === "upcoming"
-            ? "text-green-600"
+            ? "text-green-700"
             : event.stage === "in-development"
-            ? "text-blue-600"
-            : "text-gray-600"
+            ? "text-blue-700"
+            : "text-gray-700"
         }`}
       >
         {event.stage.charAt(0).toUpperCase() +
@@ -220,7 +220,10 @@ export default function EventsScreen() {
               onPress={() => router.push("/events/new")}
               className="bg-blue-700 px-3 py-2 rounded-full"
             >
-              <Ionicons name="add" size={20} color="#fff" />
+              <View className="flex-row items-center justify-center">
+                <Ionicons name="add" size={20} color="#fff" />
+                <Text className="text-white text-md ml-1 mr-1">New</Text>
+              </View>
             </TouchableOpacity>
           </View>
 
@@ -265,7 +268,13 @@ export default function EventsScreen() {
                   <TouchableOpacity
                     onPress={() => setSelectedStage(item)}
                     className={`mr-[5px] px-4 py-2 rounded-full ${
-                      selectedStage === item ? "bg-green-700" : "bg-gray-200"
+                      selectedStage === item
+                        ? item === "upcoming"
+                          ? "bg-green-700"
+                          : item === "in-development"
+                          ? "bg-blue-500"
+                          : "bg-gray-700"
+                        : "bg-gray-200"
                     }`}
                   >
                     <Text
@@ -295,6 +304,7 @@ export default function EventsScreen() {
           <Text className="text-center text-red-500 mt-4">Error: {error}</Text>
         ) : (
           <FlatList
+            style={{ paddingBottom: 10 }}
             data={events}
             renderItem={({ item }) => (
               <EventCard

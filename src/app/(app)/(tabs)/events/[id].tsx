@@ -13,7 +13,6 @@ import { useAuth } from "@/lib/auth";
 import { Event, Profile } from "@/types";
 import { Ionicons } from "@expo/vector-icons";
 import { format } from "date-fns";
-import { LinearGradient } from "expo-linear-gradient";
 
 export default function EventDetailScreen() {
   const { id } = useLocalSearchParams();
@@ -132,7 +131,11 @@ export default function EventDetailScreen() {
       setOrganizers(organizerData?.flatMap((o) => o.profiles ?? []) ?? []);
     } catch (error) {
       console.error("Error loading event:", error);
-      Alert.alert("Error", error.message || "Failed to load event details");
+      Alert.alert(
+        "Error",
+        (error instanceof Error ? error.message : String(error)) ||
+          "Failed to load event details"
+      );
     } finally {
       setLoading(false);
     }
@@ -329,7 +332,7 @@ export default function EventDetailScreen() {
 
           <View className="mb-6">
             <Text
-              className={`text-sm px-3 py-1 rounded-full inline-flex ${
+              className={`text-sm px-3 py-1 rounded-full self-start ${
                 event.stage === "upcoming"
                   ? "bg-green-100 text-green-800"
                   : event.stage === "in-development"
@@ -379,13 +382,13 @@ export default function EventDetailScreen() {
 
           {event.stage === "upcoming" && (
             <TouchableOpacity
-              className={`p-4 rounded-[16px] mb-3 ${
-                isParticipant ? "bg-red-500" : "bg-blue-500"
+              className={`p-4 rounded-lg mb-3 ${
+                isParticipant ? "bg-red-500" : "bg-green-500"
               }`}
               onPress={handleJoinEvent}
               disabled={isJoining}
             >
-              <Text className="text-white text-center text-[16px] font-semibold">
+              <Text className="text-white text-center font-semibold">
                 {isJoining
                   ? "Processing..."
                   : isParticipant
@@ -416,34 +419,24 @@ export default function EventDetailScreen() {
           {/* Chat buttons */}
           {isOrganizer && chatRooms.organizers && (
             <TouchableOpacity
-              className=""
+              className="bg-purple-500 p-4 rounded-[16px] mb-3"
               onPress={() => navigateToChat("organizers")}
             >
-              <LinearGradient
-                colors={["#1aea9f", "#10d9c7"]}
-                className="bg-[#1aea9f] p-4 rounded-[16px] mb-3"
-              >
-                <Text className="text-white text-center text-[16px] font-semibold">
-                  Organizers Chat
-                </Text>
-              </LinearGradient>
+              <Text className="text-white text-center text-[16px]  font-semibold">
+                Organizers Chat
+              </Text>
             </TouchableOpacity>
           )}
 
           {((event.stage === "upcoming" && isParticipant) || isOrganizer) &&
             chatRooms.participants && (
               <TouchableOpacity
-                className=""
+                className="bg-purple-500 p-4 rounded-[16px] mb-0"
                 onPress={() => navigateToChat("participants")}
               >
-                <LinearGradient
-                  colors={["#1aea9f", "#10d9c7"]}
-                  className="bg-[#1aea9f] p-4 rounded-[16px] mb-0"
-                >
-                  <Text className="text-white text-center text-[16px] font-semibold">
-                    Event Chat
-                  </Text>
-                </LinearGradient>
+                <Text className="text-white text-center text-[16px] font-semibold">
+                  Event Chat
+                </Text>
               </TouchableOpacity>
             )}
         </View>
