@@ -47,7 +47,7 @@ const organizations: Organization[] = [
 const OrganizationCard = ({ org }: { org: Organization }) => (
   <TouchableOpacity 
     onPress={() => Linking.openURL(org.website)}
-    className="bg-white p-4 rounded-lg shadow-sm mb-4"
+    className="bg-white p-4 rounded-[16px] mb-[24px] border-2 border-black"
   >
     <Text className="text-xl font-bold mb-2">{org.name}</Text>
     <Text className="text-gray-600 mb-2">{org.description}</Text>
@@ -61,7 +61,7 @@ const OrganizationCard = ({ org }: { org: Organization }) => (
 export default function GreenOrganizationsScreen() {
   return (
     <View className="flex-1 bg-gray-50">
-      <View className="bg-white p-4 border-b border-gray-200">
+      <View className="bg-white p-[30px] border-b border-gray-200">
         <TouchableOpacity 
           onPress={() => router.back()}
           className="mb-4 flex-row items-center"
@@ -80,7 +80,7 @@ export default function GreenOrganizationsScreen() {
         data={organizations}
         renderItem={({ item }) => <OrganizationCard org={item} />}
         keyExtractor={item => item.id}
-        contentContainerStyle={{ padding: 16 }}
+        contentContainerStyle={{ padding: '30px' }}
       />
     </View>
   );

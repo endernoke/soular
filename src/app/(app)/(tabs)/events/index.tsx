@@ -6,6 +6,8 @@ import { Event, EventStage } from '@/types'; // Use updated types
 import { Ionicons } from '@expo/vector-icons';
 import { format } from 'date-fns'; // For formatting date
 
+import { LinearGradient } from 'expo-linear-gradient';
+
 // Helper to format timestamp
 const formatEventDate = (timestamp: string | null | undefined) => {
   if (!timestamp) return 'N/A';
@@ -22,7 +24,7 @@ const EventCard = ({ event, onPress }: { event: Event; onPress: () => void }) =>
     className="bg-white p-4 rounded-[16px] mb-[24px] border-[#00000015] border-[2px]"
   >
     <Text className="text-xl font-bold mb-2">{event.title}</Text>
-    <Text className="text-gray-600 mb-2" numberOfLines={2}>{event.description}</Text>
+    <Text className="text-gray-600 mb-4" numberOfLines={2}>{event.description}</Text>
     <View className="flex-row justify-between items-center">
       <View className="flex-row items-center">
         <Ionicons name="location" size={16} color="#666" />
@@ -150,7 +152,17 @@ export default function EventsScreen() {
   const stages: (EventStage | 'all')[] = ['all', 'upcoming', 'in-development', 'completed'];
 
   return (
-    <View className="flex-1 bg-gray-50 p-[30px]">
+    <View className="flex-1 bg-gray-50">
+
+    <LinearGradient
+            colors={['#ffffff00', '#ffffff00']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 1 }}
+            style={{
+              padding: '30px'
+            }}
+          >
+
       <View className="flex-row justify-between items-center mb-4">
         <Text className="text-2xl font-bold">Events</Text>
         <TouchableOpacity 
@@ -168,18 +180,19 @@ export default function EventsScreen() {
         className="bg-white p-4 rounded-[16px] h-[50px] mb-4 border border-gray-200"
       />
 
-      <View className="mb-4">
+      <View className="mb-4 border-2 border-[#00000010] rounded-full p-[5px] pr-0">
+      <View className="rounded-full" style={{overflow: 'hidden',}}>
         <FlatList
           horizontal
           data={stages}
           renderItem={({ item }) => (
             <TouchableOpacity
               onPress={() => setSelectedStage(item)}
-              className={`mr-2 px-4 py-2 rounded-full ${
-                selectedStage === item ? 'bg-blue-500' : 'bg-gray-200'
+              className={`mr-[5px] px-4 py-2 rounded-full ${
+                selectedStage === item ? 'bg-[#1aea9f]' : 'bg-gray-200'
               }`}
             >
-              <Text className={selectedStage === item ? 'text-white' : 'text-gray-700'}>
+              <Text className={selectedStage === item ? '   text-white' : 'text-gray-700'}>
                 {item.charAt(0).toUpperCase() + item.slice(1).replace('-', ' ')}
               </Text>
             </TouchableOpacity>
@@ -187,10 +200,11 @@ export default function EventsScreen() {
           keyExtractor={item => item}
           showsHorizontalScrollIndicator={false}
         />
+        </View>
       </View>
 
       {isLoading && events.length === 0 ? (
-        <ActivityIndicator size="large" color="#007AFF" style={{ marginTop: 20 }} />
+        <ActivityIndicator size="large" color="#1aea9f" style={{ marginTop: 20 }} />
       ) : error ? (
         <Text className="text-center text-red-500 mt-4">Error: {error}</Text>
       ) : (
@@ -212,6 +226,7 @@ export default function EventsScreen() {
           }
         />
       )}
+  </LinearGradient>
     </View>
   );
 }
