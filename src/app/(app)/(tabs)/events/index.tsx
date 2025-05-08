@@ -19,7 +19,7 @@ const formatEventDate = (timestamp: string | null | undefined) => {
 const EventCard = ({ event, onPress }: { event: Event; onPress: () => void }) => (
   <TouchableOpacity 
     onPress={onPress}
-    className="bg-white p-4 rounded-lg shadow-sm mb-4"
+    className="bg-white p-4 rounded-[16px] mb-[24px] border-[#00000015] border-[2px]"
   >
     <Text className="text-xl font-bold mb-2">{event.title}</Text>
     <Text className="text-gray-600 mb-2" numberOfLines={2}>{event.description}</Text>
@@ -150,22 +150,22 @@ export default function EventsScreen() {
   const stages: (EventStage | 'all')[] = ['all', 'upcoming', 'in-development', 'completed'];
 
   return (
-    <View className="flex-1 bg-gray-50 p-4">
+    <View className="flex-1 bg-gray-50 p-[30px]">
       <View className="flex-row justify-between items-center mb-4">
         <Text className="text-2xl font-bold">Events</Text>
         <TouchableOpacity 
           onPress={() => router.push('/events/new')}
-          className="bg-blue-500 px-4 py-2 rounded-full"
+          className="bg-[black] px-4 py-2 rounded-full"
         >
           <Text className="text-white">Create Event</Text>
         </TouchableOpacity>
       </View>
 
       <TextInput
-        placeholder="Search events..."
+        placeholder="Search for soular events..."
         value={searchQuery}
         onChangeText={setSearchQuery}
-        className="bg-white p-3 rounded-lg mb-4 border border-gray-200"
+        className="bg-white p-4 rounded-[16px] h-[50px] mb-4 border border-gray-200"
       />
 
       <View className="mb-4">

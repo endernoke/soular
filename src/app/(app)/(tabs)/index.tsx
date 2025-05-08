@@ -36,10 +36,10 @@ export default function HomeScreen() {
         resizeMode="stretch"
         style={{ width: '100%' }}
       >
-        {/* <LinearGradient
+        <LinearGradient
           colors={['#ffffff', '#ffffff50', '#ffffff50', '#1aea9f30']}
           className="justify-center items-center w-full pb-10"
-        > */}
+        >
           <View className="flex-1 flex-row items-center justify-between px-[30px] w-full pt-6 mb-5">
             <View className="flex-1 flex-col">
               <Text className="text-[20px] font-bold text-[#000000]">Welcome,</Text>
@@ -66,7 +66,7 @@ export default function HomeScreen() {
             </View>
           </View>
           <HomeWidgets />
-        {/* </LinearGradient> */}
+        </LinearGradient>
       </ImageBackground>
 
       <View className="flex-1 bg-[#1aea9f30]">

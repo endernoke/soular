@@ -165,8 +165,8 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 0,
     marginBottom: 24,
-    borderColor: '#ddd',
-    borderWidth: 1,
+    borderColor: '#00000015',
+    borderWidth: 2,
   },
   postHeader: {
       padding: 16,

@@ -264,7 +264,7 @@ export default function EventDetailScreen() {
           <Text className="ml-2">Back to Events</Text>
         </TouchableOpacity>
 
-        <View className="bg-white p-6 rounded-lg shadow-sm">
+        <View className="bg-white p-6 rounded-[24px] border-2 border-[black]">
           <Text className="text-3xl font-bold mb-4">{event.title}</Text>
           
           <View className="flex-row items-center mb-4">
