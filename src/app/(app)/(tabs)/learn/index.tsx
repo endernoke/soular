@@ -736,7 +736,7 @@ handleTabChange('events'); // Ensures the gradient and animations are updated
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
         style={{
-          paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+          paddingTop: 0,
           paddingHorizontal: 20,
           paddingBottom: 16,
           alignItems: 'center',
