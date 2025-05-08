@@ -103,7 +103,7 @@ export default function SignUp() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 30,
     backgroundColor: '#fff',
   },
   title: {
@@ -115,24 +115,26 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderColor: '#ddd',
-    borderRadius: 8,
+    borderRadius: 15,
     padding: 15,
-    marginBottom: 15,
+    marginBottom: 20,
     fontSize: 16,
+       height: 60,
   },
   button: {
     backgroundColor: '#007AFF',
-    padding: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 10,
+     borderRadius: 15,
+        height: 60,
+        textAlign: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
   },
   buttonDisabled: {
     opacity: 0.7,
   },
   buttonText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: '600',
   },
   linkButton: {

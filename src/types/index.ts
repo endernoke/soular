@@ -60,3 +60,38 @@ export interface EventParticipant {
   user_id: string; // UUID
   joined_at: string; // ISO 8601 timestamp string
 }
+
+export type ChatType = 'direct' | 'event_organizers' | 'event_participants';
+
+export interface ChatRoom {
+  id: string;
+  type: ChatType;
+  icon_url: string | null;
+  event_id: string | null;
+  is_enabled: boolean;
+  created_at: string;
+  updated_at: string;
+  // Optional joined data
+  event?: Event;
+  last_message?: ChatMessage;
+  other_user?: Profile; // For direct messages
+}
+
+export interface ChatMember {
+  chat_id: string;
+  user_id: string;
+  last_read_at: string;
+  joined_at: string;
+  // Optional joined data
+  profile?: Profile;
+}
+
+export interface ChatMessage {
+  id: string;
+  chat_id: string;
+  sender_id: string;
+  content: string;
+  created_at: string;
+  // Optional joined data
+  sender?: Profile;
+}

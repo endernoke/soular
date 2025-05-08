@@ -13,6 +13,7 @@ export default function EventDetailScreen() {
   const [event, setEvent] = useState<Event | null>(null);
   const [participants, setParticipants] = useState<Profile[]>([]);
   const [organizers, setOrganizers] = useState<Profile[]>([]);
+  const [chatRooms, setChatRooms] = useState<{ organizers?: string; participants?: string }>({});
   const [loading, setLoading] = useState(true);
   const [isJoining, setIsJoining] = useState(false);
 
@@ -33,6 +34,42 @@ export default function EventDetailScreen() {
 
       if (eventError) throw eventError;
       if (!eventData) throw new Error('Event not found');
+
+      let chatRoomsData: any[] | null = [];
+      
+      // Fetch chat rooms for this event
+      // NOTE: Errors indicate unauthorized access, not necessarily a failure
+      const { data: organizersChatRoomData, error: organizersChatError } = await supabase
+        .from('chat_rooms')
+        .select('id, type')
+        .eq('event_id', id)
+        .eq('type', 'event_organizers')
+        .eq('is_enabled', true)
+        .single();
+
+      if (!organizersChatError) {
+        chatRoomsData.push(organizersChatRoomData);
+      }
+
+      const { data: participantsChatRoomData, error: participantsChatError } = await supabase
+        .from('chat_rooms')
+        .select('id, type')
+        .eq('event_id', id)
+        .eq('type', 'event_participants')
+        .eq('is_enabled', true)
+        .single();
+      
+      if (!participantsChatError) {
+        chatRoomsData.push(participantsChatRoomData);
+      }
+
+      // Map chat rooms by type
+      const chatRoomsMap = (chatRoomsData || [])
+        .reduce((acc, room) => ({
+          ...acc,
+          [room.type === 'event_organizers' ? 'organizers' : 'participants']: room.id
+        }), {});
+      setChatRooms(chatRoomsMap);
 
       // Fetch participants with their profiles
       const { data: participantData, error: participantError } = await supabase
@@ -151,6 +188,11 @@ export default function EventDetailScreen() {
       const isOrganizer = organizers.some(o => o.id === user.id);
       
       if (isOrganizer) {
+        // Check if user is author
+        if (event.author_id === user.id) {
+          Alert.alert('Error', 'You cannot leave the organizing team as the event author');
+          return;
+        }
         // Leave organizing team
         const { error } = await supabase
           .from('event_organizers')
@@ -181,6 +223,15 @@ export default function EventDetailScreen() {
     } finally {
       setIsJoining(false);
     }
+  };
+
+  const navigateToChat = (type: 'organizers' | 'participants') => {
+    const chatId = chatRooms[type];
+    if (!chatId) {
+      Alert.alert('Error', 'Chat room not found');
+      return;
+    }
+    router.push(`/chats/${chatId}`);
   };
 
   if (loading) {
@@ -297,12 +348,26 @@ export default function EventDetailScreen() {
             </TouchableOpacity>
           )}
 
-          <TouchableOpacity 
-            className="bg-purple-500 p-4 rounded-lg"
-            onPress={() => Alert.alert('Coming Soon', 'Discussion groups will be available soon!')}
-          >
-            <Text className="text-white text-center font-semibold">Join Discussion Group</Text>
-          </TouchableOpacity>
+          {/* Chat buttons */}
+          {isOrganizer && chatRooms.organizers && (
+            <TouchableOpacity 
+              className="bg-purple-500 p-4 rounded-lg mb-3"
+              onPress={() => navigateToChat('organizers')}
+            >
+              <Text className="text-white text-center font-semibold">Organizers Chat</Text>
+            </TouchableOpacity>
+          )}
+
+          {((event.stage === 'upcoming' && isParticipant) || 
+            isOrganizer) && 
+           chatRooms.participants && (
+            <TouchableOpacity 
+              className="bg-purple-500 p-4 rounded-lg mb-3"
+              onPress={() => navigateToChat('participants')}
+            >
+              <Text className="text-white text-center font-semibold">Event Chat</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     </ScrollView>
