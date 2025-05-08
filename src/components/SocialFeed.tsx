@@ -107,18 +107,20 @@ const SocialFeed = forwardRef(({ nested = false }: { nested?: boolean }, ref) =>
           </View>
         </View>
       </View>
+
+      {item.image_url && (
+              <View style={styles.imageContainer}>
+                <Image
+                  source={{ uri: item.image_url }}
+                  style={styles.postImage}
+                  resizeMode="cover"
+                />
+              </View>
+            )}
       <Text style={styles.postContent}>{item.content}</Text>
       
       {/* Use image_url from post data */}
-      {item.image_url && (
-        <View style={styles.imageContainer}>
-          <Image 
-            source={{ uri: item.image_url }} 
-            style={styles.postImage}
-            resizeMode="cover"
-          />
-        </View>
-      )}
+
       {/* Add like/comment buttons or other interactions here */}
     </View>
   );
@@ -161,15 +163,16 @@ const styles = StyleSheet.create({
   postCard: {
     backgroundColor: '#fff',
     borderRadius: 12,
-    padding: 16,
+    padding: 0,
     marginBottom: 16,
     borderWidth: 1,
     borderColor: '#f0f0f0',
   },
   postHeader: {
+      padding: 16,
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
+//     marginBottom: 12,
   },
   authorInfo: {
     flexDirection: 'row',
@@ -198,12 +201,17 @@ const styles = StyleSheet.create({
   postContent: {
     fontSize: 16,
     lineHeight: 24,
-    marginBottom: 12,
+    marginBottom: 0,
+    padding: 16,
+    paddingTop: 0,
+//     paddingTop: 0
   },
   imageContainer: {
     width: '100%',
-    borderRadius: 8,
+    marginBottom: 16,
+//     borderRadius: 8,
     overflow: 'hidden',
+
   },
   postImage: {
     width: '100%',
@@ -212,6 +220,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flexGrow: 1,
+    paddingBottom: 50,
   },
   errorText: {
     textAlign: 'center',

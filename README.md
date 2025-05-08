@@ -20,7 +20,7 @@ Soular is a mobile application designed to raise awareness about climate change,
 
 3. Configure environment variables
    
-   Create a `.env` file in the project directory and add your Supabase credentials. You can find these in your Supabase project settings.
+   Create a `.env` file in the project directory and add your Supabase credentianodels. You can find these in your Supabase project settings.
 
    ```bash
    EXPO_PUBLIC_SUPABASE_URL=https://your-supabase-url.supabase.co
