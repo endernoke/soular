@@ -750,7 +750,7 @@ handleTabChange('events'); // Ensures the gradient and animations are updated
         textAlign: 'center'
           }}
         >
-          <Text style={{ fontSize: 20, fontWeight: '500', color: '#1aea9f', marginTop: 15, marginBottom: -10 }}>
+          <Text style={{fontFamily: 'Priestacy', fontSize: 40, fontWeight: '500', color: '#1aea9f', marginLeft: -10, marginTop: 0, marginBottom: -40, zIndex: 1 }}>
             Soular
           </Text>
           <Text style={{fontSize: 40, fontWeight: 'bold', color: 'black', marginTop: 0, marginBottom: 0 }}>

@@ -15,6 +15,7 @@ export default function RootLayout() {
     'BlackMountain-vmlBZ': require('@/../assets/fonts/BlackMountain-vmlBZ.ttf'),
     'SpaceMono-Regular': require('@/../assets/fonts/SpaceMono-Regular.ttf'),
     'Yozai-Medium': require('@/../assets/fonts/Yozai-Medium.ttf'),
+    'Priestacy': require('@/../assets/fonts/Priestacy.ttf'),
   });
 
   useEffect(() => {

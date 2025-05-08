@@ -42,8 +42,8 @@ export default function HomeScreen() {
         >
           <View className="flex-1 flex-row items-center justify-between px-[30px] w-full pt-6 mb-5">
             <View className="flex-1 flex-col">
-              <Text className="text-[20px] font-bold text-[#000000]">Welcome,</Text>
-              <Text className="text-[30px] font-bold text-black">
+              <Text className="text-[30px] font-bold text-[black]" style ={{fontFamily: 'Priestacy', marginBottom: '-10px'}} >Bonjour,</Text>
+              <Text className="text-[30px] font-bold text-[black]" style={{}}>
                 {profile?.display_name || 'Soular'}
               </Text>
             </View>

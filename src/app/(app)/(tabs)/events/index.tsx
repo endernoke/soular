@@ -180,9 +180,9 @@ export default function EventsScreen() {
         className="bg-white p-4 rounded-[16px] h-[50px] mb-4 border border-gray-200"
       />
 
-      <View className="mb-4 border-2 border-[#00000010] rounded-full p-[5px] pr-0">
-      <View className="rounded-full" style={{overflow: 'hidden',}}>
-        <FlatList
+      <View className="mb-4 border-2 border-[#00000010] rounded-full p-[5px]">
+      <View className="rounded-full " style={{overflow: 'hidden'}}>
+        <FlatList style={{paddingRight: '-50px'}}
           horizontal
           data={stages}
           renderItem={({ item }) => (
