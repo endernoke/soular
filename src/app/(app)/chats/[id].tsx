@@ -1,14 +1,34 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform, Image, ActivityIndicator } from 'react-native';
-import { useLocalSearchParams, router } from 'expo-router';
-import { supabase } from '@/lib/supabase';
-import { useAuth } from '@/lib/auth';
-import { ChatMessage, ChatRoom } from '@/types';
-import { Ionicons } from '@expo/vector-icons';
-import { format } from 'date-fns';
+import React, { useEffect, useState, useRef } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  FlatList,
+  KeyboardAvoidingView,
+  Platform,
+  Image,
+  ActivityIndicator,
+} from "react-native";
+import { useLocalSearchParams, router } from "expo-router";
+import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/lib/auth";
+import { ChatMessage, ChatRoom } from "@/types";
+import { Ionicons } from "@expo/vector-icons";
+import { format } from "date-fns";
 
-const MessageItem = ({ message, isOwnMessage }: { message: ChatMessage; isOwnMessage: boolean }) => (
-  <View className={`flex-row ${isOwnMessage ? 'justify-end' : 'justify-start'} mb-4 mx-4`}>
+const MessageItem = ({
+  message,
+  isOwnMessage,
+}: {
+  message: ChatMessage;
+  isOwnMessage: boolean;
+}) => (
+  <View
+    className={`flex-row ${
+      isOwnMessage ? "justify-end" : "justify-start"
+    } mb-4 mx-4`}
+  >
     {/* Avatar for other users' messages */}
     {!isOwnMessage && (
       <View className="mr-2">
@@ -29,22 +49,24 @@ const MessageItem = ({ message, isOwnMessage }: { message: ChatMessage; isOwnMes
       {/* Sender name for others' messages */}
       {!isOwnMessage && (
         <Text className="text-xs text-gray-600 mb-1">
-          {message.sender?.display_name || 'User'}
+          {message.sender?.display_name || "User"}
         </Text>
       )}
 
       {/* Message bubble */}
-      <View className={`rounded-2xl p-3 ${
-        isOwnMessage ? 'bg-blue-500' : 'bg-gray-200'
-      }`}>
-        <Text className={isOwnMessage ? 'text-white' : 'text-black'}>
+      <View
+        className={`rounded-2xl p-3 ${
+          isOwnMessage ? "bg-blue-500" : "bg-gray-200"
+        }`}
+      >
+        <Text className={isOwnMessage ? "text-white" : "text-black"}>
           {message.content}
         </Text>
       </View>
 
       {/* Timestamp */}
       <Text className="text-xs text-gray-500 mt-1">
-        {format(new Date(message.created_at), 'HH:mm')}
+        {format(new Date(message.created_at), "HH:mm")}
       </Text>
     </View>
   </View>
@@ -55,7 +77,7 @@ export default function ChatScreen() {
   const { user } = useAuth();
   const [chat, setChat] = useState<ChatRoom | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [newMessage, setNewMessage] = useState('');
+  const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const flatListRef = useRef<FlatList>(null);
@@ -64,15 +86,17 @@ export default function ChatScreen() {
     try {
       // Fetch chat details
       const { data: chatData, error: chatError } = await supabase
-        .from('chat_rooms')
-        .select(`
+        .from("chat_rooms")
+        .select(
+          `
           *,
           event:event_id (*),
           chat_members!inner (
             profile:profiles (*)
           )
-        `)
-        .eq('id', id)
+        `
+        )
+        .eq("id", id)
         .single();
 
       if (chatError) throw chatError;
@@ -80,22 +104,24 @@ export default function ChatScreen() {
 
       // Fetch messages
       const { data: messagesData, error: messagesError } = await supabase
-        .from('chat_messages')
-        .select(`
+        .from("chat_messages")
+        .select(
+          `
           *,
           sender:sender_id (
             id,
             display_name,
             photo_url
           )
-        `)
-        .eq('chat_id', id)
-        .order('created_at', { ascending: true });
+        `
+        )
+        .eq("chat_id", id)
+        .order("created_at", { ascending: true });
 
       if (messagesError) throw messagesError;
       setMessages(messagesData || []);
     } catch (error) {
-      console.error('Error loading chat:', error);
+      console.error("Error loading chat:", error);
     } finally {
       setLoading(false);
     }
@@ -109,31 +135,33 @@ export default function ChatScreen() {
     const messageSubscription = supabase
       .channel(`chat-${id}`)
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'chat_messages',
-          filter: `chat_id=eq.${id}`
+          event: "INSERT",
+          schema: "public",
+          table: "chat_messages",
+          filter: `chat_id=eq.${id}`,
         },
         async (payload) => {
           // Fetch the complete message with sender info
           // NOTE: Consider using a more efficient way to make use of the payload data and fetch only the necessary fields
           const { data } = await supabase
-            .from('chat_messages')
-            .select(`
+            .from("chat_messages")
+            .select(
+              `
               *,
               sender:sender_id (
                 id,
                 display_name,
                 photo_url
               )
-            `)
-            .eq('id', payload.new.id)
+            `
+            )
+            .eq("id", payload.new.id)
             .single();
 
           if (data) {
-            setMessages(prev => [...prev, data]);
+            setMessages((prev) => [...prev, data]);
             // Scroll to bottom on new message
             setTimeout(() => {
               flatListRef.current?.scrollToEnd({ animated: true });
@@ -153,25 +181,22 @@ export default function ChatScreen() {
 
     try {
       setSending(true);
-      const { error } = await supabase
-        .from('chat_messages')
-        .insert({
-          chat_id: chat.id,
-          sender_id: user.id,
-          content: newMessage.trim()
-        });
+      const { error } = await supabase.from("chat_messages").insert({
+        chat_id: chat.id,
+        sender_id: user.id,
+        content: newMessage.trim(),
+      });
 
       if (error) throw error;
-      setNewMessage('');
-      
+      setNewMessage("");
+
       // Update chat's updated_at timestamp
       await supabase
-        .from('chat_rooms')
+        .from("chat_rooms")
         .update({ updated_at: new Date().toISOString() })
-        .eq('id', chat.id);
-
+        .eq("id", chat.id);
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error("Error sending message:", error);
     } finally {
       setSending(false);
     }
@@ -181,10 +206,7 @@ export default function ChatScreen() {
     return (
       <View className="flex-1">
         <View className="bg-white p-4 border-b border-gray-200 flex-row items-center">
-          <TouchableOpacity 
-            onPress={() => router.back()}
-            className="mr-4"
-          >
+          <TouchableOpacity onPress={() => router.back()} className="mr-4">
             <Ionicons name="arrow-back" size={24} color="#000" />
           </TouchableOpacity>
         </View>
@@ -201,10 +223,7 @@ export default function ChatScreen() {
     return (
       <View className="flex-1">
         <View className="bg-white p-4 border-b border-gray-200 flex-row items-center">
-          <TouchableOpacity 
-            onPress={() => router.back()}
-            className="mr-4"
-          >
+          <TouchableOpacity onPress={() => router.back()} className="mr-4">
             <Ionicons name="arrow-back" size={24} color="#000" />
           </TouchableOpacity>
         </View>
@@ -217,19 +236,16 @@ export default function ChatScreen() {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
       className="flex-1"
     >
       {/* Header */}
       <View className="bg-white p-4 border-b border-gray-200 flex-row items-center">
-        <TouchableOpacity 
-          onPress={() => router.back()}
-          className="mr-4"
-        >
+        <TouchableOpacity onPress={() => router.back()} className="mr-4">
           <Ionicons name="arrow-back" size={24} color="#000" />
         </TouchableOpacity>
 
-        {chat.type === 'direct' ? 
+        {chat.type === "direct" ? (
           chat.other_user?.photo_url ? (
             <Image
               source={{ uri: chat.other_user.photo_url }}
@@ -239,25 +255,29 @@ export default function ChatScreen() {
             <View className="w-10 h-10 rounded-full bg-blue-500 items-center justify-center mr-3">
               <Ionicons name="person" size={20} color="#fff" />
             </View>
-          ) :
-          chat.icon_url ? (
-            <Image
-              source={{ uri: chat.icon_url }}
-              className="w-10 h-10 rounded-full mr-3"
-            />
-          ) : (
-            <View className="w-10 h-10 rounded-full bg-gray-500 items-center justify-center mr-3">
-              <Ionicons name="chatbubbles" size={20} color="#fff" />
-            </View>
-          )}
+          )
+        ) : chat.icon_url ? (
+          <Image
+            source={{ uri: chat.icon_url }}
+            className="w-10 h-10 rounded-full mr-3"
+          />
+        ) : (
+          <View className="w-10 h-10 rounded-full bg-gray-500 items-center justify-center mr-3">
+            <Ionicons name="chatbubbles" size={20} color="#fff" />
+          </View>
+        )}
 
         <View className="flex-1">
           <Text className="text-lg font-semibold">
-            {chat.type === 'direct' && chat.other_user
+            {chat.type === "direct" && chat.other_user
               ? chat.other_user.display_name
               : chat.event
-                ? `${chat.type === 'event_organizers' ? 'Organizers' : 'Participants'}: ${chat.event.title}`
-                : 'Chat'}
+              ? `${
+                  chat.type === "event_organizers"
+                    ? "Organizers"
+                    : "Participants"
+                }: ${chat.event.title}`
+              : "Chat"}
           </Text>
         </View>
       </View>
@@ -272,7 +292,7 @@ export default function ChatScreen() {
             isOwnMessage={item.sender_id === user?.id}
           />
         )}
-        keyExtractor={item => item.id}
+        keyExtractor={(item) => item.id}
         onContentSizeChange={() => flatListRef.current?.scrollToEnd()}
         className="flex-1 bg-white"
         ListEmptyComponent={() => (
@@ -290,19 +310,19 @@ export default function ChatScreen() {
           placeholder="Type a message..."
           className="flex-1 bg-gray-100 rounded-full px-4 py-2 mr-2"
           multiline
-          maxHeight={100}
+          style={{ maxHeight: 100 }}
         />
         <TouchableOpacity
           onPress={handleSend}
           disabled={sending || !newMessage.trim()}
           className={`rounded-full p-2 ${
-            sending || !newMessage.trim() ? 'bg-gray-300' : 'bg-blue-500'
+            sending || !newMessage.trim() ? "bg-gray-300" : "bg-blue-500"
           }`}
         >
-          <Ionicons 
-            name="send" 
-            size={24} 
-            color={sending || !newMessage.trim() ? '#666' : '#fff'} 
+          <Ionicons
+            name="send"
+            size={24}
+            color={sending || !newMessage.trim() ? "#666" : "#fff"}
           />
         </TouchableOpacity>
       </View>

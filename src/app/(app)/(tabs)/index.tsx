@@ -1,13 +1,23 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal, Image, ImageBackground, Dimensions } from 'react-native';
-import { useFocusEffect, router } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
-import { StatusBar, setStatusBarBackgroundColor } from 'expo-status-bar';
-import { Ionicons } from '@expo/vector-icons';
-import { useAuth } from '@/lib/auth';
-import NewPost from '@/components/NewPost';
-import SocialFeed from '@/components/SocialFeed';
-import HomeWidgets from '@/components/HomeWidgets';
+import { useEffect, useRef, useState, useCallback } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  Modal,
+  Image,
+  ImageBackground,
+  Dimensions,
+} from "react-native";
+import { useFocusEffect, router } from "expo-router";
+import { LinearGradient } from "expo-linear-gradient";
+import { StatusBar, setStatusBarBackgroundColor } from "expo-status-bar";
+import { Ionicons } from "@expo/vector-icons";
+import { useAuth } from "@/lib/auth";
+import NewPost from "@/components/NewPost";
+import SocialFeed from "@/components/SocialFeed";
+import HomeWidgets from "@/components/HomeWidgets";
 
 export default function HomeScreen() {
   const { user, profile } = useAuth();
@@ -22,9 +32,9 @@ export default function HomeScreen() {
   // Set the status bar color to match the background
   useFocusEffect(
     useCallback(() => {
-      setStatusBarBackgroundColor('#1aea9f30', true);
+      setStatusBarBackgroundColor("#1aea9f30", true);
       return () => {
-        setStatusBarBackgroundColor('#ffffff', true);
+        setStatusBarBackgroundColor("#ffffff", true);
       };
     }, [])
   );
@@ -32,24 +42,29 @@ export default function HomeScreen() {
   return (
     <ScrollView className="flex-1 bg-[white]">
       <ImageBackground
-        source={require('@/../assets/images/Abstract4.png')} // Ensure your abstract.png is in the assets folder
+        source={require("@/../assets/images/Abstract4.png")} // Ensure your abstract.png is in the assets folder
         resizeMode="stretch"
         className="w-full mb-2"
       >
         <LinearGradient
-          colors={['#ffffff', '#ffffff50', '#ffffff50', '#1aea9f30']}
+          colors={["#ffffff", "#ffffff50", "#ffffff50", "#1aea9f30"]}
           className="justify-center items-center w-full pb-10"
         >
           <View className="flex-row items-center justify-between px-[30px] w-full pt-6 mb-5">
             <View className="flex-1 flex-col">
-              <Text className="text-[30px] font-bold text-[black]" style ={{fontFamily: 'Priestacy', marginBottom: '-10px'}} >Bonjour,</Text>
+              <Text
+                className="text-[30px] font-bold text-[black]"
+                style={{ fontFamily: "Priestacy", marginBottom: -10 }}
+              >
+                Bonjour,
+              </Text>
               <Text className="text-[30px] font-bold text-[black]" style={{}}>
-                {profile?.display_name || 'Soular'}
+                {profile?.display_name || "Soular"}
               </Text>
             </View>
             <View className="flex-row items-center">
               <TouchableOpacity
-                onPress={() => router.push('/profile')}
+                onPress={() => router.push("/profile")}
                 className="p-1"
               >
                 {profile?.photo_url ? (

@@ -2,7 +2,6 @@
 
 Soular is a mobile application designed to raise awareness about climate change, bring eco-conscious individuals together to take action, and provide users with personalized insights and recommendations. The app integrates features such as carbon footprint calculation, social media sharing, user-driven event participation system, and AI-powered advice.
 
-
 ## Setup
 
 1. Clone the repository
@@ -19,7 +18,7 @@ Soular is a mobile application designed to raise awareness about climate change,
    ```
 
 3. Configure environment variables
-   
+
    Create a `.env` file in the project directory and add your Supabase credentianodels. You can find these in your Supabase project settings.
 
    ```bash
@@ -35,8 +34,8 @@ Soular is a mobile application designed to raise awareness about climate change,
    - Storage buckets
    - Triggers and functions
 
-> [!NOTE]
-> If you are part of the dev team, the database schema is already set up. You can skip this step.
+   > [!NOTE]
+   > If you are part of the dev team, the database schema is already set up. You can skip this step.
 
 5. Start the app
 
@@ -73,6 +72,7 @@ Soular is a mobile application designed to raise awareness about climate change,
 ## Database Schema
 
 See `llms/DATABASE.md` for detailed information about:
+
 - Database tables and relationships
 - Row Level Security (RLS) policies
 - Storage configuration
