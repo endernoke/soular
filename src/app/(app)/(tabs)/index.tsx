@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal, Image, ImageBackground } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal, Image, ImageBackground, Dimensions } from 'react-native';
 import { useFocusEffect, router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar, setStatusBarBackgroundColor } from 'expo-status-bar';
@@ -34,13 +34,13 @@ export default function HomeScreen() {
       <ImageBackground
         source={require('@/../assets/images/Abstract4.png')} // Ensure your abstract.png is in the assets folder
         resizeMode="stretch"
-        style={{ width: '100%' }}
+        className="w-full mb-2"
       >
-        {/* <LinearGradient
+        <LinearGradient
           colors={['#ffffff', '#ffffff50', '#ffffff50', '#1aea9f30']}
           className="justify-center items-center w-full pb-10"
-        > */}
-          <View className="flex-1 flex-row items-center justify-between px-[30px] w-full pt-6 mb-5">
+        >
+          <View className="flex-row items-center justify-between px-[30px] w-full pt-6 mb-5">
             <View className="flex-1 flex-col">
               <Text className="text-[20px] font-bold text-[#000000]">Welcome,</Text>
               <Text className="text-[30px] font-bold text-black">
@@ -66,11 +66,11 @@ export default function HomeScreen() {
             </View>
           </View>
           <HomeWidgets />
-        {/* </LinearGradient> */}
+        </LinearGradient>
       </ImageBackground>
 
-      <View className="flex-1 bg-[#1aea9f30]">
-        <View className="flex-row items-center justify-between px-[30px] pt-[25px] bg-white rounded-t-[40px] border-black border-t-2">
+      <View className="flex-1 bg-[#1aea9f30] justify-center items-center">
+        <View className="flex-row w-[101%] items-center justify-between px-[30px] pt-[25px] bg-white rounded-t-[40px] border-t-2 border-x-2 border-black">
           <Text className="text-2xl">Our Soular Stories</Text>
           <TouchableOpacity
             onPress={() => setNewPostModalVisible(true)}

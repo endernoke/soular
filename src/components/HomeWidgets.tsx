@@ -18,7 +18,7 @@ export default function HomeWidgets() {
   };
 
   return (
-    <View className="flex-row px-[30px] gap-4 w-full" style={{fontFamily: 'Arial'}}>
+    <View className="flex-row px-[30px] gap-4 w-full text-[Arial]">
       {/* Left side - Large Green Organization button */}
       <TouchableOpacity
         onPress={handleGreenOrgPress}
@@ -39,20 +39,20 @@ export default function HomeWidgets() {
           onPress={handleCalenderPress}
               >
           <LinearGradient
-                  colors={['#00000010', '#00000010']}
-                  style={{ flex: 1, borderRadius: 15, padding: '10px',justifyContent: 'center', alignItems: 'center',height:'10px'}}
-                >
+            colors={['#00000010', '#00000010']}
+            style={{ flex: 1, borderRadius: 15, padding: 10, justifyContent: 'center', alignItems: 'center' }}
+          >
           <Text className="text-black text-[20px] font-400">Calendar</Text>
           </LinearGradient>
         </TouchableOpacity>
 
         <TouchableOpacity
           onPress={handleTimeAuctionPress}
-            >
+        >
         <LinearGradient
-                          colors={['#00000010', '#00000010']}
-                          style={{ flex: 1, borderRadius: 15, padding: '10px',justifyContent: 'center', alignItems: 'center'}}
-                        >
+          colors={['#00000010', '#00000010']}
+          style={{ flex: 1, borderRadius: 15, padding: 10, justifyContent: 'center', alignItems: 'center'}}
+        >
           <Text className="text-black text-[20px] font-100">Volunteer</Text>
           </LinearGradient>
         </TouchableOpacity>
