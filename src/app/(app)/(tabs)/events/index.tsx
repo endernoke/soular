@@ -164,7 +164,10 @@ export default function EventsScreen() {
           >
 
       <View className="flex-row justify-between items-center mb-4">
-        <Text className="text-2xl font-bold">Events</Text>
+      <View className="flex-row">
+        <Text className="text-2xl font-bold mr-1 text-[#1aea9f]" style={{fontFamily: 'Priestacy'}}>Soular</Text>
+        <Text className="text-2xl font-bold ">Events</Text>
+        </View>
         <TouchableOpacity 
           onPress={() => router.push('/events/new')}
           className="bg-[black] px-4 py-2 rounded-full"

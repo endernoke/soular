@@ -89,7 +89,7 @@ export default function HomeScreen() {
         >
           <View className="flex-row items-center justify-between px-[30px] w-full pt-6 mb-5">
             <View className="flex-1 flex-col">
-              <Text className="text-[30px] font-bold text-[black]" style ={{fontFamily: 'Priestacy', marginBottom: '-10px'}} >Bonjour,</Text>
+              <Text className="text-[35px] font-bold text-[black]" style ={{fontFamily: 'Priestacy', marginBottom: '-10px'}} >Bonjour,</Text>
               <Text className="text-[30px] font-bold text-[black]" style={{}}>
                 {profile?.display_name || 'Soular'}
               </Text>
@@ -124,7 +124,7 @@ export default function HomeScreen() {
             className="flex-row bg-[black] rounded-full w-20 h-8 items-center justify-center"
           >
             <Ionicons name="add" size={15} color="#fff" />
-            <Text className="text-white text-md">New</Text>
+            <Text className="text-white text-md ml-1">New</Text>
           </TouchableOpacity>
         </View>
 
