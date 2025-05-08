@@ -17,7 +17,7 @@ export default function HomeWidgets() {
   };
 
   return (
-    <View className="flex-row px-[30px] gap-4 w-full text-[Arial]">
+    <View className="flex-row px-[30px] gap-4 w-full mb-[-20px]">
       {/* Left side - Large Green Organization button */}
       <TouchableOpacity
         onPress={handleGreenOrgPress}

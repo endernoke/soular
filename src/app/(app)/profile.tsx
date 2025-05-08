@@ -148,12 +148,12 @@ export default function ProfileScreen() {
     <View style={styles.container}>
       <View style={styles.topHeader}>
         <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
-          <Ionicons name="chevron-back" size={24} color="#007AFF" />
-          <Text style={{ color: "#007AFF", fontSize: 16 }}>Back</Text>
-        </TouchableOpacity>
+                  onPress={() => router.back()}
+                  className="mb-4 flex-row items-center"
+                >
+                  <Ionicons name="arrow-back" size={24} color="#000" />
+                  <Text className="ml-2">Back</Text>
+                </TouchableOpacity>
       </View>
       <View style={styles.header}>
         <TouchableOpacity
@@ -287,7 +287,7 @@ const styles = StyleSheet.create({
   topHeader: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 16,
+    padding: 30,
     borderBottomWidth: 1,
     borderBottomColor: "#f0f0f0",
   },

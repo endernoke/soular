@@ -203,76 +203,85 @@ export default function EventsScreen() {
         colors={["#ffffff00", "#ffffff00"]}
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
-        style={{
-          padding: 30,
-        }}
+        className="flex-1"
       >
-        <View className="flex-row justify-between items-center mb-4">
-          <Text className="text-2xl font-bold">Events</Text>
-          <TouchableOpacity
-            onPress={() => router.push("/events/new")}
-            className="bg-blue-700 px-3 py-2 rounded-full"
-          >
-            <Ionicons name="add" size={20} color="#fff" />
-          </TouchableOpacity>
-        </View>
-        <View
-          className="flex-row items-center mb-4 border-2 border-[#00000010] rounded-full"
-          style={{
-            flex: 1,
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: "#f9fafb",
-          }}
-        >
-          <Ionicons
-            name="search"
-            size={20}
-            color="#4b5563"
-            style={{ padding: 20, paddingRight: 10, paddingLeft: 10 }}
-          />
-          <TextInput
+        <View className="px-6 pt-6">
+          <View className="flex-row justify-between items-center mb-4">
+            <View className="flex-row">
+              <Text
+                className="text-3xl font-black mr-1 text-green-700"
+                style={{ fontFamily: "Priestacy" }}
+              >
+                Soular
+              </Text>
+              <Text className="text-3xl font-bold ">Events</Text>
+            </View>
+            <TouchableOpacity
+              onPress={() => router.push("/events/new")}
+              className="bg-blue-700 px-3 py-2 rounded-full"
+            >
+              <Ionicons name="add" size={20} color="#fff" />
+            </TouchableOpacity>
+          </View>
+
+          <View
+            className="flex-row items-center mb-4 border-2 border-[#00000010] rounded-full"
             style={{
               flex: 1,
-              paddingTop: 10,
-              paddingRight: 10,
-              paddingBottom: 10,
-              paddingLeft: 0,
-              color: "#424242",
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "#f9fafb",
             }}
-            placeholder="Search for Soular events..."
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-          />
-        </View>
-
-        <View className="mb-4 border-2 border-[#00000010] rounded-full p-[5px]">
-          <View className="rounded-full " style={{ overflow: "hidden" }}>
-            <FlatList
-              style={{ paddingRight: -50 }}
-              horizontal
-              data={stages}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  onPress={() => setSelectedStage(item)}
-                  className={`mr-[5px] px-4 py-2 rounded-full ${
-                    selectedStage === item ? "bg-green-700" : "bg-gray-200"
-                  }`}
-                >
-                  <Text
-                    className={
-                      selectedStage === item ? "   text-white" : "text-gray-700"
-                    }
-                  >
-                    {item.charAt(0).toUpperCase() +
-                      item.slice(1).replace("-", " ")}
-                  </Text>
-                </TouchableOpacity>
-              )}
-              keyExtractor={(item) => item}
-              showsHorizontalScrollIndicator={false}
+          >
+            <Ionicons
+              name="search"
+              size={20}
+              color="#4b5563"
+              style={{ padding: 10 }}
             />
+            <TextInput
+              style={{
+                flex: 1,
+                paddingTop: 10,
+                paddingRight: 10,
+                paddingBottom: 10,
+                paddingLeft: 0,
+                color: "#424242",
+              }}
+              placeholder="Search for Soular events..."
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
+          </View>
+
+          <View className="mb-4 border-2 border-[#00000010] rounded-full p-[5px]">
+            <View className="rounded-full" style={{ overflow: "hidden" }}>
+              <FlatList
+                style={{ paddingRight: -50 }}
+                horizontal
+                data={stages}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    onPress={() => setSelectedStage(item)}
+                    className={`mr-[5px] px-4 py-2 rounded-full ${
+                      selectedStage === item ? "bg-green-700" : "bg-gray-200"
+                    }`}
+                  >
+                    <Text
+                      className={
+                        selectedStage === item ? "text-white" : "text-gray-700"
+                      }
+                    >
+                      {item.charAt(0).toUpperCase() +
+                        item.slice(1).replace("-", " ")}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+                keyExtractor={(item) => item}
+                showsHorizontalScrollIndicator={false}
+              />
+            </View>
           </View>
         </View>
 
@@ -295,6 +304,7 @@ export default function EventsScreen() {
             )}
             keyExtractor={(item) => item.id}
             showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 24 }}
             ListEmptyComponent={() =>
               !isLoading && (
                 <Text className="text-center text-gray-500 mt-10">

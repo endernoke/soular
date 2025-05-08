@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderColor: '#ddd',
-    borderRadius: 8,
+    borderRadius: '16px',
     padding: 12,
     minHeight: 80,
     textAlignVertical: 'top',
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
   imagePreview: {
     width: '100%',
     height: 200,
-    borderRadius: 8,
+    borderRadius: 0,
     marginTop: 8,
   },
   removeImageButton: {
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
   postButton: {
     backgroundColor: '#007AFF',
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 16,
     alignItems: 'center',
     flex: 1,
     marginLeft: 12,
@@ -187,5 +187,6 @@ const styles = StyleSheet.create({
   postButtonText: {
     color: '#fff',
     fontWeight: '600',
+    fontSize: '16px'
   },
 });
