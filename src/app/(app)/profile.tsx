@@ -10,14 +10,15 @@ import {
   Modal,
   Linking,
   ActivityIndicator,
+  ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 import * as ImagePicker from "expo-image-picker";
-import * as FileSystem from 'expo-file-system';
-import { decode } from 'base64-arraybuffer'; // For converting base64 to ArrayBuffer
+import * as FileSystem from "expo-file-system";
+import { decode } from "base64-arraybuffer"; // For converting base64 to ArrayBuffer
 import * as utils from "@/lib/utils";
 
 export default function ProfileScreen() {
@@ -89,14 +90,14 @@ export default function ProfileScreen() {
       const fileName = `${userId}.${fileExt}`;
       // Read the file into base64 first (required by expo-file-system)
       const base64 = await FileSystem.readAsStringAsync(uri, {
-        encoding: FileSystem.EncodingType.Base64
+        encoding: FileSystem.EncodingType.Base64,
       });
       // Upload to Supabase Storage
       const { error } = await supabase.storage
         .from("profile-pictures")
         .upload(fileName, decode(base64), {
           upsert: true,
-          contentType: mimeType
+          contentType: mimeType,
         });
 
       if (error) throw error;
@@ -175,7 +176,10 @@ export default function ProfileScreen() {
         >
           {!isLoading ? (
             profile?.photo_url ? (
-              <Image source={{ uri: profile.photo_url }} style={styles.avatar} />
+              <Image
+                source={{ uri: profile.photo_url }}
+                style={styles.avatar}
+              />
             ) : (
               <View style={[styles.avatar, styles.avatarPlaceholder]}>
                 <Ionicons name="person" size={40} color="#fff" />
@@ -186,7 +190,6 @@ export default function ProfileScreen() {
               <ActivityIndicator size="large" color="#007AFF" />
             </View>
           )}
-
         </TouchableOpacity>
         <Text style={styles.name}>{profile?.display_name || "User"}</Text>
         <Text style={styles.email}>{user?.email}</Text>
@@ -199,7 +202,7 @@ export default function ProfileScreen() {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.content}>
+      <ScrollView style={styles.content}>
         <TouchableOpacity style={styles.menuItem}>
           <Ionicons name="settings-outline" size={24} color="#666" />
           <Text style={styles.menuText}>Settings</Text>
@@ -226,7 +229,7 @@ export default function ProfileScreen() {
           <Text style={styles.menuText}>Help & Support</Text>
           <Ionicons name="chevron-forward" size={24} color="#666" />
         </TouchableOpacity>
-      </View>
+      </ScrollView>
 
       <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>
         <Text style={styles.signOutText}>Sign Out</Text>
@@ -331,7 +334,10 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    padding: 30,
+    paddingTop: 12,
+    paddingRight: 30,
+    paddingBottom: 12,
+    paddingLeft: 30,
   },
   menuItem: {
     flexDirection: "row",
@@ -352,11 +358,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#ff3b30",
     borderRadius: 8,
     alignItems: "center",
-
-    backgroundColor: '#ff3b30',
-    borderRadius: 15,
-    alignItems: 'center',
-
   },
   signOutText: {
     color: "#fff",
@@ -375,10 +376,6 @@ const styles = StyleSheet.create({
 
     padding: 20,
     width: "80%",
-
-    padding: 30,
-    width: '80%',
-
   },
   modalTitle: {
     fontSize: 20,
