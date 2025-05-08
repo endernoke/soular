@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal, Image, ImageBackground, Dimensions } from 'react-native';
+import { Animated, Easing, View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal, Image, ImageBackground, Dimensions } from 'react-native';
 import { useFocusEffect, router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar, setStatusBarBackgroundColor } from 'expo-status-bar';
@@ -10,6 +10,10 @@ import SocialFeed from '@/components/SocialFeed';
 import HomeWidgets from '@/components/HomeWidgets';
 
 export default function HomeScreen() {
+
+
+
+
   const { user, profile } = useAuth();
   const socialFeedRef = useRef<{ fetchPosts: () => Promise<void> }>();
   const [isNewPostModalVisible, setNewPostModalVisible] = useState(false);
@@ -19,6 +23,48 @@ export default function HomeScreen() {
     setNewPostModalVisible(false);
   };
 
+ const fadeAnim = useRef(new Animated.Value(0)).current;
+    const slideAnim = useRef(new Animated.Value(Dimensions.get('window').height)).current;
+
+    useEffect(() => {
+      if (isNewPostModalVisible) {
+        // Reset values when modal becomes visible
+        fadeAnim.setValue(0);
+        slideAnim.setValue(Dimensions.get('window').height);
+
+        // Run animations in parallel
+        Animated.parallel([
+          Animated.timing(fadeAnim, {
+            toValue: 1,
+            duration: 200,
+            easing: Easing.linear,
+            useNativeDriver: true,
+          }),
+          Animated.timing(slideAnim, {
+            toValue: 0,
+            duration: 300,
+            easing: Easing.out(Easing.cubic),
+            useNativeDriver: true,
+          }),
+        ]).start();
+      } else {
+        // Optional: Add reverse animations when closing
+        Animated.parallel([
+          Animated.timing(fadeAnim, {
+            toValue: 0,
+            duration: 150,
+            easing: Easing.linear,
+            useNativeDriver: true,
+          }),
+          Animated.timing(slideAnim, {
+            toValue: Dimensions.get('window').height,
+            duration: 250,
+            easing: Easing.in(Easing.cubic),
+            useNativeDriver: true,
+          }),
+        ]).start();
+      }
+    }, [isNewPostModalVisible]);
   // Set the status bar color to match the background
   useFocusEffect(
     useCallback(() => {
@@ -34,7 +80,8 @@ export default function HomeScreen() {
       <ImageBackground
         source={require('@/../assets/images/Abstract4.png')} // Ensure your abstract.png is in the assets folder
         resizeMode="stretch"
-        className="w-full mb-2"
+        className="mb-0"
+        style={{width: '100%'}}
       >
         <LinearGradient
           colors={['#ffffff', '#ffffff50', '#ffffff50', '#1aea9f30']}
@@ -69,7 +116,7 @@ export default function HomeScreen() {
         </LinearGradient>
       </ImageBackground>
 
-      <View className="flex-1 bg-[#1aea9f30] justify-center items-center">
+      <View className="flex-1 bg-[#1aea9f30] justify-center items-center w-full">
         <View className="flex-row w-[101%] items-center justify-between px-[30px] pt-[25px] bg-white rounded-t-[40px] border-t-2 border-x-2 border-black">
           <Text className="text-2xl">Our Soular Stories</Text>
           <TouchableOpacity
@@ -81,28 +128,60 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </View>
 
-        <View className="flex-1 bg-white">
+        <View className="flex-1 bg-white w-full">
           <SocialFeed ref={socialFeedRef} nested={true} />
         </View>
       </View>
 
       <Modal
         visible={isNewPostModalVisible}
-        animationType="slide"
+        animationType="none"
         transparent={true}
         onRequestClose={() => setNewPostModalVisible(false)}
       >
-        <View className="flex-1 justify-center items-center bg-black/50">
-          <View className="bg-white w-[90%] rounded-lg overflow-hidden">
-            <View className="flex-row justify-between items-center p-4 border-b border-gray-200">
+        <Animated.View
+          style={[
+            StyleSheet.absoluteFill,
+            {
+              justifyContent: 'flex-end',
+              opacity: fadeAnim,
+            }
+          ]}
+        >
+          {/* Background with fade animation */}
+          <TouchableOpacity
+            style={StyleSheet.absoluteFill}
+            activeOpacity={1}
+            onPress={() => setNewPostModalVisible(false)}
+          >
+            <Animated.View style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(0,0,0,0.5)' }]} />
+          </TouchableOpacity>
+
+          {/* Content with slide animation */}
+          <Animated.View
+            style={{
+              width: '100%',
+              minHeight: Dimensions.get('window').height * 0.5,
+              backgroundColor: 'white',
+              overflow: 'auto',
+              borderTopLeftRadius: 24,
+              borderTopRightRadius: 24,
+              paddingTop: 16,
+              transform: [{ translateY: slideAnim }],
+            }}
+          >
+            <View className="flex-row justify-between items-center px-4 pb-4 border-b border-gray-200">
               <Text className="text-lg font-semibold">Create New Post</Text>
               <TouchableOpacity onPress={() => setNewPostModalVisible(false)}>
                 <Ionicons name="close" size={24} color="#000" />
               </TouchableOpacity>
             </View>
-            <NewPost onPostCreated={handlePostCreated} />
-          </View>
-        </View>
+            <NewPost
+              onPostCreated={handlePostCreated}
+              style={{ flex: 1 }}
+            />
+          </Animated.View>
+        </Animated.View>
       </Modal>
     </ScrollView>
   );

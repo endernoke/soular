@@ -15,7 +15,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     storage: AsyncStorage,
     autoRefreshToken: true,
-    persistSession: true,  // NOTE: setting may will crash the app on Android
+    persistSession: false,  // NOTE: setting may will crash the app on Android
     detectSessionInUrl: false,
   },
 });
