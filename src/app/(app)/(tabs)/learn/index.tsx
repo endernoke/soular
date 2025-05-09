@@ -452,7 +452,7 @@ export default function LearnScreen() {
       >
         <View
           style={{
-            maxWidth: "80%",
+            maxWidth: "100%",
             flexDirection: "row",
             justifyContent: "center",
             marginBottom: 10,
@@ -493,7 +493,7 @@ export default function LearnScreen() {
 
           {/* Message Bubble */}
           <LinearGradient
-            colors={isUser ? ["#1aea9fb0", "#10c7d9b0"] : ["white", "white"]}
+            colors={isUser ? ["#1aea9f", "#10d7c9"] : ["white", "white"]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={{
@@ -660,9 +660,8 @@ export default function LearnScreen() {
               style={{
                 fontSize: 100,
                 fontWeight: "bold",
-                color: "transparent",
-                backgroundClip: "text",
-                backgroundImage: "linear-gradient(45deg, #00f260, #1aea9f)",
+                color: "#00f260",
+
               }}
             >
               {carbonData.footprint}
@@ -704,6 +703,7 @@ export default function LearnScreen() {
             carbonData.breakdown.map((item, index) => (
               <View
                 key={index}
+
                 style={{
                   flexDirection: "row",
                   justifyContent: "space-between",
@@ -711,13 +711,15 @@ export default function LearnScreen() {
                   borderBottomWidth:
                     index < carbonData.breakdown.length - 1 ? 3 : 3,
                   borderBottomColor: "#1aea9f",
+
                 }}
               >
-                <Text style={{ fontSize: 16, color: "#495057" }}>
+                <Text style={{ fontSize: 16, color: "#495057" }} numberOfLines={1}>
                   {item.category}
                 </Text>
                 <Text
                   style={{ fontSize: 16, fontWeight: "500", color: "#212529" }}
+
                 >
                   {item.amount} {carbonData.unit}
                 </Text>
@@ -737,6 +739,7 @@ export default function LearnScreen() {
             shadowOpacity: 0.1,
             shadowRadius: 20,
             elevation: 2,
+
           }}
         >
           <Text

@@ -87,7 +87,7 @@ const OrganizationCard = ({ org }: { org: Organization }) => (
           marginRight: 12,
         }}
       />
-      <Text className="text-2xl font-bold">{org.name}</Text>
+      <Text className="text-2xl font-bold numberOfLines={1}">{org.name}</Text>
     </View>
     <Text className="text-gray-600 mb-2">{org.description}</Text>
     <View className="flex-row items-center">
