@@ -17,7 +17,8 @@ export default function RootLayoutNav() {
         headerShown: false,
         tabBarStyle: {
           position: 'absolute',
-          borderTopWidth: 0,
+          borderTopWidth: 2, // Added top border width
+          borderTopColor: '#00000010', // Added black border color
           backgroundColor: 'transparent',
           elevation: 0,
           height: 50, // Increased height
@@ -28,14 +29,13 @@ export default function RootLayoutNav() {
             intensity={100}
             tint="systemThickMaterialLight"
             style={StyleSheet.absoluteFill}
-            experimentalBlurMethod='dimezisBlurView'  // use iOS blur
+            experimentalBlurMethod='dimezisBlurView'
           />
         ),
         tabBarItemStyle: {
           paddingTop: 7.5,
           borderRadius: 10,
           marginHorizontal: 5,
-
           height: 40, // Increased item height
         },
       }}>
@@ -55,23 +55,23 @@ export default function RootLayoutNav() {
         }}
       />
       <Tabs.Screen
-              name="chats"
-              options={{
-                title: '',
-                tabBarIcon: ({ color, size, focused }) => (
-                  <View style={focused ? styles.iconContainerFocused : null}>
-                    <Ionicons name="chatbubble" size={24} color={color} />
-                  </View>
-                ),
-                tabBarLabelStyle: {
-                  fontSize: 12,
-                  marginBottom: 8,
-                },
-                tabBarStyle: {
-                  display: usePathname().split('/').pop() == 'chats' ? 'flex' : 'none',
-                },
-              }}
-            />
+        name="chats"
+        options={{
+          title: '',
+          tabBarIcon: ({ color, size, focused }) => (
+            <View style={focused ? styles.iconContainerFocused : null}>
+              <Ionicons name="chatbubble" size={24} color={color} />
+            </View>
+          ),
+          tabBarLabelStyle: {
+            fontSize: 12,
+            marginBottom: 8,
+          },
+          tabBarStyle: {
+            display: usePathname().split('/').pop() == 'chats' ? 'flex' : 'none',
+          },
+        }}
+      />
       <Tabs.Screen
         name="index"
         options={{
@@ -103,16 +103,12 @@ export default function RootLayoutNav() {
           },
         }}
       />
-
     </Tabs>
-
-
   );
 }
 
 const styles = StyleSheet.create({
   iconContainerFocused: {
-//     backgroundColor: 'rgba(0, 122, 255, 0.1)',
     padding: 5, // Increased padding
     borderRadius: 15,
   },

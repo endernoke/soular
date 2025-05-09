@@ -35,7 +35,7 @@ const EventCard = ({
 }) => (
   <TouchableOpacity
     onPress={onPress}
-    className="bg-white p-4 rounded-[16px] mb-[24px] border-[#00000015] border-[2px] shadow-md"
+    className="bg-white p-4 rounded-[16px] mb-[24px] border-[#000000] border-[2px] shadow-md"
     style={{
       shadowColor: "#4b5563",
       shadowOffset: {
