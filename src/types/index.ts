@@ -27,6 +27,59 @@ export interface Post {
   } | null;
 }
 
+export interface PromotedPost {
+  id: string; // UUID
+  content: string;
+  image_url?: string | null;
+  created_at: string; // ISO 8601 timestamp string
+  author_id: string; // UUID
+  affiliated_link: string;
+  expires_at: string; // ISO 8601 timestamp string
+  // Optionally include author profile data if fetched via join
+  profiles?: { 
+    display_name: string | null;
+    photo_url?: string | null;
+  } | null;
+}
+
+export interface PromotedPost {
+  id: string; // UUID
+  content: string;
+  image_url?: string | null;
+  created_at: string; // ISO 8601 timestamp string
+  author_id: string; // UUID
+  affiliated_link: string;
+  expires_at: string; // ISO 8601 timestamp string
+  // Optionally include author profile data if fetched via join
+  profiles?: { 
+    display_name: string | null;
+    photo_url?: string | null;
+  } | null;
+}
+
+export type FeedItem = (Post | PromotedPost) & {
+  isPromoted?: boolean;
+}
+
+export interface PromotedPost {
+  id: string; // UUID
+  content: string;
+  image_url?: string | null;
+  created_at: string; // ISO 8601 timestamp string
+  author_id: string; // UUID
+  affiliated_link: string;
+  expires_at: string; // ISO 8601 timestamp string
+  // Optionally include author profile data if fetched via join
+  profiles?: { 
+    display_name: string | null;
+    photo_url?: string | null;
+  } | null;
+}
+
+export type FeedItem = (Post | PromotedPost) & {
+  isPromoted?: boolean;
+};
+
 export type EventStage = 'upcoming' | 'in-development' | 'completed';
 
 export interface Event {

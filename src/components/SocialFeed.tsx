@@ -8,11 +8,14 @@ import {
   Image,
   Dimensions,
   ActivityIndicator,
+  TouchableOpacity,
+  Linking,
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { supabase } from "@/lib/supabase"; // Import supabase client
-import type { Post } from "@/types"; // Use updated Post type
-import { formatDistanceToNowStrict } from "date-fns"; // Use date-fns for relative time
+import { supabase } from "@/lib/supabase";
+import type { FeedItem, Post, PromotedPost } from "@/types";
+import { formatDistanceToNowStrict } from "date-fns";
 
 const { width } = Dimensions.get("window");
 
@@ -29,16 +32,17 @@ const formatRelativeTime = (timestamp: string | null | undefined) => {
 
 const SocialFeed = forwardRef(
   ({ nested = false }: { nested?: boolean }, ref) => {
-    const [posts, setPosts] = useState<Post[]>([]);
+    const [feedItems, setFeedItems] = useState<FeedItem[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const fetchPosts = async () => {
+    const fetchFeedItems = async () => {
       try {
         setIsLoading(true);
         setError(null);
-        // Fetch posts and join with profiles table to get author info
-        const { data: fetchedPosts, error: fetchError } = await supabase
+
+        // Fetch regular posts
+        const { data: fetchedPosts, error: postsError } = await supabase
           .from("posts")
           .select(
             `
@@ -55,53 +59,111 @@ const SocialFeed = forwardRef(
           )
           .order("created_at", { ascending: false });
 
-        if (fetchError) throw fetchError;
+        if (postsError) throw postsError;
 
-        // Map the fetched data to match the Post type structure
+        // Fetch promoted posts that haven't expired
+        const { data: fetchedPromotedPosts, error: promotedError } = await supabase
+          .from("promoted_posts")
+          .select(
+            `
+          id,
+          content,
+          image_url,
+          created_at,
+          author_id,
+          affiliated_link,
+          expires_at,
+          profiles (
+            display_name,
+            photo_url
+          )
+        `
+          )
+          .gt("expires_at", new Date().toISOString())
+          .order("created_at", { ascending: false });
+
+        if (promotedError) throw promotedError;
+
+        // Format posts and add isPromoted flag
         const formattedPosts = (fetchedPosts || []).map((post) => ({
           ...post,
-          profiles: post.profiles?.[0] || post.profiles || null, // Take the first profile if multiple exist (which is probably impossible)
+          profiles: post.profiles?.[0] || post.profiles || null,
+          isPromoted: false,
         }));
-        setPosts(formattedPosts);
-      } catch (error) {
-        console.error("Error fetching posts:", error);
-        setError(
-          error instanceof Error ? error.message : "Failed to fetch posts"
+
+        const formattedPromotedPosts = (fetchedPromotedPosts || []).map(
+          (post) => ({
+            ...post,
+            profiles: post.profiles?.[0] || post.profiles || null,
+            isPromoted: true,
+          })
         );
+
+        // Sort regular posts and insert promoted posts randomly
+        let allPosts = formattedPosts.sort((a, b) => {
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        });
+        // Randomly insert promoted posts
+        formattedPromotedPosts.forEach((promotedPost) => {
+          const randomIndex = Math.floor(Math.random() * (allPosts.length + 1));
+          allPosts.splice(randomIndex, 0, promotedPost);
+        });
+
+        setFeedItems(allPosts);
+      } catch (error) {
+        console.error("Error fetching feed items:", error);
+        setError(error instanceof Error ? error.message : "Failed to fetch feed");
       } finally {
         setIsLoading(false);
       }
     };
 
     useImperativeHandle(ref, () => ({
-      fetchPosts,
+      fetchPosts: fetchFeedItems,
     }));
 
     useEffect(() => {
-      fetchPosts();
+      fetchFeedItems();
 
-      // Optional: Set up real-time subscription for new posts
       const postsSubscription = supabase
         .channel("public:posts")
         .on(
           "postgres_changes",
           { event: "INSERT", schema: "public", table: "posts" },
-          (payload) => {
-            console.log("New post received!", payload);
-            // Simple refetch for now, could be optimized to insert the new post
-            fetchPosts();
-          }
+          () => fetchFeedItems()
         )
         .subscribe();
 
-      // Cleanup subscription on unmount
+      const promotedPostsSubscription = supabase
+        .channel("public:promoted_posts")
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "promoted_posts" },
+          () => fetchFeedItems()
+        )
+        .subscribe();
+
       return () => {
         supabase.removeChannel(postsSubscription);
+        supabase.removeChannel(promotedPostsSubscription);
       };
     }, []);
 
-    const renderPost = ({ item }: { item: Post }) => (
-      <View style={styles.postCard}>
+    const handlePromotedPostClick = async (url: string) => {
+      try {
+        await Linking.openURL(url);
+      } catch (error) {
+        console.error("Error opening URL:", error);
+      }
+    };
+
+    const renderFeedItem = ({ item }: { item: FeedItem }) => (
+      <View
+        style={[
+          styles.postCard,
+          item.isPromoted && styles.promotedPostCard,
+        ]}
+      >
         <View style={styles.postHeader}>
           <View style={styles.authorInfo}>
             {/* Use author's photo_url from joined profiles data */}
@@ -125,6 +187,11 @@ const SocialFeed = forwardRef(
               </Text>
             </View>
           </View>
+          {item.isPromoted && (
+            <View style={styles.promotedBadge}>
+              <Text style={styles.promotedText}>Promoted</Text>
+            </View>
+          )}
         </View>
 
         {item.image_url && (
@@ -138,15 +205,20 @@ const SocialFeed = forwardRef(
         )}
         <Text style={styles.postContent}>{item.content}</Text>
 
-        {/* Use image_url from post data */}
-
-        {/* Add like/comment buttons or other interactions here */}
+        {item.isPromoted && "affiliated_link" in item && (
+          <TouchableOpacity
+            style={styles.learnMoreButton}
+            onPress={() => handlePromotedPostClick(item.affiliated_link)}
+          >
+            <Text style={styles.learnMoreText}>Learn More</Text>
+          </TouchableOpacity>
+        )}
       </View>
     );
 
     return (
       <View style={styles.feed}>
-        {isLoading && posts.length === 0 ? (
+        {isLoading && feedItems.length === 0 ? (
           <ActivityIndicator
             size="large"
             color="#007AFF"
@@ -156,16 +228,16 @@ const SocialFeed = forwardRef(
           <Text style={styles.errorText}>Error: {error}</Text>
         ) : nested ? (
           <ScrollView style={styles.scrollView}>
-            {posts.map((item) => (
-              <View key={item.id}>{renderPost({ item })}</View>
+            {feedItems.map((item) => (
+              <View key={item.id}>{renderFeedItem({ item })}</View>
             ))}
           </ScrollView>
         ) : (
           <FlatList
-            data={posts}
-            renderItem={renderPost}
+            data={feedItems}
+            renderItem={renderFeedItem}
             keyExtractor={(item) => item.id}
-            onRefresh={fetchPosts} // Add pull-to-refresh
+            onRefresh={fetchFeedItems} // Add pull-to-refresh
             refreshing={isLoading} // Show refresh indicator while loading
             ListEmptyComponent={() =>
               !isLoading && (
@@ -196,11 +268,23 @@ const styles = StyleSheet.create({
     borderColor: "#00000015",
     borderWidth: 2,
   },
+  promotedPostCard: {
+    borderColor: "#1aea9f",
+    borderWidth: 2,
+    shadowColor: "#1aea9f",
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
+  },
   postHeader: {
     padding: 16,
     flexDirection: "row",
     alignItems: "center",
-    //     marginBottom: 12,
+    justifyContent: "space-between",
   },
   authorInfo: {
     flexDirection: "row",
@@ -260,5 +344,31 @@ const styles = StyleSheet.create({
     color: "#666",
     marginTop: 40,
     fontSize: 16,
+  },
+  promotedBadge: {
+    backgroundColor: "#1aea9f20",
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#1aea9f",
+  },
+  promotedText: {
+    color: "#1aea9f",
+    fontSize: 12,
+    fontWeight: "600",
+  },
+  learnMoreButton: {
+    backgroundColor: "#1aea9f",
+    margin: 16,
+    marginTop: 0,
+    padding: 12,
+    borderRadius: 12,
+    alignItems: "center",
+  },
+  learnMoreText: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "600",
   },
 });
