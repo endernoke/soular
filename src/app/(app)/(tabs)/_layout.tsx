@@ -4,10 +4,13 @@ import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { StyleSheet, View } from 'react-native';
+import { usePathname } from 'expo-router';
 
 export default function RootLayoutNav() {
   return (
     <Tabs
+      initialRouteName="index"
+      backBehavior='history'
       screenOptions={{
         tabBarActiveTintColor: '#007AFF',
         tabBarInactiveTintColor: '#00000020',
@@ -19,13 +22,13 @@ export default function RootLayoutNav() {
           elevation: 0,
           height: 50, // Increased height
           paddingBottom: 0, // Extra padding at the bottom
-
         },
         tabBarBackground: () => (
           <BlurView
-            intensity={100}
+            intensity={50}
             tint="extraLight"
             style={StyleSheet.absoluteFill}
+            experimentalBlurMethod='dimezisBlurView'  // use iOS blur
           />
         ),
         tabBarItemStyle: {
@@ -63,6 +66,24 @@ export default function RootLayoutNav() {
           tabBarLabelStyle: {
             fontSize: 12,
             marginBottom: 8,
+          },
+        }}
+      />
+      <Tabs.Screen
+        name="chats"
+        options={{
+          title: '',
+          tabBarIcon: ({ color, size, focused }) => (
+            <View style={focused ? styles.iconContainerFocused : null}>
+              <Ionicons name="chatbubble" size={24} color={color} />
+            </View>
+          ),
+          tabBarLabelStyle: {
+            fontSize: 12,
+            marginBottom: 8,
+          },
+          tabBarStyle: {
+            display: usePathname().split('/').pop() == 'chats' ? 'flex' : 'none',
           },
         }}
       />

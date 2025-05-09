@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderColor: '#ddd',
-    borderRadius: '16px',
+    borderRadius: 16,
     padding: 12,
     minHeight: 80,
     textAlignVertical: 'top',
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
   },
   postButtonText: {
     color: '#fff',
-    fontWeight: '600',
-    fontSize: '16px'
+    fontWeight: 600,
+    fontSize: 16,
   },
 });

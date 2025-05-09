@@ -86,6 +86,7 @@ export default function HomeScreen() {
 
   return (
     <ScrollView className="flex-1 bg-[white]">
+      { /* IMPORTANT: DO NOT use 'flex-1' inside children of ImageBackground or LinearGradient */ }
       <ImageBackground
         source={require("@/../assets/images/Abstract4.png")} // Ensure your abstract.png is in the assets folder
         resizeMode="stretch"
@@ -97,14 +98,13 @@ export default function HomeScreen() {
           className="justify-center items-center w-full pb-10"
         >
           <View className="flex-row items-center justify-between px-[30px] w-full pt-6 mb-5">
-            <View className="flex-1 flex-col">
+            <View className="flex-col">
               <Text
-                className="text-[30px] font-bold text-[black]"
-                style={{ fontFamily: "Priestacy", marginBottom: -10 }}
+                className="text-[30px] font-[Priestacy]"
               >
                 Bonjour,
               </Text>
-              <Text className="text-[30px] font-bold text-[black]" style={{}}>
+              <Text className="text-[30px] font-bold text-[black]">
                 {profile?.display_name || "Soular"}
               </Text>
             </View>
@@ -116,10 +116,10 @@ export default function HomeScreen() {
                 {profile?.photo_url ? (
                   <Image
                     source={{ uri: profile.photo_url }}
-                    className="w-10 h-10 rounded-full"
+                    className="w-12 h-12 rounded-full"
                   />
                 ) : (
-                  <View className="w-10 h-10 rounded-full bg-blue-500 items-center justify-center">
+                  <View className="w-12 h-12 rounded-full bg-blue-500 items-center justify-center">
                     <Ionicons name="person" size={20} color="#ffffff" />
                   </View>
                 )}
