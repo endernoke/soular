@@ -502,20 +502,19 @@ const styles = StyleSheet.create({
   topHeader: {
     flexDirection: "row",
     alignItems: "center",
-    width: '100%',
+    width: "100%",
     padding: 30,
     paddingBottom: 20,
-//     paddingTop: 20,
-
+    //     paddingTop: 20,
   },
   backButton: {
     flexDirection: "row",
     padding: 8,
   },
   header: {
-//       width: '90%',
+    //       width: '90%',
     padding: 20,
-    alignItems: 'center',
+    alignItems: "center",
     borderBottomWidth: 1,
     borderBottomColor: "#f0f0f0",
   },
@@ -525,7 +524,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 16,
-    width: '90%'
+    width: "90%",
   },
 
   avatarContainer: {
@@ -537,7 +536,7 @@ const styles = StyleSheet.create({
     height: 80,
     borderRadius: 40,
     borderWidth: 4,
-    borderColor: '#1aea9f'
+    borderColor: "#1aea9f",
   },
 
   userInfo: {
@@ -569,28 +568,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     flexDirection: "row",
     alignItems: "center",
-  },
-  tabContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    borderTopWidth: 1,
-    borderTopColor: "#f0f0f0",
-    borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
-    marginBottom: 12,
-  },
-  tabButton: {
-    flex: 1,
-    padding: 16,
-    alignItems: "center",
-  },
-  activeTab: {
-    borderBottomWidth: 2,
-    borderBottomColor: "#000000",
-  },
-  tabButtonText: {
-    fontSize: 16,
-    color: "#000000",
   },
   tabContainer: {
     flexDirection: "row",
@@ -759,7 +736,6 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   editPhotoButton: {
-
     backgroundColor: "#000000",
     paddingHorizontal: 15,
     paddingVertical: 8,
@@ -768,5 +744,4 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginRight: 20,
   },
-
 });
