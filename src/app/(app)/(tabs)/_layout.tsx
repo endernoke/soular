@@ -12,7 +12,7 @@ export default function RootLayoutNav() {
       initialRouteName="index"
       backBehavior='history'
       screenOptions={{
-        tabBarActiveTintColor: '#007AFF',
+        tabBarActiveTintColor: 'black',
         tabBarInactiveTintColor: '#00000020',
         headerShown: false,
         tabBarStyle: {
@@ -25,8 +25,8 @@ export default function RootLayoutNav() {
         },
         tabBarBackground: () => (
           <BlurView
-            intensity={50}
-            tint="extraLight"
+            intensity={100}
+            tint="systemThickMaterialLight"
             style={StyleSheet.absoluteFill}
             experimentalBlurMethod='dimezisBlurView'  // use iOS blur
           />

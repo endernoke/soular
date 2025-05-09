@@ -100,7 +100,7 @@ export default function HomeScreen() {
           <View className="flex-row items-center justify-between px-[30px] w-full pt-6 mb-5">
             <View className="flex-col">
               <Text
-                className="text-[30px] font-[Priestacy]"
+                className="text-[40px] font-[Priestacy] mb-[-20px]"
               >
                 Bonjour,
               </Text>

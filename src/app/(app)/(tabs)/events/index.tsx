@@ -209,7 +209,7 @@ export default function EventsScreen() {
           <View className="flex-row justify-between items-center mb-4">
             <View className="flex-row">
               <Text
-                className="text-3xl font-black mr-1 text-green-700"
+                className="text-3xl font-black mr-1 text-[#1aea9f]"
                 style={{ fontFamily: "Priestacy" }}
               >
                 Soular
