@@ -444,7 +444,7 @@ export default function EventDetailScreen() {
                   Participants Chat
                 </Text>
               </TouchableOpacity>
-            )}{" "}
+            )}
           {/* Crowdfunding Button */}
           <TouchableOpacity
             className="bg-[#FFD700] p-4 rounded-[20px] mb-3"
