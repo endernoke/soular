@@ -21,7 +21,7 @@ export default function RootLayoutNav() {
           borderTopColor: '#00000010', // Added black border color
           backgroundColor: 'transparent',
           elevation: 0,
-          height: 50, // Increased height
+          height: 60, // Increased height
           paddingBottom: 0, // Extra padding at the bottom
         },
         tabBarBackground: () => (
@@ -33,7 +33,7 @@ export default function RootLayoutNav() {
           />
         ),
         tabBarItemStyle: {
-          paddingTop: 7.5,
+          paddingTop: 15,
           borderRadius: 10,
           marginHorizontal: 5,
           height: 40, // Increased item height

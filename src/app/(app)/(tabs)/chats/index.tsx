@@ -285,7 +285,7 @@ export default function ChatInboxScreen() {
   }, [searchQuery]);
 
   return (
-    <View className="flex-1 bg-gray-50">
+    <View className="h-full bg-gray-50">
       <View className="bg-white p-4 border-b border-gray-200 flex-row items-left mb-4">
         <TouchableOpacity
           onPress={navigateBack}
