@@ -7,31 +7,59 @@ import {
   StyleSheet,
   Image,
   Alert,
+  Modal,
+  Pressable,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { supabase } from "@/lib/supabase"; // Import supabase client
+import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/lib/auth";
 import { Ionicons } from "@expo/vector-icons";
 import * as FileSystem from "expo-file-system";
-import { decode } from "base64-arraybuffer"; // For converting base64 to ArrayBuffer
+import { decode } from "base64-arraybuffer";
 import * as utils from "@/lib/utils";
+
+const SPONSORED_PACKAGES = [
+  {
+    name: "Basic",
+    price: 50,
+    features: ["7 days visibility", "Standard placement"],
+  },
+  {
+    name: "Premium",
+    price: 100,
+    features: ["14 days visibility", "Priority placement", "Highlighted post"],
+  },
+  {
+    name: "Enterprise",
+    price: 1000,
+    features: [
+      "30 days visibility",
+      "Top placement",
+      "Highlighted post",
+      "Featured in newsletter",
+    ],
+  },
+];
 
 export default function NewPost({
   onPostCreated,
 }: {
   onPostCreated?: () => void;
 }) {
-  const { user } = useAuth(); // Get Supabase user
+  const { user } = useAuth();
   const [newPost, setNewPost] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [selectedImageUri, setSelectedImageUri] = useState<string | null>(null);
+  const [isSponsoredModalVisible, setIsSponsoredModalVisible] = useState(false);
+  const [selectedPackage, setSelectedPackage] = useState<number | null>(null);
+  const [organizationName, setOrganizationName] = useState("");
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 0.7, // Adjust quality as needed
+      quality: 0.7,
     });
 
     if (!result.canceled && result.assets && result.assets.length > 0) {
@@ -39,33 +67,34 @@ export default function NewPost({
     }
   };
 
-  const handleCreatePost = async () => {
+  const handleCreatePost = async (isSponsored = false) => {
     if (!newPost.trim() || !user) return;
+    if (isSponsored && (selectedPackage === null || !organizationName.trim())) {
+      Alert.alert("Error", "Please select a package and enter organization name");
+      return;
+    }
 
     setIsLoading(true);
     let imageUrl: string | null = null;
 
     try {
-      // 1. Upload image if selected
+      // Upload image if selected
       if (selectedImageUri) {
         const fileExt = utils.getFileExtension(selectedImageUri);
         const mimeType = utils.guessMimeType(fileExt);
         const fileName = `${user.id}-${Date.now()}.${fileExt}`;
         const filePath = `posts/${fileName}`;
 
-        // Read the file into base64 first (required by expo-file-system)
         const base64 = await FileSystem.readAsStringAsync(selectedImageUri, {
           encoding: FileSystem.EncodingType.Base64,
         });
 
-        // Upload to Supabase Storage
         const { data: uploadData, error: uploadError } = await supabase.storage
-          .from("images") // Assuming a bucket named 'images'
+          .from("images")
           .upload(filePath, decode(base64), { contentType: mimeType });
 
         if (uploadError) throw uploadError;
 
-        // Get public URL
         const { data: urlData } = supabase.storage
           .from("images")
           .getPublicUrl(filePath);
@@ -73,11 +102,17 @@ export default function NewPost({
         imageUrl = urlData?.publicUrl ?? null;
       }
 
-      // 2. Insert post data into the database
+      // Insert post data
       const postData = {
         content: newPost.trim(),
         image_url: imageUrl,
-        author_id: user.id, // Use Supabase user ID
+        author_id: user.id,
+        is_sponsored: isSponsored,
+        ...(isSponsored && {
+          sponsor_name: organizationName,
+          sponsor_package: SPONSORED_PACKAGES[selectedPackage!].name,
+          sponsor_price: SPONSORED_PACKAGES[selectedPackage!].price,
+        }),
       };
 
       const { error: insertError } = await supabase
@@ -86,9 +121,12 @@ export default function NewPost({
 
       if (insertError) throw insertError;
 
-      // Reset state and notify parent
+      // Reset state
       setNewPost("");
       setSelectedImageUri(null);
+      setOrganizationName("");
+      setSelectedPackage(null);
+      setIsSponsoredModalVisible(false);
       onPostCreated?.();
     } catch (error) {
       console.error("Error creating post:", error);
@@ -96,6 +134,14 @@ export default function NewPost({
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const openSponsoredModal = () => {
+    if (!user) {
+      Alert.alert("Authentication required", "Please sign in to create sponsored posts");
+      return;
+    }
+    setIsSponsoredModalVisible(true);
   };
 
   return (
@@ -110,7 +156,6 @@ export default function NewPost({
 
       {selectedImageUri && (
         <View style={styles.imagePreviewContainer}>
-          {/* Display selected image using its URI */}
           <Image
             source={{ uri: selectedImageUri }}
             style={styles.imagePreview}
@@ -129,19 +174,98 @@ export default function NewPost({
           <Ionicons name="image" size={24} color="#007AFF" />
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[
-            styles.postButton,
-            (!newPost.trim() || isLoading) && styles.postButtonDisabled,
-          ]}
-          onPress={handleCreatePost}
-          disabled={!newPost.trim() || isLoading}
-        >
-          <Text style={styles.postButtonText}>
-            {isLoading ? "Posting..." : "Post"}
-          </Text>
-        </TouchableOpacity>
+        <View style={styles.postButtonsContainer}>
+          <TouchableOpacity
+            style={styles.sponsoredButton}
+            onPress={openSponsoredModal}
+          >
+            <Text style={styles.sponsoredButtonText}>Sponsored</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[
+              styles.postButton,
+              (!newPost.trim() || isLoading) && styles.postButtonDisabled,
+            ]}
+            onPress={() => handleCreatePost(false)}
+            disabled={!newPost.trim() || isLoading}
+          >
+            <Text style={styles.postButtonText}>
+              {isLoading ? "Posting..." : "Post"}
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
+
+      {/* Sponsored Post Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isSponsoredModalVisible}
+        onRequestClose={() => setIsSponsoredModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Create Sponsored Post</Text>
+
+            <TextInput
+              style={styles.input2}
+              placeholder="Organization/NGO/Enterprise Name"
+              value={organizationName}
+              onChangeText={setOrganizationName}
+            />
+
+            <Text style={styles.packageTitle}>Select a Package:</Text>
+
+            {SPONSORED_PACKAGES.map((pkg, index) => (
+              <Pressable
+                key={pkg.name}
+                style={[
+                  styles.packageOption,
+                  selectedPackage === index && styles.packageOptionSelected,
+                ]}
+                onPress={() => setSelectedPackage(index)}
+              >
+                <View style={styles.packageHeader}>
+                  <Text style={styles.packageName}>{pkg.name}</Text>
+                  <Text style={styles.packagePrice}>${pkg.price}</Text>
+                </View>
+                <View style={styles.packageFeatures}>
+                  {pkg.features.map((feature, i) => (
+                    <Text key={i} style={styles.packageFeature}>
+                      • {feature}
+                    </Text>
+                  ))}
+                </View>
+              </Pressable>
+            ))}
+
+            <View style={styles.modalButtonRow}>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.cancelButton]}
+                onPress={() => setIsSponsoredModalVisible(false)}
+              >
+                <Text style={styles.modalButtonText}>Cancel</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[
+                  styles.modalButton,
+                  styles.submitButton,
+                  (selectedPackage === null || !organizationName.trim() || isLoading) &&
+                    styles.submitButtonDisabled,
+                ]}
+                onPress={() => handleCreatePost(true)}
+                disabled={selectedPackage === null || !organizationName.trim() || isLoading}
+              >
+                <Text style={styles.modalButtonText}>
+                  {isLoading ? "Processing..." : "Submit"}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -152,10 +276,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#f0f0f0",
     backgroundColor: "#fff",
-    flex: 1, // Ensure the container takes up available space
-    justifyContent: "flex-start", // Ensure content aligns properly
-    alignItems: "stretch", // Stretch items to fit the container
-    width: "100%", // Ensure the container spans the full width
+    flex: 1,
+    justifyContent: "flex-start",
+    alignItems: "stretch",
+    width: "100%",
   },
   input: {
     borderWidth: 1,
@@ -164,7 +288,19 @@ const styles = StyleSheet.create({
     padding: 12,
     minHeight: 80,
     textAlignVertical: "top",
+    marginBottom: 12,
   },
+
+  input2: {
+      borderWidth: 1,
+      borderColor: "#ddd",
+      borderRadius: 16,
+      padding: 16,
+//       minHeight: 80,
+height: 60,
+      textAlignVertical: "top",
+      marginBottom: 12,
+    },
   imagePreviewContainer: {
     marginTop: 12,
     position: "relative",
@@ -188,21 +324,132 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 12,
   },
+  postButtonsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 16,
+  },
   imageButton: {
     padding: 8,
   },
+  sponsoredButton: {
+    backgroundColor: "#1aea9f",
+    padding: 12,
+    borderRadius: 50,
+    alignItems: "center",
+    paddingLeft: 30,
+        paddingRight: 30,
+
+  },
+  sponsoredButtonText: {
+    color: "#fff",
+    fontWeight: "600",
+    fontSize: 16,
+  },
   postButton: {
-    backgroundColor: "#007AFF",
+    backgroundColor: "black",
+    padding: 12,
+    borderRadius: 50,
+    alignItems: "center",
+    paddingLeft: 30,
+    paddingRight: 30,
+//     minWidth: 80,
+  },
+  postButtonDisabled: {
+    opacity: 0.4,
+  },
+  postButtonText: {
+    color: "#fff",
+    fontWeight: "600",
+    fontSize: 16,
+  },
+  // Modal styles
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  modalContent: {
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 20,
+    width: "90%",
+    maxHeight: "80%",
+    shadowColor: "#4b5563",
+          shadowOffset: {
+            width: 0,
+            height: 10,
+          },
+          shadowOpacity: 0.1,
+          shadowRadius: 20,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 16,
+    textAlign: "center",
+  },
+  packageTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    marginBottom: 8
+  },
+  packageOption: {
+    borderWidth: 3,
+    borderColor: "#00000005",
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 8,
+  },
+  packageOptionSelected: {
+      borderWidth: 3,
+    borderColor: "#1aea9f",
+    backgroundColor: "#1aea9f20",
+  },
+  packageHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 8,
+  },
+  packageName: {
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  packagePrice: {
+    fontWeight: "bold",
+    fontSize: 16,
+    color: "#1aea9f",
+  },
+  packageFeatures: {
+    marginLeft: 8,
+  },
+  packageFeature: {
+    fontSize: 14,
+    color: "#555",
+  },
+  modalButtonRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 16,
+    gap: 8,
+  },
+  modalButton: {
+    flex: 1,
     padding: 12,
     borderRadius: 16,
     alignItems: "center",
-    flex: 1,
-    marginLeft: 12,
   },
-  postButtonDisabled: {
-    opacity: 0.7,
+  cancelButton: {
+    backgroundColor: "#f44336",
   },
-  postButtonText: {
+  submitButton: {
+    backgroundColor: "#007aff",
+  },
+  submitButtonDisabled: {
+    opacity: 0.4,
+  },
+  modalButtonText: {
     color: "#fff",
     fontWeight: "600",
     fontSize: 16,
