@@ -24,7 +24,7 @@ export default function HomeWidgets() {
         className="flex-1 rounded-[25px] justify-between w-[50%] h-full"
       >
         <LinearGradient
-          colors={["#1aea9fb0", "#10c7d9b0"]}
+          colors={["#1aea9f", "#10d7c9"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={{ flex: 1, borderRadius: 15, padding: 10 }}

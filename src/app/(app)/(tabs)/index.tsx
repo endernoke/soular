@@ -183,15 +183,19 @@ export default function HomeScreen() {
               width: "100%",
               minHeight: Dimensions.get("window").height * 0.5,
               backgroundColor: "white",
-              overflow: "scroll",
+              overflow: "auto",
               borderTopLeftRadius: 24,
               borderTopRightRadius: 24,
               paddingTop: 16,
               transform: [{ translateY: slideAnim }],
             }}
           >
-            <View className="flex-row justify-between items-center px-4 pb-4 border-b border-gray-200">
+            <View className="flex-row justify-start items-center px-4 pb-4 border-b border-gray-200">
               <Text className="text-lg font-semibold">Create New Post</Text>
+              <View className="rounded-full bg-[#ffcc0020] text-[#ffcc00] px-4 py-1 mx-4 text-[16px]">
+                Earn 50 Points
+              </View>
+              <View className="flex-1" /> {/* This empty View takes up remaining space */}
               <TouchableOpacity onPress={() => setNewPostModalVisible(false)}>
                 <Ionicons name="close" size={24} color="#000" />
               </TouchableOpacity>

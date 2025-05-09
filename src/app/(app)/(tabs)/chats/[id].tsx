@@ -221,7 +221,7 @@ export default function ChatScreen() {
         </View>
 
         <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#0000ff" />
+          <ActivityIndicator size="large" color="#1aea9f" />
           <Text className="text-gray-500 mt-2">Loading chat...</Text>
         </View>
       </View>
@@ -271,7 +271,7 @@ export default function ChatScreen() {
             className="w-10 h-10 rounded-full mr-3"
           />
         ) : (
-          <View className="w-10 h-10 rounded-full bg-gray-500 items-center justify-center mr-3">
+          <View className="w-10 h-10 rounded-full bg-[#1aea9f] items-center justify-center mr-3">
             <Ionicons name="chatbubbles" size={20} color="#fff" />
           </View>
         )}
@@ -318,8 +318,8 @@ export default function ChatScreen() {
           value={newMessage}
           onChangeText={setNewMessage}
           placeholder="Type a message..."
-          className="flex-1 bg-gray-100 rounded-full px-4 py-2 mr-2"
-          multiline
+          className="flex-1 bg-gray-100 rounded-full px-4 py-2 mr-2 h-[40px]"
+
           style={{ maxHeight: 100 }}
         />
         <TouchableOpacity
@@ -335,7 +335,7 @@ export default function ChatScreen() {
           <Ionicons
             name="send"
             size={24}
-            color={sending || !newMessage.trim() ? "#fff" : "#e3e3e3"}
+            color={sending || !newMessage.trim() ? "#fff" : "white"}
           />
         </TouchableOpacity>
       </View>

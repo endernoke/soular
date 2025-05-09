@@ -1111,7 +1111,7 @@ export default function LearnScreen() {
       >
         {/* Tab Content */}
         {activeTab === "chat" && (
-          <View style={{ flex: 1, marginBottom: 50 }}>
+          <View style={{ flex: 1, marginBottom: 60 }}>
             <ScrollView
               ref={scrollViewRef}
               contentContainerStyle={{ padding: 20, paddingBottom: 20 }}
@@ -1192,7 +1192,7 @@ export default function LearnScreen() {
                 <Ionicons
                   name="send"
                   size={20}
-                  color={inputMessage.trim() ? "#e3e3e3" : "#aaa"}
+                  color={inputMessage.trim() ? "white" : "#aaa"}
                 />
               </TouchableOpacity>
             </View>

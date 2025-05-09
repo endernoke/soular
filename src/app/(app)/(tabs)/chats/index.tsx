@@ -26,7 +26,7 @@ const ChatListItem = ({ chat }: { chat: ChatRoom }) => {
       };
     } else if (chat.event) {
       const prefix =
-        chat.type === "event_organizers" ? "Organizers:" : "Participants:";
+        chat.type === "event_organizers" ? "ORG /" : "PAR /";
       return {
         name: `${prefix} ${chat.event.title}`,
         icon: chat.icon_url,
@@ -50,7 +50,7 @@ const ChatListItem = ({ chat }: { chat: ChatRoom }) => {
       ) : (
         <View
           className={`w-12 h-12 rounded-full ${
-            isProfile ? "bg-blue-500" : "bg-gray-500"
+            isProfile ? "bg-blue-500" : "bg-[#1aea9f]"
           } items-center justify-center`}
         >
           <Ionicons
@@ -63,10 +63,14 @@ const ChatListItem = ({ chat }: { chat: ChatRoom }) => {
 
       {/* Chat Info */}
       <View className="flex-1 ml-4">
-        <Text className="font-semibold text-lg">{name}</Text>
-        {lastMessage && (
+        <Text className="font-semibold text-lg" numberOfLines={1}>{name}</Text>
+        {lastMessage ? (
           <Text className="text-gray-600 text-sm" numberOfLines={1}>
             {lastMessage.sender?.display_name}: {lastMessage.content}
+          </Text>
+        ) : (
+          <Text className="text-[#1aea9f] text-sm font-semibold">
+            Start the conversation!
           </Text>
         )}
       </View>
@@ -285,8 +289,8 @@ export default function ChatInboxScreen() {
   }, [searchQuery]);
 
   return (
-    <View className="flex-1 bg-gray-50">
-      <View className="bg-white p-4 border-b border-gray-200 flex-row items-left items-center mb-4">
+    <View className="flex-1 bg-white">
+      <View className="bg-white p-4 flex-row items-left items-center mb-0">
         <Text className="text-3xl ml-1 font-bold">Messages</Text>
       </View>
 
