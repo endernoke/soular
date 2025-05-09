@@ -675,7 +675,7 @@ const styles = StyleSheet.create({
   signOutButton: {
     margin: 30,
     padding: 16,
-    marginBottom: 60,
+    marginBottom: 80,
     backgroundColor: "#ff3b30",
     borderRadius: 16,
     alignItems: "center",
@@ -752,12 +752,14 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   editPhotoButton: {
+
     backgroundColor: "#007AFF",
     paddingHorizontal: 15,
     paddingVertical: 8,
     borderRadius: 20,
     flexDirection: "row",
     alignItems: "center",
-    marginRight: 40,
+    marginRight: 20,
   },
+
 });

@@ -958,7 +958,7 @@ export default function LearnScreen() {
               style={{
                 backgroundColor: "#1aea9f",
                 padding: 12,
-                borderRadius: 8,
+                borderRadius: 16,
                 flexDirection: "row",
                 alignItems: "center",
                 justifyContent: "center",
@@ -975,7 +975,7 @@ export default function LearnScreen() {
               <Text
                 style={{
                   color: "white",
-                  fontSize: 16,
+                  fontSize: 20,
                   fontWeight: "600",
                 }}
               >

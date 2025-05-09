@@ -282,7 +282,7 @@ export default function EventDetailScreen() {
   if (loading) {
     return (
       <View className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator size="large" color="#1aea9f" />
       </View>
     );
   }

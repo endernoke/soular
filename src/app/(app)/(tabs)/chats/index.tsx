@@ -295,13 +295,13 @@ export default function ChatInboxScreen() {
       </View>
 
       {/* Search Bar */}
-      <View className="flex-row items-center bg-gray-100 rounded-full px-4 py-2 mb-4 mx-[20px]">
+      <View className="flex-row items-center bg-gray-100 rounded-full px-4 py-3 mb-4 mx-[20px] border-2 border-gray-100">
         <Ionicons name="search" size={20} color="#666" />
         <TextInput
           value={searchQuery}
           onChangeText={setSearchQuery}
           placeholder="Search users or chats..."
-          className="flex-1 ml-2"
+          className="flex-1 ml-3"
         />
         {searching && <ActivityIndicator size="small" color="#007AFF" />}
       </View>
