@@ -289,7 +289,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 30,
     borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
+    borderBottomColor:   "#f0f0f0",
   },
   backButton: {
     flexDirection: "row",
