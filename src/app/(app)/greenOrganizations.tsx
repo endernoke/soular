@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 
 interface Organization {
   id: string;
@@ -100,6 +101,8 @@ export default function GreenOrganizationsScreen() {
   return (
     <View className="flex-1 bg-gray-50">
       <View className="bg-green-200 p-[30px] border-b border-gray-200">
+
+
         <TouchableOpacity
           onPress={() => router.back()}
           className="mb-4 flex-row items-center"
