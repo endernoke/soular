@@ -146,6 +146,30 @@ export default function RootLayoutNav() {
           },
         }}
       />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: "",
+          tabBarIcon: ({ color, size, focused }) => (
+            <View style={focused ? styles.iconContainerFocused : null}>
+              <Ionicons name="person" size={24} color={color} />
+            </View>
+          ),
+          tabBarLabelStyle: {
+            fontSize: 12,
+            marginBottom: 8,
+          },
+        }}
+        listeners={{
+          tabPress: () => {
+            if (router.canDismiss()) {
+              router.dismissTo("/profile");
+            } else {
+              router.replace("/profile");
+            }
+          },
+        }}
+      />
     </Tabs>
   );
 }
