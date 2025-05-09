@@ -96,3 +96,17 @@ export interface ChatMessage {
   // Optional joined data
   sender?: Profile;
 }
+
+export interface Story {
+  id: string;
+  content: string;
+  image_url: string | null;
+  created_at: string;
+  author_id: string;
+  expires_at: string;
+  // Include author profile data if fetched via join
+  profiles?: {
+    display_name: string | null;
+    photo_url?: string | null;
+  } | null;
+}

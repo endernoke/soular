@@ -20,6 +20,7 @@ import { useAuth } from "@/lib/auth";
 import NewPost from "@/components/NewPost";
 import SocialFeed from "@/components/SocialFeed";
 import HomeWidgets from "@/components/HomeWidgets";
+import Stories from "@/components/Stories";
 
 export default function HomeScreen() {
   const { user, profile } = useAuth();
@@ -32,14 +33,14 @@ export default function HomeScreen() {
   };
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(Dimensions.get("window").height))
+  const slideAnim = useRef(new Animated.Value(Dimensions.get("screen").height))
     .current;
 
   useEffect(() => {
     if (isNewPostModalVisible) {
       // Reset values when modal becomes visible
       fadeAnim.setValue(0);
-      slideAnim.setValue(Dimensions.get("window").height);
+      slideAnim.setValue(Dimensions.get("screen").height);
 
       // Run animations in parallel
       Animated.parallel([
@@ -66,7 +67,7 @@ export default function HomeScreen() {
           useNativeDriver: true,
         }),
         Animated.timing(slideAnim, {
-          toValue: Dimensions.get("window").height,
+          toValue: Dimensions.get("screen").height,
           duration: 250,
           easing: Easing.in(Easing.cubic),
           useNativeDriver: true,
@@ -87,7 +88,7 @@ export default function HomeScreen() {
   return (
     <ScrollView className="flex-1 bg-[white]">
       <ImageBackground
-        source={require("@/../assets/images/Abstract4.png")} // Ensure your abstract.png is in the assets folder
+        source={require("@/../assets/images/Abstract4.png")}
         resizeMode="stretch"
         className="mb-0"
         style={{ width: "100%" }}
@@ -99,7 +100,7 @@ export default function HomeScreen() {
           <View className="flex-row items-center justify-between px-[30px] w-full pt-6 mb-5">
             <View className="flex-1 flex-col">
               <Text
-                className="text-[30px] font-bold text-[black]"
+                className="text-[30px]"
                 style={{ fontFamily: "Priestacy", marginBottom: -10 }}
               >
                 Bonjour,
@@ -132,14 +133,17 @@ export default function HomeScreen() {
       </ImageBackground>
 
       <View className="flex-1 bg-[#1aea9f30] justify-left items-center w-full">
+        <Text className="text-xl font-bold px-[30px] py-4">Stories</Text>
+        <Stories />
+
         <View className="flex-row w-[101%] items-center justify-between px-[30px] pt-[25px] bg-white rounded-t-[40px] border-t-2 border-x-2 border-black">
-          <Text className="text-2xl">Our Soular Stories</Text>
+          <Text className="text-2xl">Feed</Text>
           <TouchableOpacity
             onPress={() => setNewPostModalVisible(true)}
             className="flex-row bg-blue-500 rounded-full px-4 py-2 items-center justify-center"
           >
             <Ionicons name="add" className="mt-0.5" size={15} color="#fff" />
-            <Text className="text-white text-md ml-1">New</Text>
+            <Text className="text-white text-md ml-1">New Post</Text>
           </TouchableOpacity>
         </View>
 
@@ -181,7 +185,7 @@ export default function HomeScreen() {
           <Animated.View
             style={{
               width: "100%",
-              minHeight: Dimensions.get("window").height * 0.5,
+              minHeight: Dimensions.get("screen").height * 0.5,
               backgroundColor: "white",
               overflow: "scroll",
               borderTopLeftRadius: 24,
