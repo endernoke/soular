@@ -13,6 +13,7 @@ import { useAuth } from "@/lib/auth";
 import { Event, Profile } from "@/types";
 import { Ionicons } from "@expo/vector-icons";
 import { format } from "date-fns";
+import FundingModal from "@/components/FundingModal";
 
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -28,6 +29,7 @@ export default function EventDetailScreen() {
   }>({});
   const [loading, setLoading] = useState(true);
   const [isJoining, setIsJoining] = useState(false);
+  const [showCrowdfundingModal, setShowCrowdfundingModal] = useState(false);
 
   const loadEventAndParticipants = async () => {
     try {
@@ -442,7 +444,20 @@ export default function EventDetailScreen() {
                   Participants Chat
                 </Text>
               </TouchableOpacity>
-            )}
+            )}            {/* Crowdfunding Button */}
+            <TouchableOpacity
+              className="bg-[#FFD700] p-4 rounded-[20px] mb-3"
+              onPress={() => setShowCrowdfundingModal(true)}
+            >
+              <Text className="text-white text-center text-[20px] font-semibold">
+                Support This Event 🌟
+              </Text>
+            </TouchableOpacity>
+            
+            <FundingModal 
+              visible={showCrowdfundingModal}
+              onClose={() => setShowCrowdfundingModal(false)}
+            />
         </View>
       </View>
     </ScrollView>
