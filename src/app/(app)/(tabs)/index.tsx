@@ -78,7 +78,7 @@ export default function HomeScreen() {
   // Set the status bar color to match the background
   useFocusEffect(
     useCallback(() => {
-      setStatusBarBackgroundColor("#1aea9f30", true);
+      setStatusBarBackgroundColor("#fff", true);
       return () => {
         setStatusBarBackgroundColor("#ffffff", true);
       };
@@ -105,7 +105,9 @@ export default function HomeScreen() {
         >
           <View className="flex-row items-center justify-between px-[30px] w-full pt-6 mb-5">
             <View className="flex-col">
-              <Text className="text-[40px] font-[Priestacy] mb-[-20px]">Bonjour,</Text>
+              <View className="h-[80px] w-[200px]">
+                <Text className="absolute text-[40px] font-[Priestacy]">Bonjour,</Text>
+              </View>
               <Text className="text-[30px] font-bold text-[black]">
                 {profile?.display_name || "Soular"}
               </Text>
@@ -199,9 +201,9 @@ export default function HomeScreen() {
           >
             <View className="flex-row justify-start items-center px-4 pb-4 border-b border-gray-200">
               <Text className="text-lg font-semibold">Create New Post</Text>
-              <View className="rounded-full bg-[#ffcc0020] text-[#ffcc00] px-4 py-1 mx-4 text-[16px]">
+              <Text className="rounded-full bg-[#ffcc0020] text-[#ffcc00] px-4 py-1 mx-4 text-[16px]">
                 Earn 50 Points
-              </View>
+              </Text>
               <View className="flex-1" />{" "}
               {/* This empty View takes up remaining space */}
               <TouchableOpacity onPress={() => setNewPostModalVisible(false)}>

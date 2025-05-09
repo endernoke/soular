@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -14,11 +14,12 @@ import {
   StatusBar,
   Image,
 } from "react-native";
+import { setStatusBarBackgroundColor } from "expo-status-bar";
 import { LinearGradient } from "expo-linear-gradient";
 import Markdown from "react-native-markdown-display";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
-import { useRouter } from "expo-router";
+import { useRouter, useFocusEffect } from "expo-router";
 
 // Screen dimensions
 const { width } = Dimensions.get("window");
@@ -444,6 +445,7 @@ export default function LearnScreen() {
           flexDirection: "column",
           alignItems: isUser ? "flex-end" : "flex-start",
           marginVertical: 8,
+          shadowColor: "#000",
           opacity: fadeAnim,
           transform: [{ translateY: slideAnim }],
         }}
@@ -989,6 +991,16 @@ export default function LearnScreen() {
     );
   };
 
+  // Set the status bar color to match the background
+  useFocusEffect(
+    useCallback(() => {
+      setStatusBarBackgroundColor("#1aea9f50", true);
+      return () => {
+        setStatusBarBackgroundColor("#ffffff", true);
+      };
+    }, [])
+  );
+
   // Main render
   return (
     <SafeAreaView
@@ -1002,7 +1014,7 @@ export default function LearnScreen() {
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
         style={{
-          paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+          paddingTop: 0,
           paddingHorizontal: 20,
           paddingBottom: 16,
           alignItems: "center",
@@ -1021,7 +1033,6 @@ export default function LearnScreen() {
             style={{
               fontFamily: "Priestacy",
               fontSize: 40,
-              fontWeight: "700",
               color: "#1aea9f",
               marginLeft: -100,
               marginTop: 0,

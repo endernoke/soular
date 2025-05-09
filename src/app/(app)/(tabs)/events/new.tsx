@@ -108,8 +108,8 @@ export default function NewEventScreen() {
           Create New Event
         </Text>
         <Text className="rounded-full bg-[#ffcc0020] text-[#ffcc00] w-[150px] text-center px-4 py-2 mb-5   text-[16px]">
-                        Earn 100 Points
-                      </Text>
+          Earn 100 Points
+        </Text>
 
         <View className="space-y-4">
           <View>
@@ -178,7 +178,7 @@ export default function NewEventScreen() {
 
           <View style={{ marginBottom: 10 }}>
             <Text className="text-gray-600 mb-3">Stage</Text>
-            <View className="flex-row space-x-2">
+            <View className="flex-row gap-2">
               {(["in-development", "upcoming"] as EventStage[]).map((stage) => (
                 <TouchableOpacity
                   key={stage}

@@ -350,9 +350,9 @@ export default function EventDetailScreen() {
           <Text className="text-gray-800 mb-6 leading-6">
             {event.description}
           </Text>
-<Text className="rounded-full bg-[#ffcc0020] text-[#ffcc00] w-[150px] text-center px-4 py-2 mb-5 text-[16px]">
-                        Earn 1000 Points
-                      </Text>
+          <Text className="rounded-full bg-[#ffcc0020] text-[#ffcc00] w-[150px] text-center px-4 py-2 mb-5 text-[16px]">
+            Earn 1000 Points
+          </Text>
           <View className="mb-4">
             <Text className="text-gray-600 mb-2">
               Created by: {event.profiles?.display_name || "Unknown"}
@@ -423,37 +423,25 @@ export default function EventDetailScreen() {
           {/* Chat buttons */}
           {isOrganizer && chatRooms.organizers && (
             <TouchableOpacity
-//               className="bg-[#1aea9f] p-4 rounded-[20px] mb-3"
+              className="bg-[#1aea9f] p-4 rounded-[20px] mb-3"
               onPress={() => navigateToChat("organizers")}
             >
-            <LinearGradient
-            colors={["#1aea9f", "#10d9c7"]}
-             className="bg-[#1aea9f] p-4 rounded-[20px] mb-3"
-            >
-
               <Text className="text-white text-center text-[20px]  font-semibold">
                 Organizers Chat
               </Text>
-              </LinearGradient>
             </TouchableOpacity>
           )}
 
           {((event.stage === "upcoming" && isParticipant) || isOrganizer) &&
             chatRooms.participants && (
               <TouchableOpacity
-              //               className="bg-[#1aea9f] p-4 rounded-[20px] mb-3"
-                            onPress={() => navigateToChat("participants")}
-                          >
-                          <LinearGradient
-                          colors={["#1aea9f", "#10d9c7"]}
-                           className="bg-[#1aea9f] p-4 rounded-[20px] mb-3"
-                          >
-
-                            <Text className="text-white text-center text-[20px]  font-semibold">
-                              Participants Chat
-                            </Text>
-                            </LinearGradient>
-                          </TouchableOpacity>
+                className="bg-[#1aea9f] p-4 rounded-[20px] mb-3"
+                onPress={() => navigateToChat("participants")}
+              >
+                <Text className="text-white text-center text-[20px]  font-semibold">
+                  Participants Chat
+                </Text>
+              </TouchableOpacity>
             )}
         </View>
       </View>

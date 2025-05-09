@@ -8,7 +8,8 @@ import {
   ActivityIndicator,
   RefreshControl,
 } from "react-native";
-import { router } from "expo-router";
+import { setStatusBarBackgroundColor } from "expo-status-bar";
+import { router, useFocusEffect } from "expo-router";
 import { supabase } from "@/lib/supabase"; // Import supabase client
 import { Event, EventStage } from "@/types"; // Use updated types
 import { Ionicons } from "@expo/vector-icons";
@@ -197,6 +198,16 @@ export default function EventsScreen() {
     };
   }, [loadEvents]); // Rerun effect if loadEvents changes (due to filters)
 
+  // Set the status bar color to match the background
+  useFocusEffect(
+    useCallback(() => {
+      setStatusBarBackgroundColor("#f9fafb", true);
+      return () => {
+        setStatusBarBackgroundColor("#ffffff", true);
+      };
+    }, [])
+  );
+  
   const stages: (EventStage | "all")[] = [
     "all",
     "upcoming",
@@ -205,140 +216,123 @@ export default function EventsScreen() {
   ];
 
   return (
-    <View className="flex-1 bg-gray-50">
-      <LinearGradient
-        colors={["#ffffff00", "#ffffff00"]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 0, y: 1 }}
-        className="flex-1"
-      >
-        <View className="px-6 pt-6">
-          <View className="flex-row justify-between items-center mb-4">
-            <View className="flex-row">
-              <Text
-                className="text-3xl font-black mr-1 text-[#1aea9f]"
-                style={{ fontFamily: "Priestacy" }}
-              >
-                Soular
-              </Text>
-              <Text className="text-3xl font-bold ">Events</Text>
-            </View>
-            <TouchableOpacity onPress={() => router.push("/events/new")}>
-              <LinearGradient
-                colors={["black", "black"]}
-                className="px-4 py-2 rounded-full"
-              >
-                <View className="flex-row items-center justify-center">
-                  <Ionicons name="add" size={20} color="white" />
-                  <Text className="text-white text-md font-bold ml-1 mr-1">
-                    New
-                  </Text>
-                </View>
-              </LinearGradient>
-            </TouchableOpacity>
+    <View className="bg-gray-50">
+      <View className="pb-6 px-6 pt-6">
+        <View className="flex-row justify-between items-center mb-4">
+          <View className="flex-row">
+            <Text
+              className="text-3xl font-[Priestacy] text-[#1aea9f] pt-6"
+            >
+              Soular
+            </Text>
+            <Text className="text-3xl font-bold pl-1 pt-3">Events</Text>
           </View>
-
-          <View
-            className="flex-row items-center mb-4 border-2 border-[#00000010] rounded-full"
-            style={{
-              flex: 1,
-              flexDirection: "row",
-              justifyContent: "center",
-              alignItems: "center",
-              backgroundColor: "#f9fafb",
-            }}
+          <TouchableOpacity
+            className="bg-black rounded-full px-4 py-2 flex-row items-center justify-center"
+            onPress={() => router.push("/events/new")}
           >
-            <Ionicons
-              name="search"
-              size={20}
-              color="#4b5563"
-              style={{ padding: 10 }}
-            />
-            <TextInput
-              style={{
-                flex: 1,
-                paddingTop: 10,
-                paddingRight: 10,
-                paddingBottom: 10,
-                paddingLeft: 0,
-                color: "#424242",
-              }}
-              placeholder="Search for Soular events..."
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-            />
-          </View>
-
-          <View className="mb-4 border-2 border-[#00000010] rounded-full p-[5px]">
-            <View className="rounded-full" style={{ overflow: "hidden" }}>
-              <FlatList
-                style={{ paddingRight: -50 }}
-                horizontal
-                data={stages}
-                renderItem={({ item }) => (
-                  <TouchableOpacity
-                    onPress={() => setSelectedStage(item)}
-                    className={`mr-[5px] px-5 py-2 rounded-full ${
-                      selectedStage === item
-                        ? item === "upcoming"
-                          ? "bg-[#1aea9f]"
-                          : item === "in-development"
-                          ? "bg-blue-500"
-                          : "bg-gray-700"
-                        : "bg-gray-200"
-                    }`}
-                  >
-                    <Text
-                      className={
-                        selectedStage === item ? "text-white" : "text-gray-700"
-                      }
-                    >
-                      {item.charAt(0).toUpperCase() +
-                        item.slice(1).replace("-", " ")}
-                    </Text>
-                  </TouchableOpacity>
-                )}
-                keyExtractor={(item) => item}
-                showsHorizontalScrollIndicator={false}
-              />
+            <View className="flex-row items-center justify-center">
+              <Ionicons name="add" size={20} color="white" />
+              <Text className="text-white text-md font-bold ml-1 mr-1">
+                New
+              </Text>
             </View>
-          </View>
+          </TouchableOpacity>
         </View>
 
-        {isLoading && events.length === 0 ? (
-          <ActivityIndicator
-            size="large"
-            color="#1aea9f"
-            style={{ marginTop: 20 }}
+        <View
+          className="flex-row items-center justify-left mb-4 border-2 border-[#00000010] rounded-full min-h-[40px]"
+        >
+          <Ionicons
+            name="search"
+            size={20}
+            color="#4b5563"
+            style={{ padding: 10 }}
           />
-        ) : error ? (
-          <Text className="text-center text-red-500 mt-4">Error: {error}</Text>
-        ) : (
-          <FlatList
-            style={{ paddingBottom: 10 }}
-            data={events}
-            renderItem={({ item }) => (
-              <EventCard
-                event={item}
-                onPress={() => router.push(`/events/${item.id}`)}
-              />
-            )}
-            keyExtractor={(item) => item.id}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 24 }}
-            ListEmptyComponent={() =>
-              !isLoading && (
-                <Text className="text-center text-gray-500 mt-10">
-                  No events found.
-                </Text>
-              )
-            }
-            refreshControl={
-              <RefreshControl refreshing={isLoading} onRefresh={loadEvents} />
-            }
-          />
-        )}
-      </LinearGradient>
+          <TextInput
+            style={{
+              paddingTop: 10,
+              paddingRight: 10,
+              paddingBottom: 10,
+              paddingLeft: 0,
+              color: "#424242",
+            }}
+            placeholder="Search for Soular events..."
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            />
+        </View>
+
+        { /* Stage filter buttons */}
+        <View className="mb-4 rounded-full p-[5px]">
+          <View className="rounded-full">
+            <FlatList
+              style={{ paddingRight: -50 }}
+              horizontal
+              data={stages}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  onPress={() => setSelectedStage(item)}
+                  className={`mr-[5px] px-5 py-2 rounded-full ${
+                    selectedStage === item
+                      ? item === "upcoming"
+                        ? "bg-[#1aea9f]"
+                        : item === "in-development"
+                        ? "bg-blue-500"
+                        : "bg-gray-700"
+                      : "bg-gray-200"
+                  }`}
+                >
+                  <Text
+                    className={
+                      selectedStage === item ? "text-white" : "text-gray-700"
+                    }
+                  >
+                    {item.charAt(0).toUpperCase() +
+                      item.slice(1).replace("-", " ")}
+                  </Text>
+                </TouchableOpacity>
+              )}
+              keyExtractor={(item) => item}
+              showsHorizontalScrollIndicator={false}
+            />
+          </View>
+        </View>
+      </View>
+
+      {isLoading && events.length === 0 ? (
+        <ActivityIndicator
+          size="large"
+          color="#1aea9f"
+          style={{ marginTop: 20 }}
+        />
+      ) : error ? (
+        <Text className="text-center text-red-500 mt-4">Error: {error}</Text>
+      ) : (
+        <FlatList
+          style={{ marginBottom: 250 }}
+          data={events}
+          renderItem={({ item }) => (
+            <EventCard
+              event={item}
+              onPress={() => router.push(`/events/${item.id}`)}
+            />
+          )}
+          keyExtractor={(item) => item.id}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 24 }}
+          ListEmptyComponent={() =>
+            !isLoading && (
+              <Text className="text-center text-gray-500 mt-10">
+                No events found.
+              </Text>
+            )
+          }
+          refreshControl={
+            <RefreshControl refreshing={isLoading} onRefresh={loadEvents} />
+          }
+        />
+      )}
     </View>
   );
 }
