@@ -107,8 +107,8 @@ export default function NewEventScreen() {
         <Text className="text-3xl font-bold mb-4 text-black">
           Create New Event
         </Text>
-        <Text className="rounded-full bg-[#ffcc0020] text-[#ffcc00] w-[140px] text-center px-4 py-1 mb-5 text-[16px]">
-                        Earn 50 Points
+        <Text className="rounded-full bg-[#ffcc0020] text-[#ffcc00] w-[150px] text-center px-4 py-2 mb-5   text-[16px]">
+                        Earn 100 Points
                       </Text>
 
         <View className="space-y-4">

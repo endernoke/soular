@@ -350,7 +350,9 @@ export default function EventDetailScreen() {
           <Text className="text-gray-800 mb-6 leading-6">
             {event.description}
           </Text>
-
+<Text className="rounded-full bg-[#ffcc0020] text-[#ffcc00] w-[150px] text-center px-4 py-2 mb-5 text-[16px]">
+                        Earn 1000 Points
+                      </Text>
           <View className="mb-4">
             <Text className="text-gray-600 mb-2">
               Created by: {event.profiles?.display_name || "Unknown"}

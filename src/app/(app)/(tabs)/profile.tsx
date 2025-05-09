@@ -255,7 +255,7 @@ export default function ProfileScreen() {
           className="flex-row items-center"
         >
           <Ionicons name="arrow-back" size={24} color="#000" />
-          <Text className="ml-2 text-xl">Back</Text>
+          <Text className="ml-2 text-md">Back</Text>
         </TouchableOpacity>
       </View>
       {/* Redesigned header with horizontal layout */}
@@ -276,7 +276,7 @@ export default function ProfileScreen() {
               )
             ) : (
               <View style={[styles.avatar, styles.avatarPlaceholder]}>
-                <ActivityIndicator size="large" color="#007AFF" />
+                <ActivityIndicator size="large" color="#000000" />
               </View>
             )}
           </View>
@@ -502,16 +502,20 @@ const styles = StyleSheet.create({
   topHeader: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
+    width: '100%',
+    padding: 30,
+    paddingBottom: 20,
+//     paddingTop: 20,
+
   },
   backButton: {
     flexDirection: "row",
     padding: 8,
   },
   header: {
+//       width: '90%',
     padding: 20,
+    alignItems: 'center',
     borderBottomWidth: 1,
     borderBottomColor: "#f0f0f0",
   },
@@ -521,6 +525,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 16,
+    width: '90%'
   },
 
   avatarContainer: {
@@ -531,6 +536,8 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
+    borderWidth: 4,
+    borderColor: '#1aea9f'
   },
 
   userInfo: {
@@ -556,7 +563,7 @@ const styles = StyleSheet.create({
   },
 
   editButton: {
-    backgroundColor: "#007AFF",
+    backgroundColor: "#000000",
     paddingHorizontal: 15,
     paddingVertical: 8,
     borderRadius: 20,
@@ -579,11 +586,11 @@ const styles = StyleSheet.create({
   },
   activeTab: {
     borderBottomWidth: 2,
-    borderBottomColor: "#007AFF",
+    borderBottomColor: "#000000",
   },
   tabButtonText: {
     fontSize: 16,
-    color: "#007AFF",
+    color: "#000000",
   },
   tabContainer: {
     flexDirection: "row",
@@ -601,11 +608,11 @@ const styles = StyleSheet.create({
   },
   activeTab: {
     borderBottomWidth: 2,
-    borderBottomColor: "#007AFF",
+    borderBottomColor: "#000000",
   },
   tabButtonText: {
     fontSize: 16,
-    color: "#007AFF",
+    color: "#000000",
   },
   content: {
     flex: 1,
@@ -632,7 +639,7 @@ const styles = StyleSheet.create({
   },
   eventRole: {
     fontSize: 14,
-    color: "#007AFF",
+    color: "#000000",
   },
   postItem: {
     padding: 16,
@@ -738,7 +745,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   modalSaveButton: {
-    backgroundColor: "#007AFF",
+    backgroundColor: "#000000",
     marginLeft: 8,
   },
   modalButtonText: {
@@ -753,7 +760,7 @@ const styles = StyleSheet.create({
   },
   editPhotoButton: {
 
-    backgroundColor: "#007AFF",
+    backgroundColor: "#000000",
     paddingHorizontal: 15,
     paddingVertical: 8,
     borderRadius: 20,
