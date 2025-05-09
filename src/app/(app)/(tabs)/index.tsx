@@ -104,7 +104,7 @@ export default function HomeScreen() {
               >
                 Bonjour,
               </Text>
-              <Text className="text-[30px] font-bold text-[black]" style={{}}>
+              <Text className="text-[30px] font-bold text-[black]">
                 {profile?.display_name || "Soular"}
               </Text>
             </View>
@@ -116,10 +116,10 @@ export default function HomeScreen() {
                 {profile?.photo_url ? (
                   <Image
                     source={{ uri: profile.photo_url }}
-                    className="w-10 h-10 rounded-full"
+                    className="w-12 h-12 rounded-full"
                   />
                 ) : (
-                  <View className="w-10 h-10 rounded-full bg-blue-500 items-center justify-center">
+                  <View className="w-12 h-12 rounded-full bg-blue-500 items-center justify-center">
                     <Ionicons name="person" size={20} color="#ffffff" />
                   </View>
                 )}

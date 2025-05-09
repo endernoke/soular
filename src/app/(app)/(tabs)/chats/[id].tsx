@@ -313,7 +313,7 @@ export default function ChatScreen() {
       />
 
       {/* Message Input */}
-      <View className="p-4 border-t mb-10 border-gray-200 bg-white flex-row items-center">
+      <View className="p-4 border-t border-gray-200 bg-white flex-row items-center">
         <TextInput
           value={newMessage}
           onChangeText={setNewMessage}

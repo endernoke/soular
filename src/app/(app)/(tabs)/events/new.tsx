@@ -8,21 +8,24 @@ import {
   Alert,
   ActivityIndicator,
 } from "react-native";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { supabase } from "@/lib/supabase"; // Import supabase client
 import { useAuth } from "@/lib/auth";
 import { EventStage } from "@/types"; // Use updated types
 import { Ionicons } from "@expo/vector-icons";
 
 export default function NewEventScreen() {
-  const { user } = useAuth(); // Get Supabase user
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
+  const params = useLocalSearchParams();
+
+  // Initialize form data with URL parameters if they exist
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    date: "",
-    time: "",
-    venue: "",
+    title: (params.title as string) || "",
+    description: (params.description as string) || "",
+    date: (params.date as string) || "",
+    time: "14:00", // Default to 2 PM if not specified
+    venue: (params.venue as string) || "",
     stage: "in-development" as EventStage,
   });
 

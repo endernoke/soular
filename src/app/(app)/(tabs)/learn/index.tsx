@@ -18,6 +18,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import Markdown from "react-native-markdown-display";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
+import { useRouter } from "expo-router";
 
 // Screen dimensions
 const { width } = Dimensions.get("window");
@@ -66,6 +67,8 @@ export default function LearnScreen() {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
   const tabIndicatorPosition = useRef(new Animated.Value(0)).current;
+
+  const router = useRouter();
 
   // Start a new chat session when the component mounts
   useEffect(() => {
@@ -416,6 +419,19 @@ export default function LearnScreen() {
     }).start();
   };
 
+  // Handle create event navigation
+  const handleCreateEvent = (event: GreenEvent) => {
+    // Encode the event data in the URL parameters
+    const params = new URLSearchParams({
+      title: event.title,
+      description: `${event.description}\n\nEnvironmental Impact: ${event.impact}`,
+      venue: event.location,
+      date: event.date,
+    });
+
+    router.push(`/events/new?${params.toString()}`);
+  };
+
   // Render message item
   // Render message item
   const renderMessage = (message: Message, index: number) => {
@@ -461,12 +477,12 @@ export default function LearnScreen() {
             style={{
               fontSize: 24,
               fontWeight: "bold",
-              color: "#6C757D",
+              color: "black",
               marginBottom: 4,
               textAlign: isUser ? "right" : "left",
             }}
           >
-            {isUser ? "You" : "Soular Assistant"}
+            {isUser ? "You" : "SoularAI"}
           </Text>
         </View>
         {/* Message Content */}
@@ -481,7 +497,7 @@ export default function LearnScreen() {
             style={{
               borderRadius: 18,
               paddingHorizontal: 16,
-              paddingVertical: 10,
+              paddingVertical: 8,
               borderWidth: isUser ? 0 : 2,
               borderColor: "#00000020",
 
@@ -494,7 +510,7 @@ export default function LearnScreen() {
           >
             {isUser ? (
               <Text
-                style={{ color: "#212529", fontSize: 16, fontWeight: "500" }}
+                style={{ color: "white", fontSize: 16, fontWeight: "500" }}
               >
                 {message.text}
               </Text>
@@ -644,7 +660,7 @@ export default function LearnScreen() {
                 fontWeight: "bold",
                 color: "transparent",
                 backgroundClip: "text",
-                backgroundImage: "linear-gradient(45deg, #00f260, #0575e6)",
+                backgroundImage: "linear-gradient(45deg, #00f260, #1aea9f)",
               }}
             >
               {carbonData.footprint}
@@ -747,7 +763,7 @@ export default function LearnScreen() {
                     width: 24,
                     height: 24,
                     borderRadius: 12,
-                    backgroundColor: "#2e8b57",
+                    backgroundColor: "#1aea9f",
                     justifyContent: "center",
                     alignItems: "center",
                     marginRight: 12,
@@ -839,7 +855,7 @@ export default function LearnScreen() {
           >
             <View style={{ height: 120, backgroundColor: "white" }}>
               <LinearGradient
-                colors={["rgba(26, 234, 159, 0.8)", "rgba(16, 217, 199, 0.8)"]}
+                colors={["#1aea9f", "rgba(16, 217, 199, 0.8)"]}
                 style={{
                   position: "absolute",
                   left: 0,
@@ -936,6 +952,36 @@ export default function LearnScreen() {
                 </Text>
               </View>
             </View>
+
+            <TouchableOpacity
+              onPress={() => handleCreateEvent(event)}
+              style={{
+                backgroundColor: "#1aea9f",
+                padding: 12,
+                borderRadius: 8,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                margin: 20,
+                marginTop: 0,
+              }}
+            >
+              <Ionicons
+                name="add-circle-outline"
+                size={20}
+                color="white"
+                style={{ marginRight: 8 }}
+              />
+              <Text
+                style={{
+                  color: "white",
+                  fontSize: 16,
+                  fontWeight: "600",
+                }}
+              >
+                Create Event
+              </Text>
+            </TouchableOpacity>
           </TouchableOpacity>
         ))}
       </Animated.ScrollView>
@@ -975,8 +1021,8 @@ export default function LearnScreen() {
               fontFamily: "Priestacy",
               fontSize: 40,
               fontWeight: "700",
-              color: "#388e3c",
-              marginLeft: -10,
+              color: "#1aea9f",
+              marginLeft: -100,
               marginTop: 0,
               marginBottom: -40,
               zIndex: 1,
@@ -987,7 +1033,7 @@ export default function LearnScreen() {
           <Text
             style={{
               fontSize: 40,
-              fontWeight: "800",
+              fontWeight: "700",
               opacity: 0.85,
               color: "black",
               marginTop: 0,
@@ -1110,11 +1156,12 @@ export default function LearnScreen() {
                 value={inputMessage}
                 onChangeText={setInputMessage}
                 placeholder="Ask a question..."
-                multiline={true} // Enable multiline input
+                multiline={false} // Enable multiline input
                 style={{
                   flex: 1,
+                  height: 40,
                   minHeight: 40, // Changed from fixed height to minHeight
-                  maxHeight: 120, // Add a maximum height to prevent too much expansion
+                  maxHeight: 120,
                   backgroundColor: "#F1F3F5",
                   borderRadius: 20,
                   paddingHorizontal: 16,
@@ -1123,6 +1170,7 @@ export default function LearnScreen() {
                   marginRight: 8,
                   fontSize: 16,
                   textAlignVertical: "center", // Center text vertically
+
                 }}
                 placeholderTextColor="#ADB5BD"
               />
@@ -1138,7 +1186,7 @@ export default function LearnScreen() {
                   backgroundColor: inputMessage.trim() ? "#1aea9f" : "#e3e3e3",
                   justifyContent: "center",
                   alignItems: "center",
-                  marginBottom: 5, // Add a small margin at the bottom to align with text
+                  marginBottom: 0, // Add a small margin at the bottom to align with text
                 }}
               >
                 <Ionicons

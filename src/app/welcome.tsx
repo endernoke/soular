@@ -83,7 +83,8 @@ const styles = StyleSheet.create({
     fontWeight: '100',
     color: 'black',
     textAlign: 'center',
-    marginTop: 20
+    marginTop: 20,
+    fontFamily: "Priestacy"
 
   },
   subtitle: {

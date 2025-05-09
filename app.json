@@ -34,8 +34,10 @@
         "expo-font",
         {
           "fonts": [
-            "./assets/fonts/modernline.otf",
-            "./assets/fonts/priestacy.otf"
+            "./assets/fonts/Priestacy.ttf",
+            "./assets/fonts/Yozai-Medium.ttf",
+            "./assets/fonts/BlackMountain-vmlBZ.ttf",
+            "./assets/fonts/SpaceMono-Regular.ttf"
           ]
         }
       ]

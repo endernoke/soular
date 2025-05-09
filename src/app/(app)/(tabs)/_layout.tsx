@@ -2,13 +2,15 @@ import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { StyleSheet, View } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, usePathname } from "expo-router";
 
 export default function RootLayoutNav() {
   const router = useRouter();
 
   return (
     <Tabs
+      initialRouteName="index"
+      backBehavior="history"
       screenOptions={{
         tabBarActiveTintColor: "#007AFF",
         tabBarInactiveTintColor: "#00000020",
@@ -18,18 +20,19 @@ export default function RootLayoutNav() {
           borderTopWidth: 0,
           backgroundColor: "transparent",
           elevation: 0,
-          height: 50, // Increased height
+          height: 60, // Increased height
           paddingBottom: 0, // Extra padding at the bottom
         },
         tabBarBackground: () => (
           <BlurView
             intensity={100}
-            tint="extraLight"
+            tint="systemThickMaterialLight"
             style={StyleSheet.absoluteFill}
+            experimentalBlurMethod="dimezisBlurView"
           />
         ),
         tabBarItemStyle: {
-          paddingTop: 7.5,
+          paddingTop: 15,
           borderRadius: 10,
           marginHorizontal: 5,
           height: 40, // Increased item height
@@ -50,6 +53,15 @@ export default function RootLayoutNav() {
             marginBottom: 8, // Adjusted label position
           },
         }}
+        listeners={{
+          tabPress: () => {
+            if (router.canDismiss()) {
+              router.dismissTo("/learn");
+            } else {
+              router.replace("/learn");
+            }
+          },
+        }}
       />
       <Tabs.Screen
         name="index"
@@ -65,6 +77,15 @@ export default function RootLayoutNav() {
             marginBottom: 8,
           },
         }}
+        listeners={{
+          tabPress: () => {
+            if (router.canDismiss()) {
+              router.dismissTo("/");
+            } else {
+              router.replace("/");
+            }
+          },
+        }}
       />
       <Tabs.Screen
         name="chats"
@@ -72,12 +93,31 @@ export default function RootLayoutNav() {
           title: "",
           tabBarIcon: ({ color, size, focused }) => (
             <View style={focused ? styles.iconContainerFocused : null}>
-              <Ionicons name="chatbubbles" size={24} color={color} />
+              <Ionicons name="chatbubble" size={24} color={color} />
             </View>
           ),
           tabBarLabelStyle: {
             fontSize: 12,
             marginBottom: 8,
+          },
+          tabBarStyle: {
+            display:
+              usePathname().split("/").pop() == "chats" ? "flex" : "none",
+            position: "absolute",
+            borderTopWidth: 0,
+            backgroundColor: "transparent",
+            elevation: 0,
+            height: 60, // Increased height
+            paddingBottom: 0, // Extra padding at the bottom
+          },
+        }}
+        listeners={{
+          tabPress: () => {
+            if (router.canDismiss()) {
+              router.dismissTo("/chats");
+            } else {
+              router.replace("/chats");
+            }
           },
         }}
       />
@@ -93,6 +133,15 @@ export default function RootLayoutNav() {
           tabBarLabelStyle: {
             fontSize: 12,
             marginBottom: 8,
+          },
+        }}
+        listeners={{
+          tabPress: () => {
+            if (router.canDismiss()) {
+              router.dismissTo("/events");
+            } else {
+              router.replace("/events");
+            }
           },
         }}
       />

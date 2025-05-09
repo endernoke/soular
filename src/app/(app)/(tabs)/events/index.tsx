@@ -35,15 +35,15 @@ const EventCard = ({
 }) => (
   <TouchableOpacity
     onPress={onPress}
-    className="bg-white p-4 rounded-[16px] mb-[24px] border-[#00000015] border-[2px] shadow-md"
+    className="bg-white p-4 rounded-[16px] mb-[24px] border-[#000000] border-[2px] shadow-md"
     style={{
       shadowColor: "#4b5563",
       shadowOffset: {
         width: 0,
-        height: 3,
+        height: 10,
       },
-      shadowOpacity: 0.5,
-      shadowRadius: 3.14,
+      shadowOpacity: 0.1,
+      shadowRadius: 20,
     }}
   >
     <Text className="text-black text-xl font-bold mb-2">{event.title}</Text>
@@ -216,21 +216,25 @@ export default function EventsScreen() {
           <View className="flex-row justify-between items-center mb-4">
             <View className="flex-row">
               <Text
-                className="text-3xl font-black mr-1 text-green-700"
+                className="text-3xl font-black mr-1 text-[#1aea9f]"
                 style={{ fontFamily: "Priestacy" }}
               >
                 Soular
               </Text>
               <Text className="text-3xl font-bold ">Events</Text>
             </View>
-            <TouchableOpacity
-              onPress={() => router.push("/events/new")}
-              className="bg-blue-700 px-3 py-2 rounded-full"
-            >
-              <View className="flex-row items-center justify-center">
-                <Ionicons name="add" size={20} color="#fff" />
-                <Text className="text-white text-md ml-1 mr-1">New</Text>
-              </View>
+            <TouchableOpacity onPress={() => router.push("/events/new")}>
+              <LinearGradient
+                colors={["black", "black"]}
+                className="bg-[#1aea9f] px-4 py-2 rounded-full"
+              >
+                <View className="flex-row items-center justify-center">
+                  <Ionicons name="add" size={20} color="white" />
+                  <Text className="text-white text-md font-bold ml-1 mr-1">
+                    New
+                  </Text>
+                </View>
+              </LinearGradient>
             </TouchableOpacity>
           </View>
 
@@ -274,10 +278,10 @@ export default function EventsScreen() {
                 renderItem={({ item }) => (
                   <TouchableOpacity
                     onPress={() => setSelectedStage(item)}
-                    className={`mr-[5px] px-4 py-2 rounded-full ${
+                    className={`mr-[5px] px-5 py-2 rounded-full ${
                       selectedStage === item
                         ? item === "upcoming"
-                          ? "bg-green-700"
+                          ? "bg-[#1aea9f]"
                           : item === "in-development"
                           ? "bg-blue-500"
                           : "bg-gray-700"

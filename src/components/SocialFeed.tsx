@@ -194,8 +194,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   timestamp: {
+      fontWeight: '600',
     fontSize: 12,
-    color: '#666',
+    color: '#00000050',
     marginTop: 2,
   },
   postContent: {
