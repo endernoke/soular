@@ -81,6 +81,16 @@ create table chat_messages (
   created_at timestamptz default now()
 );
 
+-- Stories table
+create table if not exists stories (
+  id uuid default uuid_generate_v4() primary key,
+  content text not null,
+  image_url text,
+  author_id uuid references profiles(id) on delete cascade not null,
+  created_at timestamptz default now(),
+  expires_at timestamptz not null -- Stories expire after 24 hours
+);
+
 -- Indexes for performance
 create index if not exists posts_created_at_idx on posts (created_at desc);
 create index if not exists posts_author_id_idx on posts (author_id);
@@ -93,6 +103,9 @@ create index chat_rooms_event_id_idx on chat_rooms(event_id);
 create index chat_rooms_updated_at_idx on chat_rooms(updated_at desc);
 create index chat_messages_chat_id_created_idx on chat_messages(chat_id, created_at desc);
 create index chat_messages_sender_id_idx on chat_messages(sender_id);
+create index if not exists stories_created_at_idx on stories (created_at desc);
+create index if not exists stories_expires_at_idx on stories (expires_at);
+create index if not exists stories_author_id_idx on stories (author_id);
 
 -- Function to handle new user creation
 create or replace function public.handle_new_user()
@@ -121,6 +134,7 @@ alter table event_participants enable row level security;
 alter table chat_rooms enable row level security;
 alter table chat_members enable row level security;
 alter table chat_messages enable row level security;
+alter table stories enable row level security;
 
 -- Profiles policies
 create policy "Public profiles are viewable by everyone"
@@ -601,3 +615,51 @@ create policy "Users can delete their own profile pictures"
 create policy "Profile pictures are viewable by everyone"
   on storage.objects for select
   using (bucket_id = 'profile-pictures');
+
+-- Create storage bucket for stories
+insert into storage.buckets (id, name)
+values ('stories', 'stories')
+on conflict do nothing;
+
+-- Set up storage policies for stories
+create policy "Stories are viewable by everyone"
+  on storage.objects for select
+  using (bucket_id = 'stories');
+
+create policy "Authenticated users can upload stories"
+  on storage.objects for insert
+  with check (
+    bucket_id = 'stories' and
+    auth.role() = 'authenticated'
+  );
+
+create policy "Users can update their own stories"
+  on storage.objects for update
+  using (
+    bucket_id = 'stories' and
+    owner = auth.uid()
+  );
+
+create policy "Users can delete their own stories"
+  on storage.objects for delete
+  using (
+    bucket_id = 'stories' and
+    owner = auth.uid()
+  );
+
+-- Stories policies
+create policy "Stories are viewable by everyone"
+  on stories for select
+  using (true);
+
+create policy "Users can create stories as themselves"
+  on stories for insert
+  with check (auth.uid() = author_id);
+
+create policy "Users can update their own stories"
+  on stories for update
+  using (auth.uid() = author_id);
+
+create policy "Users can delete their own stories"
+  on stories for delete
+  using (auth.uid() = author_id);

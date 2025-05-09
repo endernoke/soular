@@ -2,9 +2,6 @@ import { View, Text, StyleSheet, TouchableOpacity, Image, Platform, Dimensions  
 import { Link } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 
-const { width: screenWidth } = Dimensions.get('window');
-const { height: screenHeight } = Dimensions.get('window');
-
 export default function Welcome() {
   return (
     <View style={styles.container}>
