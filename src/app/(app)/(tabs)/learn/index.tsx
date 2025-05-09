@@ -827,6 +827,7 @@ export default function LearnScreen() {
 
     return (
       <Animated.ScrollView
+      showsVerticalScrollIndicator={false}
         style={{
           flex: 1,
           opacity: fadeAnim,

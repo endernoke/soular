@@ -94,7 +94,7 @@ export default function NewEventScreen() {
   };
 
   return (
-    <ScrollView className="flex-1 bg-gray-50 pb-8">
+    <ScrollView className="flex-1 bg-gray-50 pb-8" showsVerticalScrollIndicator={false}>
       <View className="p-[30px]">
         <TouchableOpacity
           onPress={() => router.back()}

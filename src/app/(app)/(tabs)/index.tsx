@@ -86,7 +86,7 @@ export default function HomeScreen() {
   );
 
   return (
-    <ScrollView className="flex-1 bg-[white]">
+    <ScrollView className="flex-1 bg-[white]" showsVerticalScrollIndicator={false}>
       <ImageBackground
         source={require("@/../assets/images/Abstract4.png")}
         resizeMode="stretch"

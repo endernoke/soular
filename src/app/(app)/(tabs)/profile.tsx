@@ -355,7 +355,7 @@ export default function ProfileScreen() {
         </TouchableOpacity>
       </View>
 
-      <ScrollView style={styles.content}>
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {activeTab === "events" ? (
           userEvents.length > 0 ? (
             userEvents.map((event) => (

@@ -127,6 +127,7 @@ export default function GreenOrganizationsScreen() {
       </LinearGradient>
 
       <FlatList
+      showsVerticalScrollIndicator={false}
         data={organizations}
         renderItem={({ item }) => <OrganizationCard org={item} />}
         keyExtractor={(item) => item.id}

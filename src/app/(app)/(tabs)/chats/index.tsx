@@ -309,6 +309,7 @@ export default function ChatInboxScreen() {
       {/* Show filtered chats if the query matches any existing chats */}
       {searchQuery && getFilteredChats().length > 0 ? (
         <FlatList
+        showsVerticalScrollIndicator={false}
         className="pb-[60px]"
           data={getFilteredChats()}
           renderItem={({ item }) => <ChatListItem chat={item} />}
@@ -319,6 +320,7 @@ export default function ChatInboxScreen() {
       ) : searchQuery ? (
         // Show user search results if no matching chats
         <FlatList
+        showsVerticalScrollIndicator={false}
         className="pb-[60px]"
           data={searchResults}
           renderItem={({ item }) => (
@@ -339,6 +341,7 @@ export default function ChatInboxScreen() {
       ) : (
         // Show all chats when no search
         <FlatList
+        showsVerticalScrollIndicator={false}
         className="pb-[60px]"
           data={chats}
           renderItem={({ item }) => <ChatListItem chat={item} />}
