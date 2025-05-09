@@ -226,7 +226,7 @@ export default function EventsScreen() {
             <TouchableOpacity onPress={() => router.push("/events/new")}>
               <LinearGradient
                 colors={["black", "black"]}
-                className="bg-[#1aea9f] px-4 py-2 rounded-full"
+                className="px-4 py-2 rounded-full"
               >
                 <View className="flex-row items-center justify-center">
                   <Ionicons name="add" size={20} color="white" />
