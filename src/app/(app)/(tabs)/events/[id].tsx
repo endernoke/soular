@@ -9,6 +9,8 @@ import {
 } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { supabase } from "@/lib/supabase";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
 import { useAuth } from "@/lib/auth";
 import { Event, Profile } from "@/types";
 import { Ionicons } from "@expo/vector-icons";
@@ -145,48 +147,54 @@ export default function EventDetailScreen() {
     }
   };
 
-  useEffect(() => {
-    loadEventAndParticipants();
+  useFocusEffect(
+    useCallback(() => {
+      const loadAndSubscribe = async () => {
+        await loadEventAndParticipants();
 
-    // Set up real-time subscriptions
-    const eventSubscription = supabase
-      .channel("event-details")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "events",
-          filter: `id=eq.${id}`,
-        },
-        () => loadEventAndParticipants()
-      )
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "event_participants",
-          filter: `event_id=eq.${id}`,
-        },
-        () => loadEventAndParticipants()
-      )
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "event_organizers",
-          filter: `event_id=eq.${id}`,
-        },
-        () => loadEventAndParticipants()
-      )
-      .subscribe();
+        // Set up real-time subscriptions
+        const eventSubscription = supabase
+          .channel("event-details")
+          .on(
+            "postgres_changes",
+            {
+              event: "*",
+              schema: "public",
+              table: "events",
+              filter: `id=eq.${id}`,
+            },
+            () => loadEventAndParticipants()
+          )
+          .on(
+            "postgres_changes",
+            {
+              event: "*",
+              schema: "public",
+              table: "event_participants",
+              filter: `event_id=eq.${id}`,
+            },
+            () => loadEventAndParticipants()
+          )
+          .on(
+            "postgres_changes",
+            {
+              event: "*",
+              schema: "public",
+              table: "event_organizers",
+              filter: `event_id=eq.${id}`,
+            },
+            () => loadEventAndParticipants()
+          )
+          .subscribe();
 
-    return () => {
-      supabase.removeChannel(eventSubscription);
-    };
-  }, [id]);
+        return () => {
+          supabase.removeChannel(eventSubscription);
+        };
+      };
+
+      loadAndSubscribe();
+    }, [id])
+  );
 
   const handleJoinEvent = async () => {
     if (!user || !event) return;
@@ -301,7 +309,10 @@ export default function EventDetailScreen() {
   const isOrganizer = user && organizers.some((o) => o.id === user.id);
 
   return (
-    <ScrollView className="flex-1 bg-gray-50 pb-[50px]" showsVerticalScrollIndicator={false}>
+    <ScrollView
+      className="flex-1 bg-gray-50 pb-[50px]"
+      showsVerticalScrollIndicator={false}
+    >
       <View className="p-[30px]">
         <TouchableOpacity
           onPress={() => router.back()}
@@ -313,7 +324,6 @@ export default function EventDetailScreen() {
 
         <View className="bg-white p-6 rounded-[24px] border-2 border-[black]">
           <Text className="text-3xl font-bold mb-4">{event.title}</Text>
-
           <View className="flex-row items-center mb-4">
             <View className="flex-row items-center mr-4">
               <Ionicons name="calendar" size={20} color="#666" />
@@ -328,12 +338,10 @@ export default function EventDetailScreen() {
               </Text>
             </View>
           </View>
-
           <View className="flex-row items-center mb-4">
             <Ionicons name="location" size={20} color="#666" />
             <Text className="text-gray-600 ml-2">{event.venue}</Text>
           </View>
-
           <View className="mb-6">
             <Text
               className={`text-sm px-3 py-1 rounded-full self-start ${
@@ -348,12 +356,8 @@ export default function EventDetailScreen() {
                 event.stage.replace("-", " ").slice(1)}
             </Text>
           </View>
-
           <Text className="text-gray-800 mb-6 leading-6">
             {event.description}
-          </Text>
-          <Text className="rounded-full bg-[#ffcc0020] text-[#ffcc00] w-[150px] text-center px-4 py-2 mb-5 text-[16px]">
-            Earn 1000 Points
           </Text>
           <View className="mb-4">
             <Text className="text-gray-600 mb-2">
@@ -385,7 +389,6 @@ export default function EventDetailScreen() {
               ))}
             </View>
           </View>
-
           {event.stage === "upcoming" && (
             <TouchableOpacity
               className={`p-4 rounded-[20px] mb-3 ${
@@ -403,7 +406,6 @@ export default function EventDetailScreen() {
               </Text>
             </TouchableOpacity>
           )}
-
           {event.stage === "in-development" && (
             <TouchableOpacity
               className={`p-4 rounded-[20px] mb-3 ${
@@ -421,7 +423,6 @@ export default function EventDetailScreen() {
               </Text>
             </TouchableOpacity>
           )}
-
           {/* Chat buttons */}
           {isOrganizer && chatRooms.organizers && (
             <TouchableOpacity
@@ -433,7 +434,6 @@ export default function EventDetailScreen() {
               </Text>
             </TouchableOpacity>
           )}
-
           {((event.stage === "upcoming" && isParticipant) || isOrganizer) &&
             chatRooms.participants && (
               <TouchableOpacity
@@ -444,20 +444,20 @@ export default function EventDetailScreen() {
                   Participants Chat
                 </Text>
               </TouchableOpacity>
-            )}            {/* Crowdfunding Button */}
-            <TouchableOpacity
-              className="bg-[#FFD700] p-4 rounded-[20px] mb-3"
-              onPress={() => setShowCrowdfundingModal(true)}
-            >
-              <Text className="text-white text-center text-[20px] font-semibold">
-                Support This Event 🌟
-              </Text>
-            </TouchableOpacity>
-            
-            <FundingModal 
-              visible={showCrowdfundingModal}
-              onClose={() => setShowCrowdfundingModal(false)}
-            />
+            )}
+          {/* Crowdfunding Button */}
+          <TouchableOpacity
+            className="bg-[#FFD700] p-4 rounded-[20px] mb-3"
+            onPress={() => setShowCrowdfundingModal(true)}
+          >
+            <Text className="text-white text-center text-[20px] font-semibold">
+              Support This Event 🌟
+            </Text>
+          </TouchableOpacity>
+          <FundingModal
+            visible={showCrowdfundingModal}
+            onClose={() => setShowCrowdfundingModal(false)}
+          />
         </View>
       </View>
     </ScrollView>
