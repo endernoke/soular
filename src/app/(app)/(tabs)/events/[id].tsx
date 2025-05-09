@@ -385,12 +385,12 @@ export default function EventDetailScreen() {
           {event.stage === "upcoming" && (
             <TouchableOpacity
               className={`p-4 rounded-[20px] mb-3 ${
-                isParticipant ? "bg-red-500" : "bg-green-500"
+                isParticipant ? "bg-red-500" : "bg-blue-500"
               }`}
               onPress={handleJoinEvent}
               disabled={isJoining}
             >
-              <Text className="text-white text-center font-semibold">
+              <Text className="text-white text-center font-semibold text-[20px]">
                 {isJoining
                   ? "Processing..."
                   : isParticipant

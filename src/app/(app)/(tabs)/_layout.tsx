@@ -32,7 +32,7 @@ export default function RootLayoutNav() {
           />
         ),
         tabBarItemStyle: {
-          paddingTop: 20,
+          paddingTop: 12.5,
           borderRadius: 10,
           marginHorizontal: 5,
           height: 40, // Increased item height
