@@ -57,7 +57,7 @@ const MessageItem = ({
 
       {/* Message bubble */}
       <View
-        className={`rounded-[30px] p-2 px-4`}
+        className={`rounded-[18px] p-2 px-4`}
         style={isOwnMessage ? undefined : { backgroundColor: "#f0f0f0" }}
       >
         {isOwnMessage && (
