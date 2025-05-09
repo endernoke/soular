@@ -322,7 +322,7 @@ export default function LearnScreen() {
     // Here we tell the AI to respond in JSON format for green events
     const formattedMsg =
       message +
-      " (.. For the above idea, please respond with a JSON array of 3 highly related and targeted events, each with title, description, date, location, and impact fields. For date, use a date relative to today. Today is May 10, 2025.)";
+      " (.. For the above idea, please respond with a JSON array of 5 highly related and targeted events, each with title, description, date (which is in format YYYY-MM-DD), location, and impact fields. For date, use a date relative to today. Today is 2025-05-10.)";
 
     const response = await fetch(
       "https://server-ef04.onrender.com/api/chat/message",
