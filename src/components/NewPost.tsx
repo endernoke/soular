@@ -107,7 +107,7 @@ export default function NewPost({
         content: newPost.trim(),
         image_url: imageUrl,
         author_id: user.id,
-        is_sponsored: isSponsored,
+
         ...(isSponsored && {
           sponsor_name: organizationName,
           sponsor_package: SPONSORED_PACKAGES[selectedPackage!].name,
