@@ -77,7 +77,7 @@ const ChatListItem = ({ chat }: { chat: ChatRoom }) => {
 
       {/* Timestamp */}
       {lastMessage && (
-        <Text className="text-xs text-gray-500">
+        <Text className="text-xs text-gray-500 ml-2">
           {format(new Date(lastMessage.created_at), "HH:mm")}
         </Text>
       )}
@@ -309,13 +309,17 @@ export default function ChatInboxScreen() {
       {/* Show filtered chats if the query matches any existing chats */}
       {searchQuery && getFilteredChats().length > 0 ? (
         <FlatList
+        className="pb-[60px]"
           data={getFilteredChats()}
           renderItem={({ item }) => <ChatListItem chat={item} />}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.id
+
+              }
         />
       ) : searchQuery ? (
         // Show user search results if no matching chats
         <FlatList
+        className="pb-[60px]"
           data={searchResults}
           renderItem={({ item }) => (
             <SearchResultItem
@@ -335,6 +339,7 @@ export default function ChatInboxScreen() {
       ) : (
         // Show all chats when no search
         <FlatList
+        className="pb-[60px]"
           data={chats}
           renderItem={({ item }) => <ChatListItem chat={item} />}
           keyExtractor={(item) => item.id}

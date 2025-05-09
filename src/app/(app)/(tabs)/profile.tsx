@@ -30,6 +30,9 @@ export default function ProfileScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [bioCharCount, setBioCharCount] = useState(0);
   const MAX_BIO_LENGTH = 150;
+  const [activeTab, setActiveTab] = useState<"events" | "posts">("events");
+  const [userEvents, setUserEvents] = useState<any[]>([]);
+  const [userPosts, setUserPosts] = useState<any[]>([]);
 
   useEffect(() => {
     if (profile) {
@@ -38,6 +41,91 @@ export default function ProfileScreen() {
       setBioCharCount(profile.bio?.length || 0);
     }
   }, [profile]);
+
+  // Fetch user's events and posts
+  useEffect(() => {
+    if (user?.id) {
+      fetchUserEvents();
+      fetchUserPosts();
+    }
+  }, [user?.id]);
+
+  const fetchUserEvents = async () => {
+    try {
+      // Fetch events where user is organizer or participant
+      const { data: organizedEvents, error: organizerError } = await supabase
+        .from("events")
+        .select(
+          `
+          *,
+          profiles:author_id (
+            display_name,
+            photo_url
+          )
+        `
+        )
+        .eq("author_id", user?.id);
+
+      const {
+        data: participatedEvents,
+        error: participantError,
+      } = await supabase
+        .from("event_participants")
+        .select(
+          `
+          events (
+            *,
+            profiles:author_id (
+              display_name,
+              photo_url
+            )
+          )
+        `
+        )
+        .eq("user_id", user?.id);
+
+      if (organizerError) throw organizerError;
+      if (participantError) throw participantError;
+
+      const events = [
+        ...(organizedEvents || []).map((event) => ({
+          ...event,
+          role: "organizer",
+        })),
+        ...(participatedEvents || []).map(({ events }) => ({
+          ...events,
+          role: "participant",
+        })),
+      ];
+
+      setUserEvents(events);
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    }
+  };
+
+  const fetchUserPosts = async () => {
+    try {
+      const { data: posts, error } = await supabase
+        .from("posts")
+        .select(
+          `
+          *,
+          profiles:author_id (
+            display_name,
+            photo_url
+          )
+        `
+        )
+        .eq("author_id", user?.id)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      setUserPosts(posts || []);
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    }
+  };
 
   const handleSignOut = async () => {
     try {
@@ -251,7 +339,60 @@ export default function ProfileScreen() {
           </TouchableOpacity>
         </View>
       </View>
+
+      <View style={styles.tabContainer}>
+        <TouchableOpacity
+          style={[styles.tabButton, activeTab === "events" && styles.activeTab]}
+          onPress={() => setActiveTab("events")}
+        >
+          <Text style={styles.tabButtonText}>Events</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.tabButton, activeTab === "posts" && styles.activeTab]}
+          onPress={() => setActiveTab("posts")}
+        >
+          <Text style={styles.tabButtonText}>Posts</Text>
+        </TouchableOpacity>
+      </View>
+
       <ScrollView style={styles.content}>
+        {activeTab === "events" ? (
+          userEvents.length > 0 ? (
+            userEvents.map((event) => (
+              <TouchableOpacity
+                key={event.id}
+                style={styles.eventItem}
+                onPress={() => router.push(`/events/${event.id}`)}
+              >
+                <Text style={styles.eventTitle}>{event.title}</Text>
+                <Text style={styles.eventDate}>
+                  {/* event.start_date is in YYYY-MM-DD format */}
+                  {new Date(event.event_timestamp).toLocaleString()}
+                </Text>
+                <Text style={styles.eventRole}>
+                  {event.role === "organizer"
+                    ? "You are the organizer"
+                    : "You are a participant"}
+                </Text>
+              </TouchableOpacity>
+            ))
+          ) : (
+            <Text style={styles.noDataText}>No events found</Text>
+          )
+        ) : userPosts.length > 0 ? (
+          userPosts.map((post) => (
+            <View key={post.id} style={styles.postItem}>
+              <Text style={styles.postTitle}>{post.title}</Text>
+              <Text style={styles.postDate}>
+                {new Date(post.created_at).toLocaleString()}
+              </Text>
+              <Text style={styles.postContent}>{post.content}</Text>
+            </View>
+          ))
+        ) : (
+          <Text style={styles.noDataText}>No posts found</Text>
+        )}
+
         <TouchableOpacity style={styles.menuItem}>
           <Ionicons name="settings-outline" size={24} color="#666" />
           <Text style={styles.menuText}>Settings</Text>
@@ -422,12 +563,102 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
+  tabContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    borderTopWidth: 1,
+    borderTopColor: "#f0f0f0",
+    borderBottomWidth: 1,
+    borderBottomColor: "#f0f0f0",
+    marginBottom: 12,
+  },
+  tabButton: {
+    flex: 1,
+    padding: 16,
+    alignItems: "center",
+  },
+  activeTab: {
+    borderBottomWidth: 2,
+    borderBottomColor: "#007AFF",
+  },
+  tabButtonText: {
+    fontSize: 16,
+    color: "#007AFF",
+  },
+  tabContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    borderTopWidth: 1,
+    borderTopColor: "#f0f0f0",
+    borderBottomWidth: 1,
+    borderBottomColor: "#f0f0f0",
+    marginBottom: 12,
+  },
+  tabButton: {
+    flex: 1,
+    padding: 16,
+    alignItems: "center",
+  },
+  activeTab: {
+    borderBottomWidth: 2,
+    borderBottomColor: "#007AFF",
+  },
+  tabButtonText: {
+    fontSize: 16,
+    color: "#007AFF",
+  },
   content: {
     flex: 1,
     paddingTop: 12,
     paddingRight: 30,
     paddingBottom: 12,
     paddingLeft: 30,
+  },
+  eventItem: {
+    padding: 16,
+    borderRadius: 8,
+    backgroundColor: "#f9f9f9",
+    marginBottom: 12,
+  },
+  eventTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 4,
+  },
+  eventDate: {
+    fontSize: 14,
+    color: "#666",
+    marginBottom: 8,
+  },
+  eventRole: {
+    fontSize: 14,
+    color: "#007AFF",
+  },
+  postItem: {
+    padding: 16,
+    borderRadius: 8,
+    backgroundColor: "#f9f9f9",
+    marginBottom: 12,
+  },
+  postTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 4,
+  },
+  postDate: {
+    fontSize: 14,
+    color: "#666",
+    marginBottom: 8,
+  },
+  postContent: {
+    fontSize: 16,
+    color: "#333",
+  },
+  noDataText: {
+    textAlign: "center",
+    color: "#999",
+    fontSize: 16,
+    marginTop: 20,
   },
   menuItem: {
     flexDirection: "row",

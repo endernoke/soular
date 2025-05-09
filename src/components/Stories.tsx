@@ -102,7 +102,7 @@ export default function Stories() {
         const { data } = supabase.storage
           .from("stories")
           .getPublicUrl(filePath);
-        
+
         const imageUrl = data.publicUrl;
         // Create story record
         const expiresAt = new Date();
@@ -130,12 +130,13 @@ export default function Stories() {
   const renderStoryItem = ({ item }: { item: Story }) => (
     <TouchableOpacity
       onPress={() => setViewingStory(item)}
-      className="items-center justify-start overflow-hidden px-1"
+      className="items-center justify-start px-2"
     >
-      <View className="rounded-[50%] w-[60px] h-[60px] overflow-hidden">
+      <View className="rounded-full" style={{marginBottom: 10, marginTop: 10, height: 86}}>
         <LinearGradient
-          colors={['#1aea9fb0', '#ffbf00']}
-          className="flex-1 rounded-[50px] items-center justify-center w-full h-full"
+          colors={['#1aea9fb0', '#10d9c7']}
+          className=" rounded-full items-center justify-center w-[86px]"
+          style={{height: 86, width: 86}}
         >
           {item.profiles?.photo_url ? (
             <Image
@@ -159,14 +160,13 @@ export default function Stories() {
       style={styles.addStoryButton}
     >
       <View style={styles.addStoryPlus}>
-        <Ionicons name="add" size={24} color="#1aea9f" />
+        <Ionicons name="add" size={40} color="#1aea9f" />
       </View>
-      <Text style={styles.addStoryText}>Add Story</Text>
     </TouchableOpacity>
   );
 
   return (
-    <View className='flex-row w-full items-center justify-start px-2 gap-4'>
+    <View className='flex-row w-full items-center justify-start px-[0] mb-[20px]'>
       <FlatList
         data={stories}
         renderItem={renderStoryItem}
@@ -194,7 +194,7 @@ export default function Stories() {
             >
               <Ionicons name="close" size={24} color="#fff" />
             </TouchableOpacity>
-            
+
             <View style={styles.storyHeader}>
               <View style={styles.storyUserInfo}>
                 {viewingStory.profiles?.photo_url ? (
@@ -232,10 +232,10 @@ export default function Stories() {
 
 const styles = StyleSheet.create({
   storyAvatar: {
-    width: 54,
-    height: 54,
-    borderRadius: 27,
-    borderWidth: 3,
+    width: 80,
+    height: 80,
+    borderRadius: 100,
+    borderWidth: 4,
     borderColor: '#fff',
   },
   avatarPlaceholder: {
@@ -253,11 +253,13 @@ const styles = StyleSheet.create({
   addStoryButton: {
     alignItems: 'center',
     marginRight: 15,
+    marginLeft: 20,
+    marginTop: 10
   },
   addStoryPlus: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 86,
+    height: 86,
+    borderRadius: 100,
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
@@ -267,6 +269,7 @@ const styles = StyleSheet.create({
   },
   addStoryText: {
     marginTop: 4,
+    marginBottom: 20,
     fontSize: 12,
     color: '#000',
   },

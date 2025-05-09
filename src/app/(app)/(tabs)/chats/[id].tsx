@@ -47,7 +47,7 @@ const MessageItem = ({
       </View>
     )}
 
-    <View className="max-w-[70%]">
+    <View className="max-w-[80%]">
       {/* Sender name for others' messages */}
       {!isOwnMessage && (
         <Text className="text-xs text-gray-600 mb-1">
@@ -57,18 +57,24 @@ const MessageItem = ({
 
       {/* Message bubble */}
       <View
-        className={`rounded-2xl p-3`}
+        className={`rounded-[30px] p-2 px-4`}
         style={isOwnMessage ? undefined : { backgroundColor: "#f0f0f0" }}
       >
         {isOwnMessage && (
           <LinearGradient
-            colors={["#1aea9fb0", "#10c7d9b0"]}
+            colors={["#1aea9f", "#10d7c9"]}
             start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={{ ...StyleSheet.absoluteFillObject, borderRadius: 16 }}
+            end={{ x: 0, y: 1 }}
+            style={{ ...StyleSheet.absoluteFillObject,
+
+              borderRadius: 18,
+                          paddingHorizontal: 16,
+                          paddingVertical: 8,
+
+                          }}
           />
         )}
-        <Text style={{ color: "#212529", fontSize: 16, fontWeight: "500" }}>
+        <Text style={{ color: isOwnMessage ? "white": "black", fontSize: 16, fontWeight: "500" }}>
           {message.content}
         </Text>
       </View>
@@ -215,7 +221,7 @@ export default function ChatScreen() {
     return (
       <View className="flex-1">
         <View className="bg-white p-4 border-b border-gray-200 flex-row items-center">
-          <TouchableOpacity onPress={() => router.back()} className="mr-4">
+          <TouchableOpacity onPress={() => router.replace('/chats')} className="mr-4">
             <Ionicons name="arrow-back" size={24} color="#000" />
           </TouchableOpacity>
         </View>
@@ -232,7 +238,7 @@ export default function ChatScreen() {
     return (
       <View className="flex-1">
         <View className="bg-white p-4 border-b border-gray-200 flex-row items-center">
-          <TouchableOpacity onPress={() => router.back()} className="mr-4">
+          <TouchableOpacity onPress={() => router.replace('/chats')} className="mr-4">
             <Ionicons name="arrow-back" size={24} color="#000" />
           </TouchableOpacity>
         </View>
@@ -250,7 +256,7 @@ export default function ChatScreen() {
     >
       {/* Header */}
       <View className="bg-white p-4 border-b border-gray-200 flex-row items-center">
-        <TouchableOpacity onPress={() => router.back()} className="mr-4">
+        <TouchableOpacity onPress={() => router.replace('/chats')} className="mr-4">
           <Ionicons name="arrow-back" size={24} color="#000" />
         </TouchableOpacity>
 
