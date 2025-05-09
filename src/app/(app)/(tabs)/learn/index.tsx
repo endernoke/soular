@@ -747,7 +747,7 @@ export default function LearnScreen() {
                     width: 24,
                     height: 24,
                     borderRadius: 12,
-                    backgroundColor: "#2e8b57",
+                    backgroundColor: "#1aea9f",
                     justifyContent: "center",
                     alignItems: "center",
                     marginRight: 12,
@@ -987,7 +987,7 @@ export default function LearnScreen() {
           <Text
             style={{
               fontSize: 40,
-              fontWeight: "800",
+              fontWeight: "700",
               opacity: 0.85,
               color: "black",
               marginTop: 0,

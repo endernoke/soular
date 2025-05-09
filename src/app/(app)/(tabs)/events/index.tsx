@@ -42,7 +42,7 @@ const EventCard = ({
         width: 0,
         height: 10,
       },
-      shadowOpacity: 0.2,
+      shadowOpacity: 0.1,
       shadowRadius: 20, // easter egg?
     }}
   >
@@ -220,7 +220,7 @@ export default function EventsScreen() {
               onPress={() => router.push("/events/new")}
 
             >
-            <LinearGradient colors={["#1aea9f", "#10d9c7"]} className="bg-[#1aea9f] px-4 py-2 rounded-full">
+            <LinearGradient colors={["black", "black"]} className="bg-[#1aea9f] px-4 py-2 rounded-full">
               <View className="flex-row items-center justify-center">
                 <Ionicons name="add" size={20} color="white" />
                 <Text className="text-white text-md font-bold ml-1 mr-1">New</Text>
