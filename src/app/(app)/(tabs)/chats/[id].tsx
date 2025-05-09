@@ -16,6 +16,8 @@ import { useAuth } from "@/lib/auth";
 import { ChatMessage, ChatRoom } from "@/types";
 import { Ionicons } from "@expo/vector-icons";
 import { format } from "date-fns";
+import { LinearGradient } from "expo-linear-gradient";
+import { StyleSheet } from "react-native";
 
 const MessageItem = ({
   message,
@@ -55,11 +57,18 @@ const MessageItem = ({
 
       {/* Message bubble */}
       <View
-        className={`rounded-2xl p-3 ${
-          isOwnMessage ? "bg-blue-500" : "bg-gray-200"
-        }`}
+        className={`rounded-2xl p-3`}
+        style={isOwnMessage ? undefined : { backgroundColor: "#f0f0f0" }}
       >
-        <Text className={isOwnMessage ? "text-white" : "text-black"}>
+        {isOwnMessage && (
+          <LinearGradient
+            colors={["#1aea9fb0", "#10c7d9b0"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={{ ...StyleSheet.absoluteFillObject, borderRadius: 16 }}
+          />
+        )}
+        <Text style={{ color: "#212529", fontSize: 16, fontWeight: "500" }}>
           {message.content}
         </Text>
       </View>
@@ -286,6 +295,7 @@ export default function ChatScreen() {
       <FlatList
         ref={flatListRef}
         data={messages}
+        style={{ flex: 1, paddingTop: 16 }}
         renderItem={({ item }) => (
           <MessageItem
             message={item}
@@ -303,7 +313,7 @@ export default function ChatScreen() {
       />
 
       {/* Message Input */}
-      <View className="p-4 border-t border-gray-200 bg-white flex-row items-center">
+      <View className="p-4 border-t mb-10 border-gray-200 bg-white flex-row items-center">
         <TextInput
           value={newMessage}
           onChangeText={setNewMessage}
@@ -315,14 +325,17 @@ export default function ChatScreen() {
         <TouchableOpacity
           onPress={handleSend}
           disabled={sending || !newMessage.trim()}
-          className={`rounded-full p-2 ${
-            sending || !newMessage.trim() ? "bg-gray-300" : "bg-blue-500"
-          }`}
+          style={{
+            backgroundColor:
+              sending || !newMessage.trim() ? "#e3e3e3" : "#1aea9f",
+            borderRadius: 9999,
+            padding: 8,
+          }}
         >
           <Ionicons
             name="send"
             size={24}
-            color={sending || !newMessage.trim() ? "#666" : "#fff"}
+            color={sending || !newMessage.trim() ? "#fff" : "#e3e3e3"}
           />
         </TouchableOpacity>
       </View>

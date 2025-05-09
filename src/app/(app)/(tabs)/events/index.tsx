@@ -43,26 +43,33 @@ const EventCard = ({
         height: 3,
       },
       shadowOpacity: 0.5,
-      shadowRadius: 3.14, // easter egg?
+      shadowRadius: 3.14,
     }}
   >
     <Text className="text-black text-xl font-bold mb-2">{event.title}</Text>
     <Text className="text-gray-600 mb-4" numberOfLines={2}>
       {event.description}
     </Text>
-    <View className="flex-row justify-between items-center">
-      <View className="flex-row items-center">
+
+    {/* Modified this section for better layout */}
+    <View className="flex-col mb-2">
+      <View className="flex-row items-center mb-2">
         <Ionicons name="location" size={16} color="#4b5563" />
-        <Text className="text-gray-600 ml-1">{event.venue}</Text>
+        <Text
+          className="text-gray-600 ml-1 flex-shrink flex-wrap"
+          numberOfLines={2}
+        >
+          {event.venue}
+        </Text>
       </View>
       <View className="flex-row items-center">
         <Ionicons name="calendar" size={16} color="#4b5563" />
-        {/* Format event_timestamp */}
         <Text className="text-gray-600 ml-1">
           {formatEventDate(event.event_timestamp)}
         </Text>
       </View>
     </View>
+
     <View className="mt-2 flex-row justify-between items-center">
       <Text
         className={`text-sm font-medium ${

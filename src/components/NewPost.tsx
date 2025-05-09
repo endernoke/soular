@@ -1,16 +1,28 @@
-import { useState } from 'react';
-import { View, TextInput, TouchableOpacity, Text, StyleSheet, Image, Alert } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
-import { supabase } from '@/lib/supabase'; // Import supabase client
-import { useAuth } from '@/lib/auth';
-import { Ionicons } from '@expo/vector-icons';
-import * as FileSystem from 'expo-file-system';
-import { decode } from 'base64-arraybuffer'; // For converting base64 to ArrayBuffer
-import * as utils from '@/lib/utils';
+import { useState } from "react";
+import {
+  View,
+  TextInput,
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  Image,
+  Alert,
+} from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import { supabase } from "@/lib/supabase"; // Import supabase client
+import { useAuth } from "@/lib/auth";
+import { Ionicons } from "@expo/vector-icons";
+import * as FileSystem from "expo-file-system";
+import { decode } from "base64-arraybuffer"; // For converting base64 to ArrayBuffer
+import * as utils from "@/lib/utils";
 
-export default function NewPost({ onPostCreated }: { onPostCreated?: () => void }) {
+export default function NewPost({
+  onPostCreated,
+}: {
+  onPostCreated?: () => void;
+}) {
   const { user } = useAuth(); // Get Supabase user
-  const [newPost, setNewPost] = useState('');
+  const [newPost, setNewPost] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [selectedImageUri, setSelectedImageUri] = useState<string | null>(null);
 
@@ -48,16 +60,16 @@ export default function NewPost({ onPostCreated }: { onPostCreated?: () => void 
 
         // Upload to Supabase Storage
         const { data: uploadData, error: uploadError } = await supabase.storage
-          .from('images') // Assuming a bucket named 'images'
+          .from("images") // Assuming a bucket named 'images'
           .upload(filePath, decode(base64), { contentType: mimeType });
 
         if (uploadError) throw uploadError;
 
         // Get public URL
         const { data: urlData } = supabase.storage
-          .from('images')
+          .from("images")
           .getPublicUrl(filePath);
-        
+
         imageUrl = urlData?.publicUrl ?? null;
       }
 
@@ -69,19 +81,18 @@ export default function NewPost({ onPostCreated }: { onPostCreated?: () => void 
       };
 
       const { error: insertError } = await supabase
-        .from('posts')
+        .from("posts")
         .insert(postData);
 
       if (insertError) throw insertError;
-      
+
       // Reset state and notify parent
-      setNewPost('');
+      setNewPost("");
       setSelectedImageUri(null);
       onPostCreated?.();
-
-    } catch (error: any) {
-      console.error('Error creating post:', error);
-      Alert.alert('Error', error.message || 'Failed to create post');
+    } catch (error) {
+      console.error("Error creating post:", error);
+      Alert.alert("Error", String(error) || "Failed to create post");
     } finally {
       setIsLoading(false);
     }
@@ -96,12 +107,15 @@ export default function NewPost({ onPostCreated }: { onPostCreated?: () => void 
         onChangeText={setNewPost}
         multiline
       />
-      
+
       {selectedImageUri && (
         <View style={styles.imagePreviewContainer}>
           {/* Display selected image using its URI */}
-          <Image source={{ uri: selectedImageUri }} style={styles.imagePreview} />
-          <TouchableOpacity 
+          <Image
+            source={{ uri: selectedImageUri }}
+            style={styles.imagePreview}
+          />
+          <TouchableOpacity
             style={styles.removeImageButton}
             onPress={() => setSelectedImageUri(null)}
           >
@@ -111,20 +125,20 @@ export default function NewPost({ onPostCreated }: { onPostCreated?: () => void 
       )}
 
       <View style={styles.buttonRow}>
-        <TouchableOpacity 
-          style={styles.imageButton}
-          onPress={pickImage}
-        >
+        <TouchableOpacity style={styles.imageButton} onPress={pickImage}>
           <Ionicons name="image" size={24} color="#007AFF" />
         </TouchableOpacity>
 
-        <TouchableOpacity 
-          style={[styles.postButton, (!newPost.trim() || isLoading) && styles.postButtonDisabled]}
+        <TouchableOpacity
+          style={[
+            styles.postButton,
+            (!newPost.trim() || isLoading) && styles.postButtonDisabled,
+          ]}
           onPress={handleCreatePost}
           disabled={!newPost.trim() || isLoading}
         >
           <Text style={styles.postButtonText}>
-            {isLoading ? 'Posting...' : 'Post'}
+            {isLoading ? "Posting..." : "Post"}
           </Text>
         </TouchableOpacity>
       </View>
@@ -136,48 +150,52 @@ const styles = StyleSheet.create({
   createPost: {
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
-    backgroundColor: '#fff',
+    borderBottomColor: "#f0f0f0",
+    backgroundColor: "#fff",
+    flex: 1, // Ensure the container takes up available space
+    justifyContent: "flex-start", // Ensure content aligns properly
+    alignItems: "stretch", // Stretch items to fit the container
+    width: "100%", // Ensure the container spans the full width
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: '16px',
+    borderColor: "#ddd",
+    borderRadius: 16,
     padding: 12,
     minHeight: 80,
-    textAlignVertical: 'top',
+    textAlignVertical: "top",
   },
   imagePreviewContainer: {
     marginTop: 12,
-    position: 'relative',
+    position: "relative",
   },
   imagePreview: {
-    width: '100%',
+    width: "100%",
     height: 200,
     borderRadius: 0,
     marginTop: 8,
   },
   removeImageButton: {
-    position: 'absolute',
+    position: "absolute",
     top: 16,
     right: 8,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: "rgba(0,0,0,0.5)",
     borderRadius: 12,
   },
   buttonRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginTop: 12,
   },
   imageButton: {
     padding: 8,
   },
   postButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: "#007AFF",
     padding: 12,
     borderRadius: 16,
-    alignItems: 'center',
+    alignItems: "center",
     flex: 1,
     marginLeft: 12,
   },
@@ -185,8 +203,8 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   postButtonText: {
-    color: '#fff',
-    fontWeight: '600',
-    fontSize: '16px'
+    color: "#fff",
+    fontWeight: "600",
+    fontSize: 16,
   },
 });

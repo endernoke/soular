@@ -475,9 +475,9 @@ export default function LearnScreen() {
 
           {/* Message Bubble */}
           <LinearGradient
-            colors={isUser ? ["#1aea9fb0", "#10d9c7b0"] : ["white", "white"]}
+            colors={isUser ? ["#1aea9fb0", "#10c7d9b0"] : ["white", "white"]}
             start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
+            end={{ x: 1, y: 1 }}
             style={{
               borderRadius: 18,
               paddingHorizontal: 16,
@@ -1135,7 +1135,7 @@ export default function LearnScreen() {
                   width: 40,
                   height: 40,
                   borderRadius: 20,
-                  backgroundColor: inputMessage.trim() ? "#1aea9f" : "#E9ECEF",
+                  backgroundColor: inputMessage.trim() ? "#1aea9f" : "#e3e3e3",
                   justifyContent: "center",
                   alignItems: "center",
                   marginBottom: 5, // Add a small margin at the bottom to align with text
@@ -1144,7 +1144,7 @@ export default function LearnScreen() {
                 <Ionicons
                   name="send"
                   size={20}
-                  color={inputMessage.trim() ? "white" : "#ADB5BD"}
+                  color={inputMessage.trim() ? "#e3e3e3" : "#aaa"}
                 />
               </TouchableOpacity>
             </View>

@@ -286,15 +286,8 @@ export default function ChatInboxScreen() {
 
   return (
     <View className="flex-1 bg-gray-50">
-      <View className="bg-white p-4 border-b border-gray-200 flex-row items-left mb-4">
-        <TouchableOpacity
-          onPress={navigateBack}
-          className="mr-4"
-          accessibilityLabel="Back"
-        >
-          <Ionicons name="arrow-back" size={24} color="#000" />
-        </TouchableOpacity>
-        <Text className="text-2xl font-bold">Messages</Text>
+      <View className="bg-white p-4 border-b border-gray-200 flex-row items-left items-center mb-4">
+        <Text className="text-3xl ml-1 font-bold">Messages</Text>
       </View>
 
       {/* Search Bar */}

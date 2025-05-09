@@ -136,9 +136,9 @@ export default function HomeScreen() {
           <Text className="text-2xl">Our Soular Stories</Text>
           <TouchableOpacity
             onPress={() => setNewPostModalVisible(true)}
-            className="flex-row bg-[black] rounded-full w-20 h-8 items-center justify-center"
+            className="flex-row bg-blue-500 rounded-full w-16 h-8 items-center justify-center"
           >
-            <Ionicons name="add" size={15} color="#fff" />
+            <Ionicons name="add" className="mt-0.5" size={15} color="#fff" />
             <Text className="text-white text-md ml-1">New</Text>
           </TouchableOpacity>
         </View>

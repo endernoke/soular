@@ -79,7 +79,12 @@ export default function NewEventScreen() {
       router.back();
     } catch (error) {
       console.error("Error creating event:", error);
-      Alert.alert("Error", error.message || "Failed to create event");
+      Alert.alert(
+        "Error",
+        error instanceof Error
+          ? error.message
+          : String(error) || "Failed to create event"
+      );
     } finally {
       setLoading(false);
     }

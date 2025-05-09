@@ -34,8 +34,8 @@ Soular is a mobile application designed to raise awareness about climate change,
    - Storage buckets
    - Triggers and functions
 
-   > [!NOTE]
-   > If you are part of the dev team, the database schema is already set up. You can skip this step.
+> [!NOTE]
+> If you are part of the dev team, the database schema is already set up. You can skip this step.
 
 5. Start the app
 
