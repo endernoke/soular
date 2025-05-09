@@ -299,7 +299,7 @@ export default function EventDetailScreen() {
   const isOrganizer = user && organizers.some((o) => o.id === user.id);
 
   return (
-    <ScrollView className="flex-1 bg-gray-50 pb-[50px]">
+    <ScrollView className="flex-1 bg-gray-50 pb-[50px]" showsVerticalScrollIndicator={false}>
       <View className="p-[30px]">
         <TouchableOpacity
           onPress={() => router.back()}

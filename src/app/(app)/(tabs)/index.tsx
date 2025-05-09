@@ -92,7 +92,7 @@ export default function HomeScreen() {
   );
 
   return (
-    <ScrollView className="flex-1 bg-[white]">
+    <ScrollView className="flex-1 bg-[white]" showsVerticalScrollIndicator={false}>
       <ImageBackground
         source={require("@/../assets/images/Abstract4.png")}
         resizeMode="stretch"
@@ -143,7 +143,7 @@ export default function HomeScreen() {
           <Text className="text-2xl">Soular Posts</Text>
           <TouchableOpacity
             onPress={() => setNewPostModalVisible(true)}
-            className="flex-row bg-black     rounded-full px-4 py-2 items-center justify-center"
+            className="flex-row bg-black rounded-full px-4 py-2 items-center justify-center"
           >
             <Ionicons name="add" size={20} color="white" />
             <Text className="text-white text-md font-bold ml-1 mr-1">New</Text>

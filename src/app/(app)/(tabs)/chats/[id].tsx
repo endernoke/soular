@@ -299,6 +299,7 @@ export default function ChatScreen() {
 
       {/* Messages */}
       <FlatList
+      showsVerticalScrollIndicator={false}
         ref={flatListRef}
         data={messages}
         style={{ flex: 1, paddingTop: 16 }}

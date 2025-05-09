@@ -1,7 +1,7 @@
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 import { useRouter, usePathname } from "expo-router";
 
 export default function RootLayoutNav() {
@@ -15,6 +15,7 @@ export default function RootLayoutNav() {
         tabBarActiveTintColor: "#007AFF",
         tabBarInactiveTintColor: "#00000020",
         headerShown: false,
+        tabBarShowLabel: false, // This will hide all labels
         tabBarStyle: {
           position: "absolute",
           borderTopWidth: 0,
@@ -32,7 +33,7 @@ export default function RootLayoutNav() {
           />
         ),
         tabBarItemStyle: {
-          paddingTop: 12.5,
+          paddingTop: 15,
           borderRadius: 10,
           marginHorizontal: 5,
           height: 40,
@@ -42,14 +43,9 @@ export default function RootLayoutNav() {
       <Tabs.Screen
         name="learn/index"
         options={{
-          title: "",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="book" size={24} color={color} />
           ),
-          tabBarLabelStyle: {
-            fontSize: 12,
-            marginBottom: 8,
-          },
         }}
         listeners={{
           tabPress: () => {
@@ -64,14 +60,9 @@ export default function RootLayoutNav() {
       <Tabs.Screen
         name="chats"
         options={{
-          title: "",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="chatbubble" size={24} color={color} />
           ),
-          tabBarLabelStyle: {
-            fontSize: 12,
-            marginBottom: 8,
-          },
           tabBarStyle: {
             display:
               usePathname().split("/").pop() == "chats" ? "flex" : "none",
@@ -96,14 +87,9 @@ export default function RootLayoutNav() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home" size={24} color={color} />
           ),
-          tabBarLabelStyle: {
-            fontSize: 12,
-            marginBottom: 8,
-          },
         }}
         listeners={{
           tabPress: () => {
@@ -115,18 +101,12 @@ export default function RootLayoutNav() {
           },
         }}
       />
-
       <Tabs.Screen
         name="events"
         options={{
-          title: "",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="calendar" size={24} color={color} />
           ),
-          tabBarLabelStyle: {
-            fontSize: 12,
-            marginBottom: 8,
-          },
         }}
         listeners={{
           tabPress: () => {
@@ -141,14 +121,9 @@ export default function RootLayoutNav() {
       <Tabs.Screen
         name="profile"
         options={{
-          title: "",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="person" size={24} color={color} />
           ),
-          tabBarLabelStyle: {
-            fontSize: 12,
-            marginBottom: 8,
-          },
         }}
         listeners={{
           tabPress: () => {

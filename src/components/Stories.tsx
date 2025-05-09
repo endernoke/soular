@@ -135,8 +135,9 @@ export default function Stories() {
       <View className="rounded-full" style={{marginBottom: 10, marginTop: 10, height: 86}}>
         <LinearGradient
           colors={['#1aea9fb0', '#10d9c7']}
-          className=" rounded-full items-center justify-center w-[86px]"
-          style={{height: 86, width: 86}}
+          className=" items-center justify-center w-[86px]"
+
+          style={{height: 86, width: 86, borderRadius: 100}}
         >
           {item.profiles?.photo_url ? (
             <Image
