@@ -201,10 +201,7 @@ export default function HomeScreen() {
           >
             <View className="flex-row justify-start items-center px-4 pb-4 border-b border-gray-200">
               <Text className="text-lg font-semibold">Create New Post</Text>
-              <Text className="rounded-full bg-[#ffcc0020] text-[#ffcc00] px-4 py-1 mx-4 text-[16px]">
-                Earn 50 Points
-              </Text>
-              <View className="flex-1" />{" "}
+              <View className="flex-1" />
               {/* This empty View takes up remaining space */}
               <TouchableOpacity onPress={() => setNewPostModalVisible(false)}>
                 <Ionicons name="close" size={24} color="#000" />
