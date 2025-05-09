@@ -218,12 +218,14 @@ export default function EventsScreen() {
             </View>
             <TouchableOpacity
               onPress={() => router.push("/events/new")}
-              className="bg-blue-700 px-3 py-2 rounded-full"
+
             >
+            <LinearGradient colors={["#1aea9f", "#10d9c7"]} className="bg-[#1aea9f] px-4 py-2 rounded-full">
               <View className="flex-row items-center justify-center">
-                <Ionicons name="add" size={20} color="#fff" />
-                <Text className="text-white text-md ml-1 mr-1">New</Text>
+                <Ionicons name="add" size={20} color="white" />
+                <Text className="text-white text-md font-bold ml-1 mr-1">New</Text>
               </View>
+              </LinearGradient>
             </TouchableOpacity>
           </View>
 
@@ -267,10 +269,10 @@ export default function EventsScreen() {
                 renderItem={({ item }) => (
                   <TouchableOpacity
                     onPress={() => setSelectedStage(item)}
-                    className={`mr-[5px] px-4 py-2 rounded-full ${
+                    className={`mr-[5px] px-5 py-2 rounded-full ${
                       selectedStage === item
                         ? item === "upcoming"
-                          ? "bg-green-700"
+                          ? "bg-[#1aea9f]"
                           : item === "in-development"
                           ? "bg-blue-500"
                           : "bg-gray-700"

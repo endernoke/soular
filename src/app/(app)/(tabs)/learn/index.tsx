@@ -461,12 +461,12 @@ export default function LearnScreen() {
             style={{
               fontSize: 24,
               fontWeight: "bold",
-              color: "#6C757D",
+              color: "black",
               marginBottom: 4,
               textAlign: isUser ? "right" : "left",
             }}
           >
-            {isUser ? "You" : "Soular Assistant"}
+            {isUser ? "You" : "SoularAI"}
           </Text>
         </View>
         {/* Message Content */}
@@ -481,7 +481,7 @@ export default function LearnScreen() {
             style={{
               borderRadius: 18,
               paddingHorizontal: 16,
-              paddingVertical: 10,
+              paddingVertical: 8,
               borderWidth: isUser ? 0 : 2,
               borderColor: "#00000020",
 
@@ -494,7 +494,7 @@ export default function LearnScreen() {
           >
             {isUser ? (
               <Text
-                style={{ color: "#212529", fontSize: 16, fontWeight: "500" }}
+                style={{ color: "white", fontSize: 16, fontWeight: "500" }}
               >
                 {message.text}
               </Text>
@@ -644,7 +644,7 @@ export default function LearnScreen() {
                 fontWeight: "bold",
                 color: "transparent",
                 backgroundClip: "text",
-                backgroundImage: "linear-gradient(45deg, #00f260, #0575e6)",
+                backgroundImage: "linear-gradient(45deg, #00f260, #1aea9f)",
               }}
             >
               {carbonData.footprint}
@@ -839,7 +839,7 @@ export default function LearnScreen() {
           >
             <View style={{ height: 120, backgroundColor: "white" }}>
               <LinearGradient
-                colors={["rgba(26, 234, 159, 0.8)", "rgba(16, 217, 199, 0.8)"]}
+                colors={["#1aea9f", "rgba(16, 217, 199, 0.8)"]}
                 style={{
                   position: "absolute",
                   left: 0,
@@ -975,8 +975,8 @@ export default function LearnScreen() {
               fontFamily: "Priestacy",
               fontSize: 40,
               fontWeight: "700",
-              color: "#00d959",
-              marginLeft: -10,
+              color: "#1aea9f",
+              marginLeft: -100,
               marginTop: 0,
               marginBottom: -40,
               zIndex: 1,
