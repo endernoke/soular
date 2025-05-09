@@ -4,7 +4,7 @@ import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { StyleSheet, View } from 'react-native';
-import { usePathname } from 'expo-router';
+import { router, usePathname } from 'expo-router';
 
 export default function RootLayoutNav() {
   return (
@@ -53,6 +53,15 @@ export default function RootLayoutNav() {
             marginBottom: 8, // Adjusted label position
           },
         }}
+        listeners={{
+          tabPress: () => {
+            if (router.canDismiss()) {
+              router.dismissTo('/learn');
+            } else {
+              router.replace('/learn');
+            }
+          },
+        }}
       />
       <Tabs.Screen
         name="index"
@@ -66,6 +75,15 @@ export default function RootLayoutNav() {
           tabBarLabelStyle: {
             fontSize: 12,
             marginBottom: 8,
+          },
+        }}
+        listeners={{
+          tabPress: () => {
+            if (router.canDismiss()) {
+              router.dismissTo('/');
+            } else {
+              router.replace('/');
+            }
           },
         }}
       />
@@ -86,6 +104,15 @@ export default function RootLayoutNav() {
             display: usePathname().split('/').pop() == 'chats' ? 'flex' : 'none',
           },
         }}
+        listeners={{
+          tabPress: () => {
+            if (router.canDismiss()) {
+              router.dismissTo('/chats');
+            } else {
+              router.replace('/chats');
+            }
+          },
+        }}
       />
       <Tabs.Screen
         name="events"
@@ -99,6 +126,15 @@ export default function RootLayoutNav() {
           tabBarLabelStyle: {
             fontSize: 12,
             marginBottom: 8,
+          },
+        }}
+        listeners={{
+          tabPress: () => {
+            if (router.canDismiss()) {
+              router.dismissTo('/events');
+            } else {
+              router.replace('/events');
+            }
           },
         }}
       />

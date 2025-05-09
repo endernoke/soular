@@ -18,6 +18,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import Markdown from "react-native-markdown-display";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
+import { useRouter } from "expo-router";
 
 // Screen dimensions
 const { width } = Dimensions.get("window");
@@ -66,6 +67,8 @@ export default function LearnScreen() {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
   const tabIndicatorPosition = useRef(new Animated.Value(0)).current;
+
+  const router = useRouter();
 
   // Start a new chat session when the component mounts
   useEffect(() => {
@@ -414,6 +417,19 @@ export default function LearnScreen() {
       friction: 30,
       useNativeDriver: false,
     }).start();
+  };
+
+  // Handle create event navigation
+  const handleCreateEvent = (event: GreenEvent) => {
+    // Encode the event data in the URL parameters
+    const params = new URLSearchParams({
+      title: event.title,
+      description: `${event.description}\n\nEnvironmental Impact: ${event.impact}`,
+      venue: event.location,
+      date: event.date,
+    });
+
+    router.push(`/events/new?${params.toString()}`);
   };
 
   // Render message item
@@ -936,6 +952,36 @@ export default function LearnScreen() {
                 </Text>
               </View>
             </View>
+
+            <TouchableOpacity
+              onPress={() => handleCreateEvent(event)}
+              style={{
+                backgroundColor: "#1aea9f",
+                padding: 12,
+                borderRadius: 8,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                margin: 20,
+                marginTop: 0,
+              }}
+            >
+              <Ionicons
+                name="add-circle-outline"
+                size={20}
+                color="white"
+                style={{ marginRight: 8 }}
+              />
+              <Text
+                style={{
+                  color: "white",
+                  fontSize: 16,
+                  fontWeight: "600",
+                }}
+              >
+                Create Event
+              </Text>
+            </TouchableOpacity>
           </TouchableOpacity>
         ))}
       </Animated.ScrollView>
