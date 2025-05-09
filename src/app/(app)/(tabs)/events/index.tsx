@@ -86,7 +86,7 @@ const EventCard = ({
       </Text>
       {/* Display counts fetched via RPC or separate queries */}
       <View className="flex-row space-x-4">
-        <View className="flex-row items-center">
+        <View className="flex-row items-center pr-4">
           <Ionicons name="people" size={16} color="#4b5563" />
           <Text className="text-gray-600 ml-1">
             {event.participant_count ?? 0}
@@ -207,7 +207,7 @@ export default function EventsScreen() {
       };
     }, [])
   );
-  
+
   const stages: (EventStage | "all")[] = [
     "all",
     "upcoming",
@@ -220,9 +220,7 @@ export default function EventsScreen() {
       <View className="pb-6 px-6 pt-6">
         <View className="flex-row justify-between items-center mb-4">
           <View className="flex-row">
-            <Text
-              className="text-3xl font-[Priestacy] text-[#1aea9f] pt-6"
-            >
+            <Text className="text-3xl font-[Priestacy] text-[#1aea9f] pt-6">
               Soular
             </Text>
             <Text className="text-3xl font-bold pl-1 pt-3">Events</Text>
@@ -240,9 +238,7 @@ export default function EventsScreen() {
           </TouchableOpacity>
         </View>
 
-        <View
-          className="flex-row items-center justify-left mb-4 border-2 border-[#00000010] rounded-full min-h-[40px]"
-        >
+        <View className="flex-row items-center justify-left mb-4 border-2 border-[#00000010] rounded-full min-h-[40px]">
           <Ionicons
             name="search"
             size={20}
@@ -260,10 +256,10 @@ export default function EventsScreen() {
             placeholder="Search for Soular events..."
             value={searchQuery}
             onChangeText={setSearchQuery}
-            />
+          />
         </View>
 
-        { /* Stage filter buttons */}
+        {/* Stage filter buttons */}
         <View className="mb-4 rounded-full p-[5px]">
           <View className="rounded-full">
             <FlatList

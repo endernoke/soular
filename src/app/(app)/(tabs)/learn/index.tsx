@@ -508,12 +508,11 @@ export default function LearnScreen() {
               //               shadowOpacity: isUser ? undefined : 0.1,
               //               shadowRadius: isUser ? undefined : 10,
               elevation: isUser ? undefined : 2,
+              overflow: isUser ? undefined : "hidden",
             }}
           >
             {isUser ? (
-              <Text
-                style={{ color: "white", fontSize: 16, fontWeight: "500" }}
-              >
+              <Text style={{ color: "white", fontSize: 16, fontWeight: "500" }}>
                 {message.text}
               </Text>
             ) : (
@@ -661,7 +660,6 @@ export default function LearnScreen() {
                 fontSize: 100,
                 fontWeight: "bold",
                 color: "#00f260",
-
               }}
             >
               {carbonData.footprint}
@@ -703,7 +701,6 @@ export default function LearnScreen() {
             carbonData.breakdown.map((item, index) => (
               <View
                 key={index}
-
                 style={{
                   flexDirection: "row",
                   justifyContent: "space-between",
@@ -711,15 +708,16 @@ export default function LearnScreen() {
                   borderBottomWidth:
                     index < carbonData.breakdown.length - 1 ? 3 : 3,
                   borderBottomColor: "#1aea9f",
-
                 }}
               >
-                <Text style={{ fontSize: 16, color: "#495057" }} numberOfLines={1}>
+                <Text
+                  style={{ fontSize: 16, color: "#495057" }}
+                  numberOfLines={1}
+                >
                   {item.category}
                 </Text>
                 <Text
                   style={{ fontSize: 16, fontWeight: "500", color: "#212529" }}
-
                 >
                   {item.amount} {carbonData.unit}
                 </Text>
@@ -739,7 +737,6 @@ export default function LearnScreen() {
             shadowOpacity: 0.1,
             shadowRadius: 20,
             elevation: 2,
-
           }}
         >
           <Text
@@ -832,7 +829,7 @@ export default function LearnScreen() {
 
     return (
       <Animated.ScrollView
-      showsVerticalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
         style={{
           flex: 1,
           opacity: fadeAnim,
@@ -1185,7 +1182,6 @@ export default function LearnScreen() {
                   marginRight: 8,
                   fontSize: 16,
                   textAlignVertical: "center", // Center text vertically
-
                 }}
                 placeholderTextColor="#ADB5BD"
               />
