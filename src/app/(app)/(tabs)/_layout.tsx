@@ -32,7 +32,7 @@ export default function RootLayoutNav() {
           />
         ),
         tabBarItemStyle: {
-          paddingTop: 15,
+          paddingTop: 20,
           borderRadius: 10,
           marginHorizontal: 5,
           height: 40, // Increased item height
@@ -64,6 +64,40 @@ export default function RootLayoutNav() {
         }}
       />
       <Tabs.Screen
+              name="chats"
+              options={{
+                title: "",
+                tabBarIcon: ({ color, size, focused }) => (
+                  <View style={focused ? styles.iconContainerFocused : null}>
+                    <Ionicons name="chatbubble" size={24} color={color} />
+                  </View>
+                ),
+                tabBarLabelStyle: {
+                  fontSize: 12,
+                  marginBottom: 8,
+                },
+                tabBarStyle: {
+                  display:
+                    usePathname().split("/").pop() == "chats" ? "flex" : "none",
+                  position: "absolute",
+                  borderTopWidth: 0,
+                  backgroundColor: "transparent",
+                  elevation: 0,
+                  height: 60, // Increased height
+                  paddingBottom: 0, // Extra padding at the bottom
+                },
+              }}
+              listeners={{
+                tabPress: () => {
+                  if (router.canDismiss()) {
+                    router.dismissTo("/chats");
+                  } else {
+                    router.replace("/chats");
+                  }
+                },
+              }}
+            />
+      <Tabs.Screen
         name="index"
         options={{
           title: "",
@@ -87,40 +121,7 @@ export default function RootLayoutNav() {
           },
         }}
       />
-      <Tabs.Screen
-        name="chats"
-        options={{
-          title: "",
-          tabBarIcon: ({ color, size, focused }) => (
-            <View style={focused ? styles.iconContainerFocused : null}>
-              <Ionicons name="chatbubble" size={24} color={color} />
-            </View>
-          ),
-          tabBarLabelStyle: {
-            fontSize: 12,
-            marginBottom: 8,
-          },
-          tabBarStyle: {
-            display:
-              usePathname().split("/").pop() == "chats" ? "flex" : "none",
-            position: "absolute",
-            borderTopWidth: 0,
-            backgroundColor: "transparent",
-            elevation: 0,
-            height: 60, // Increased height
-            paddingBottom: 0, // Extra padding at the bottom
-          },
-        }}
-        listeners={{
-          tabPress: () => {
-            if (router.canDismiss()) {
-              router.dismissTo("/chats");
-            } else {
-              router.replace("/chats");
-            }
-          },
-        }}
-      />
+
       <Tabs.Screen
         name="events"
         options={{
