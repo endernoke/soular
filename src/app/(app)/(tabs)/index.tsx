@@ -98,10 +98,9 @@ export default function HomeScreen() {
           className="justify-center items-center w-full pb-10"
         >
           <View className="flex-row items-center justify-between px-[30px] w-full pt-6 mb-5">
-            <View className="flex-1 flex-col">
+            <View className="flex-col">
               <Text
-                className="text-[30px]"
-                style={{ fontFamily: "Priestacy", marginBottom: -10 }}
+                className="text-[30px] font-[Priestacy]"
               >
                 Bonjour,
               </Text>
