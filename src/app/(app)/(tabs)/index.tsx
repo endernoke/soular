@@ -99,11 +99,7 @@ export default function HomeScreen() {
         >
           <View className="flex-row items-center justify-between px-[30px] w-full pt-6 mb-5">
             <View className="flex-col">
-              <Text
-                className="text-[30px] font-[Priestacy]"
-              >
-                Bonjour,
-              </Text>
+              <Text className="text-[30px] font-[Priestacy]">Bonjour,</Text>
               <Text className="text-[30px] font-bold text-[black]">
                 {profile?.display_name || "Soular"}
               </Text>
@@ -132,10 +128,12 @@ export default function HomeScreen() {
       </ImageBackground>
 
       <View className="flex-1 bg-[#1aea9f30] justify-left items-center w-full">
-        <Text className="text-xl font-bold px-[30px] py-4">Stories</Text>
+        <Text className="text-2xl text-blue-600 font-bold px-[30px] pb-4">
+          Stories
+        </Text>
         <Stories />
 
-        <View className="flex-row w-[101%] items-center justify-between px-[30px] pt-[25px] bg-white rounded-t-[40px] border-t-2 border-x-2 border-black">
+        <View className="mt-2 flex-row w-[101%] items-center justify-between px-[30px] pt-[20px] bg-white rounded-t-[40px] border-t-2 border-x-2 border-black">
           <Text className="text-2xl">Feed</Text>
           <TouchableOpacity
             onPress={() => setNewPostModalVisible(true)}
@@ -186,7 +184,6 @@ export default function HomeScreen() {
               width: "100%",
               minHeight: Dimensions.get("screen").height * 0.5,
               backgroundColor: "white",
-              overflow: "auto",
               borderTopLeftRadius: 24,
               borderTopRightRadius: 24,
               paddingTop: 16,
@@ -198,7 +195,8 @@ export default function HomeScreen() {
               <View className="rounded-full bg-[#ffcc0020] text-[#ffcc00] px-4 py-1 mx-4 text-[16px]">
                 Earn 50 Points
               </View>
-              <View className="flex-1" /> {/* This empty View takes up remaining space */}
+              <View className="flex-1" />{" "}
+              {/* This empty View takes up remaining space */}
               <TouchableOpacity onPress={() => setNewPostModalVisible(false)}>
                 <Ionicons name="close" size={24} color="#000" />
               </TouchableOpacity>

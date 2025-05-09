@@ -28,11 +28,14 @@ export default function ProfileScreen() {
   const [editedName, setEditedName] = useState(profile?.display_name || "");
   const [editedBio, setEditedBio] = useState(profile?.bio || "");
   const [isLoading, setIsLoading] = useState(false);
+  const [bioCharCount, setBioCharCount] = useState(0);
+  const MAX_BIO_LENGTH = 150;
 
   useEffect(() => {
     if (profile) {
       setEditedName(profile.display_name || "");
       setEditedBio(profile.bio || "");
+      setBioCharCount(profile.bio?.length || 0);
     }
   }, [profile]);
 
@@ -147,65 +150,107 @@ export default function ProfileScreen() {
     }
   };
 
+  // Update bio and character count
+  const handleBioChange = (text: string) => {
+    // Limit input to MAX_BIO_LENGTH characters
+    if (text.length <= MAX_BIO_LENGTH) {
+      setEditedBio(text);
+      setBioCharCount(text.length);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.topHeader}>
         <TouchableOpacity
           onPress={() => router.back()}
-          className="mb-4 flex-row items-center"
+          className="flex-row items-center"
         >
           <Ionicons name="arrow-back" size={24} color="#000" />
-          <Text className="ml-2">Back</Text>
+          <Text className="ml-2 text-xl">Back</Text>
         </TouchableOpacity>
       </View>
+      {/* Redesigned header with horizontal layout */}
       <View style={styles.header}>
-        <TouchableOpacity
-          onPress={async () => {
-            const uri = await handlePickImage();
-            if (uri) {
-              setIsLoading(true);
-              if (user?.id) {
-                let photoUrl = await handleUploadProfileImage(uri, user.id);
-                if (photoUrl) {
-                  photoUrl += `?t=${new Date().getTime()}`; // Cache-busting
-                  await updateUserProfilePhoto(photoUrl);
-                }
-              } else {
-                Alert.alert("Error", "User ID is not available");
-              }
-              setIsLoading(false);
-            }
-          }}
-        >
-          {!isLoading ? (
-            profile?.photo_url ? (
-              <Image
-                source={{ uri: profile.photo_url }}
-                style={styles.avatar}
-              />
+        <View style={styles.profileRow}>
+          {/* Left side: Profile picture */}
+          <View style={styles.avatarContainer}>
+            {!isLoading ? (
+              profile?.photo_url ? (
+                <Image
+                  source={{ uri: profile.photo_url }}
+                  style={styles.avatar}
+                />
+              ) : (
+                <View style={[styles.avatar, styles.avatarPlaceholder]}>
+                  <Ionicons name="person" size={40} color="#fff" />
+                </View>
+              )
             ) : (
               <View style={[styles.avatar, styles.avatarPlaceholder]}>
-                <Ionicons name="person" size={40} color="#fff" />
+                <ActivityIndicator size="large" color="#007AFF" />
               </View>
-            )
-          ) : (
-            <View style={[styles.avatar, styles.avatarPlaceholder]}>
-              <ActivityIndicator size="large" color="#007AFF" />
-            </View>
-          )}
-        </TouchableOpacity>
-        <Text style={styles.name}>{profile?.display_name || "User"}</Text>
-        <Text style={styles.email}>{user?.email}</Text>
-        {profile?.bio && <Text style={styles.bio}>{profile.bio}</Text>}
+            )}
+          </View>
 
-        <TouchableOpacity
-          style={styles.editButton}
-          onPress={() => setIsEditingProfile(true)}
-        >
-          <Text style={styles.editButtonText}>Edit Profile</Text>
-        </TouchableOpacity>
+          {/* Right side: User info */}
+          <View style={styles.userInfo}>
+            <Text style={styles.name}>{profile?.display_name || "User"}</Text>
+            <Text style={styles.email}>{user?.email}</Text>
+            {profile?.bio && (
+              <Text style={styles.bio} numberOfLines={6} ellipsizeMode="tail">
+                {profile.bio}
+              </Text>
+            )}
+          </View>
+        </View>
+
+        {/* Buttons row */}
+        <View style={styles.buttonsRow}>
+          {/* Edit Profile Picture button */}
+          <TouchableOpacity
+            style={styles.editPhotoButton}
+            onPress={async () => {
+              const uri = await handlePickImage();
+              if (uri) {
+                setIsLoading(true);
+                if (user?.id) {
+                  let photoUrl = await handleUploadProfileImage(uri, user.id);
+                  if (photoUrl) {
+                    photoUrl += `?t=${new Date().getTime()}`; // Cache-busting
+                    await updateUserProfilePhoto(photoUrl);
+                  }
+                } else {
+                  Alert.alert("Error", "User ID is not available");
+                }
+                setIsLoading(false);
+              }
+            }}
+          >
+            <Ionicons
+              name="camera"
+              size={16}
+              color="#fff"
+              style={{ marginRight: 5 }}
+            />
+            <Text style={styles.editButtonText}>Edit Photo</Text>
+          </TouchableOpacity>
+
+          {/* Edit Profile button */}
+          <TouchableOpacity
+            style={styles.editButton}
+            onPress={() => setIsEditingProfile(true)}
+          >
+            <Ionicons
+              name="create"
+              size={16}
+              color="#fff"
+              style={{ marginRight: 5 }}
+            />
+            <Text style={styles.editButtonText}>Edit Profile</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-
       <ScrollView style={styles.content}>
         <TouchableOpacity style={styles.menuItem}>
           <Ionicons name="settings-outline" size={24} color="#666" />
@@ -234,11 +279,9 @@ export default function ProfileScreen() {
           <Ionicons name="chevron-forward" size={24} color="#666" />
         </TouchableOpacity>
       </ScrollView>
-
       <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>
         <Text style={styles.signOutText}>Sign Out</Text>
       </TouchableOpacity>
-
       <Modal
         visible={isEditingProfile}
         animationType="slide"
@@ -255,15 +298,20 @@ export default function ProfileScreen() {
               onChangeText={setEditedName}
             />
 
-            <TextInput
-              style={[styles.modalInput, styles.bioInput]}
-              placeholder="Bio - Tell us about yourself..."
-              value={editedBio}
-              onChangeText={setEditedBio}
-              multiline
-              numberOfLines={4}
-              maxLength={500}
-            />
+            <View>
+              <TextInput
+                style={[styles.modalInput, styles.bioInput]}
+                placeholder="Bio - Tell us about yourself..."
+                value={editedBio}
+                onChangeText={handleBioChange}
+                multiline
+                numberOfLines={4}
+                maxLength={MAX_BIO_LENGTH}
+              />
+              <Text style={styles.charCounter}>
+                {bioCharCount}/{MAX_BIO_LENGTH}
+              </Text>
+            </View>
 
             <View style={styles.modalButtons}>
               <TouchableOpacity
@@ -271,6 +319,7 @@ export default function ProfileScreen() {
                 onPress={() => {
                   setEditedName(profile?.display_name || "");
                   setEditedBio(profile?.bio || "");
+                  setBioCharCount(profile?.bio?.length || 0);
                   setIsEditingProfile(false);
                 }}
               >
@@ -299,10 +348,20 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
+  avatarPlaceholder: {
+    backgroundColor: "#ccc",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  editButtonText: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "600",
+  },
   topHeader: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 30,
+    padding: 12,
     borderBottomWidth: 1,
     borderBottomColor: "#f0f0f0",
   },
@@ -311,48 +370,57 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   header: {
-    alignItems: "center",
     padding: 20,
     borderBottomWidth: 1,
     borderBottomColor: "#f0f0f0",
   },
-  avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+
+  // New styles for horizontal layout
+  profileRow: {
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 16,
   },
-  avatarPlaceholder: {
-    backgroundColor: "#007AFF",
-    alignItems: "center",
-    justifyContent: "center",
+
+  avatarContainer: {
+    marginRight: 16,
   },
+
+  avatar: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+  },
+
+  userInfo: {
+    flex: 1,
+  },
+
   name: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: "bold",
+    marginBottom: 4,
+  },
+
+  email: {
+    fontSize: 14,
+    color: "#666",
     marginBottom: 8,
   },
-  email: {
-    fontSize: 16,
-    color: "#666",
-    marginBottom: 20,
-  },
+
   bio: {
-    fontSize: 16,
+    fontSize: 14,
     color: "#333",
-    marginTop: 8,
-    marginBottom: 16,
-    textAlign: "center",
+    lineHeight: 18,
   },
+
   editButton: {
     backgroundColor: "#007AFF",
-    paddingHorizontal: 20,
+    paddingHorizontal: 15,
     paddingVertical: 8,
     borderRadius: 20,
-  },
-  editButtonText: {
-    color: "#fff",
-    fontWeight: "600",
+    flexDirection: "row",
+    alignItems: "center",
   },
   content: {
     flex: 1,
@@ -376,7 +444,7 @@ const styles = StyleSheet.create({
   signOutButton: {
     margin: 30,
     padding: 16,
-
+    marginBottom: 60,
     backgroundColor: "#ff3b30",
     borderRadius: 16,
     alignItems: "center",
@@ -415,6 +483,14 @@ const styles = StyleSheet.create({
   bioInput: {
     height: 100,
     textAlignVertical: "top",
+    paddingBottom: 24, // Add padding to make room for the character counter
+  },
+  charCounter: {
+    position: "absolute",
+    bottom: 24,
+    right: 12,
+    fontSize: 12,
+    color: "#666",
   },
   modalButtons: {
     flexDirection: "row",
@@ -437,5 +513,20 @@ const styles = StyleSheet.create({
   modalButtonText: {
     color: "#fff",
     fontWeight: "600",
+  },
+  buttonsRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 8,
+  },
+  editPhotoButton: {
+    backgroundColor: "#007AFF",
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    borderRadius: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    marginRight: 40,
   },
 });

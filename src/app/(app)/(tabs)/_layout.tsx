@@ -20,8 +20,8 @@ export default function RootLayoutNav() {
           borderTopWidth: 0,
           backgroundColor: "transparent",
           elevation: 0,
-          height: 60, // Increased height
-          paddingBottom: 0, // Extra padding at the bottom
+          height: 60,
+          paddingBottom: 0,
         },
         tabBarBackground: () => (
           <BlurView
@@ -35,7 +35,7 @@ export default function RootLayoutNav() {
           paddingTop: 12.5,
           borderRadius: 10,
           marginHorizontal: 5,
-          height: 40, // Increased item height
+          height: 40,
         },
       }}
     >
@@ -43,14 +43,12 @@ export default function RootLayoutNav() {
         name="learn/index"
         options={{
           title: "",
-          tabBarIcon: ({ color, size, focused }) => (
-            <View style={focused ? styles.iconContainerFocused : null}>
-              <Ionicons name="book" size={24} color={color} />
-            </View>
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="book" size={24} color={color} />
           ),
           tabBarLabelStyle: {
             fontSize: 12,
-            marginBottom: 8, // Adjusted label position
+            marginBottom: 8,
           },
         }}
         listeners={{
@@ -64,47 +62,43 @@ export default function RootLayoutNav() {
         }}
       />
       <Tabs.Screen
-              name="chats"
-              options={{
-                title: "",
-                tabBarIcon: ({ color, size, focused }) => (
-                  <View style={focused ? styles.iconContainerFocused : null}>
-                    <Ionicons name="chatbubble" size={24} color={color} />
-                  </View>
-                ),
-                tabBarLabelStyle: {
-                  fontSize: 12,
-                  marginBottom: 8,
-                },
-                tabBarStyle: {
-                  display:
-                    usePathname().split("/").pop() == "chats" ? "flex" : "none",
-                  position: "absolute",
-                  borderTopWidth: 0,
-                  backgroundColor: "transparent",
-                  elevation: 0,
-                  height: 60, // Increased height
-                  paddingBottom: 0, // Extra padding at the bottom
-                },
-              }}
-              listeners={{
-                tabPress: () => {
-                  if (router.canDismiss()) {
-                    router.dismissTo("/chats");
-                  } else {
-                    router.replace("/chats");
-                  }
-                },
-              }}
-            />
+        name="chats"
+        options={{
+          title: "",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="chatbubble" size={24} color={color} />
+          ),
+          tabBarLabelStyle: {
+            fontSize: 12,
+            marginBottom: 8,
+          },
+          tabBarStyle: {
+            display:
+              usePathname().split("/").pop() == "chats" ? "flex" : "none",
+            position: "absolute",
+            borderTopWidth: 0,
+            backgroundColor: "transparent",
+            elevation: 0,
+            height: 60,
+            paddingBottom: 0,
+          },
+        }}
+        listeners={{
+          tabPress: () => {
+            if (router.canDismiss()) {
+              router.dismissTo("/chats");
+            } else {
+              router.replace("/chats");
+            }
+          },
+        }}
+      />
       <Tabs.Screen
         name="index"
         options={{
           title: "",
-          tabBarIcon: ({ color, size, focused }) => (
-            <View style={focused ? styles.iconContainerFocused : null}>
-              <Ionicons name="home" size={24} color={color} />
-            </View>
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="home" size={24} color={color} />
           ),
           tabBarLabelStyle: {
             fontSize: 12,
@@ -126,10 +120,8 @@ export default function RootLayoutNav() {
         name="events"
         options={{
           title: "",
-          tabBarIcon: ({ color, size, focused }) => (
-            <View style={focused ? styles.iconContainerFocused : null}>
-              <Ionicons name="calendar" size={24} color={color} />
-            </View>
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="calendar" size={24} color={color} />
           ),
           tabBarLabelStyle: {
             fontSize: 12,
@@ -150,10 +142,8 @@ export default function RootLayoutNav() {
         name="profile"
         options={{
           title: "",
-          tabBarIcon: ({ color, size, focused }) => (
-            <View style={focused ? styles.iconContainerFocused : null}>
-              <Ionicons name="person" size={24} color={color} />
-            </View>
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="person" size={24} color={color} />
           ),
           tabBarLabelStyle: {
             fontSize: 12,
@@ -173,11 +163,3 @@ export default function RootLayoutNav() {
     </Tabs>
   );
 }
-
-const styles = StyleSheet.create({
-  iconContainerFocused: {
-    //     backgroundColor: 'rgba(0, 122, 255, 0.1)',
-    padding: 5, // Increased padding
-    borderRadius: 15,
-  },
-});
