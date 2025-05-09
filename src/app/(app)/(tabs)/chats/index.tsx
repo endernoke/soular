@@ -42,7 +42,7 @@ const ChatListItem = ({ chat }: { chat: ChatRoom }) => {
   return (
     <TouchableOpacity
       onPress={() => router.push(`/chats/${chat.id}`)}
-      className="flex-row items-center p-4 bg-white border-b border-gray-100"
+      className="flex-row items-center p-4 px-[20px] bg-white border-b border-gray-100"
     >
       {/* Chat Icon/Avatar */}
       {icon ? (
@@ -94,7 +94,7 @@ const SearchResultItem = ({
 }) => (
   <TouchableOpacity
     onPress={onPress}
-    className="flex-row items-center p-4 bg-white border-b border-gray-100"
+    className="flex-row items-center p-4 px-[20px] bg-white border-b border-gray-100"
   >
     {profile.photo_url ? (
       <Image
@@ -290,12 +290,12 @@ export default function ChatInboxScreen() {
 
   return (
     <View className="flex-1 bg-white">
-      <View className="bg-white p-4 flex-row items-left items-center mb-0">
+      <View className="bg-white p-[20px] flex-row items-left items-center mb-0">
         <Text className="text-3xl ml-1 font-bold">Messages</Text>
       </View>
 
       {/* Search Bar */}
-      <View className="flex-row items-center bg-gray-100 rounded-full px-4 py-2 mb-4 mx-4">
+      <View className="flex-row items-center bg-gray-100 rounded-full px-4 py-2 mb-4 mx-[20px]">
         <Ionicons name="search" size={20} color="#666" />
         <TextInput
           value={searchQuery}
@@ -329,7 +329,7 @@ export default function ChatInboxScreen() {
           )}
           keyExtractor={(item) => item.id}
           ListEmptyComponent={() => (
-            <View className="flex-1 justify-center items-center p-4">
+            <View className="flex-1 justify-center items-center p-[20px]">
               <Text className="text-gray-500 text-center">
                 {searching ? "Searching..." : "No users or chats found"}
               </Text>
@@ -344,7 +344,7 @@ export default function ChatInboxScreen() {
           renderItem={({ item }) => <ChatListItem chat={item} />}
           keyExtractor={(item) => item.id}
           ListEmptyComponent={() => (
-            <View className="flex-1 justify-center items-center p-4">
+            <View className="flex-1 justify-center items-center p-[20px]">
               <Text className="text-gray-500 text-center">
                 {loading ? "Loading chats..." : "No messages yet"}
               </Text>

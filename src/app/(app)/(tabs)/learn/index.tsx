@@ -1192,7 +1192,7 @@ export default function LearnScreen() {
                 <Ionicons
                   name="send"
                   size={20}
-                  color={inputMessage.trim() ? "white" : "#aaa"}
+                  color={inputMessage.trim() ? "white" : "white"}
                 />
               </TouchableOpacity>
             </View>

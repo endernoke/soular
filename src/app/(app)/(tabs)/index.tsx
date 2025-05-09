@@ -99,7 +99,7 @@ export default function HomeScreen() {
         >
           <View className="flex-row items-center justify-between px-[30px] w-full pt-6 mb-5">
             <View className="flex-col">
-              <Text className="text-[30px] font-[Priestacy]">Bonjour,</Text>
+              <Text className="text-[40px] font-[Priestacy] mb-[-20px]">Bonjour,</Text>
               <Text className="text-[30px] font-bold text-[black]">
                 {profile?.display_name || "Soular"}
               </Text>
@@ -128,13 +128,13 @@ export default function HomeScreen() {
       </ImageBackground>
 
       <View className="flex-1 bg-[#1aea9f30] justify-left items-center w-full">
-        <Text className="text-2xl text-blue-600 font-bold px-[30px] pb-4">
-          Stories
-        </Text>
-        <Stories />
 
-        <View className="mt-2 flex-row w-[101%] items-center justify-between px-[30px] pt-[20px] bg-white rounded-t-[40px] border-t-2 border-x-2 border-black">
-          <Text className="text-2xl">Feed</Text>
+
+
+        <View className="mt-2 flex-col w-[101%] items-center justify-between  pt-[25px] bg-white rounded-t-[30px] border-t-2 border-x-2 border-black">
+           <Stories />
+          <View className="mt-2 w-full px-[30px] flex-row justify-between">
+          <Text className="text-2xl">Soular Posts</Text>
           <TouchableOpacity
             onPress={() => setNewPostModalVisible(true)}
             className="flex-row bg-black     rounded-full px-4 py-2 items-center justify-center"
@@ -142,6 +142,7 @@ export default function HomeScreen() {
             <Ionicons name="add" size={20} color="white" />
             <Text className="text-white text-md font-bold ml-1 mr-1">New</Text>
           </TouchableOpacity>
+          </View>
         </View>
 
         <View className="flex-1 bg-white w-full">
