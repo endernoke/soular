@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, Image, } from 'react-native';
 import { useRouter } from 'expo-router';
 import { supabase } from '@/lib/supabase'; // Import supabase client
 
@@ -31,6 +31,7 @@ export default function Login() {
 
   return (
     <View style={styles.container}>
+
       <Text style={styles.title}>Log In</Text>
       
       <TextInput
@@ -110,11 +111,14 @@ const styles = StyleSheet.create({
       fontWeight: '600',
     },
   linkButton: {
-    marginTop: 20,
-    alignItems: 'center',
+     marginTop: 20,
+        alignItems: 'center',
+    //     backgroundColor: '#00000005',
+        padding: 10,
+        borderRadius: 20,
   },
   linkText: {
     color: '#007AFF',
-    fontSize: 14,
+    fontSize: 16,
   },
 });

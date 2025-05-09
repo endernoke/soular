@@ -140,9 +140,14 @@ const styles = StyleSheet.create({
   linkButton: {
     marginTop: 20,
     alignItems: 'center',
+//     backgroundColor: '#00000005',
+    padding: 10,
+    borderRadius: 20,
+
+
   },
   linkText: {
     color: '#007AFF',
-    fontSize: 14,
+    fontSize: 16,
   },
 });
