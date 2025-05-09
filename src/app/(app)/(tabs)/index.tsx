@@ -85,6 +85,12 @@ export default function HomeScreen() {
     }, [])
   );
 
+  useFocusEffect(
+    useCallback(() => {
+      socialFeedRef.current?.fetchPosts();
+    }, [])
+  );
+
   return (
     <ScrollView className="flex-1 bg-[white]" showsVerticalScrollIndicator={false}>
       <ImageBackground

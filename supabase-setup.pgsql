@@ -24,6 +24,17 @@ create table if not exists posts (
   created_at timestamptz default now()
 );
 
+-- Promoted posts table
+create table if not exists promoted_posts (
+  id uuid default uuid_generate_v4() primary key,
+  content text not null,
+  image_url text,
+  author_id uuid references profiles(id) on delete cascade not null,
+  created_at timestamptz default now(),
+  affiliated_link text,
+  expires_at timestamptz not null
+);
+
 -- Events table
 create table if not exists events (
   id uuid default uuid_generate_v4() primary key,
@@ -94,6 +105,9 @@ create table if not exists stories (
 -- Indexes for performance
 create index if not exists posts_created_at_idx on posts (created_at desc);
 create index if not exists posts_author_id_idx on posts (author_id);
+create index if not exists promoted_posts_created_at_idx on promoted_posts (created_at desc);
+create index if not exists promoted_posts_expires_at_idx on promoted_posts (expires_at);
+create index if not exists promoted_posts_author_id_idx on promoted_posts (author_id);
 create index if not exists events_event_timestamp_idx on events (event_timestamp desc);
 create index if not exists events_stage_idx on events (stage);
 create index if not exists events_author_id_idx on events (author_id);
@@ -128,6 +142,7 @@ create or replace trigger on_auth_user_created
 -- Enable Row Level Security
 alter table profiles enable row level security;
 alter table posts enable row level security;
+alter table promoted_posts enable row level security;
 alter table events enable row level security;
 alter table event_organizers enable row level security;
 alter table event_participants enable row level security;
@@ -141,9 +156,10 @@ create policy "Public profiles are viewable by everyone"
   on profiles for select
   using (true);
 
-create policy "Users can update their own profile"
-  on profiles for update
-  using (auth.uid() = id);
+-- Promoted posts policies
+create policy "Promoted posts are viewable by everyone"
+  on promoted_posts for select
+  using (true);
 
 -- Posts policies
 create policy "Posts are viewable by everyone"
