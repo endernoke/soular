@@ -440,7 +440,7 @@ export default function EventDetailScreen() {
             chatRooms.participants && (
               <TouchableOpacity
               //               className="bg-[#1aea9f] p-4 rounded-[20px] mb-3"
-                            onPress={() => navigateToChat("[participants]")}
+                            onPress={() => navigateToChat("participants")}
                           >
                           <LinearGradient
                           colors={["#1aea9f", "#10d9c7"]}
