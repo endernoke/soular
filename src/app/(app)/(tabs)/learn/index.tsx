@@ -975,7 +975,7 @@ export default function LearnScreen() {
               fontFamily: "Priestacy",
               fontSize: 40,
               fontWeight: "700",
-              color: "#388e3c",
+              color: "#00d959",
               marginLeft: -10,
               marginTop: 0,
               marginBottom: -40,
@@ -1110,11 +1110,12 @@ export default function LearnScreen() {
                 value={inputMessage}
                 onChangeText={setInputMessage}
                 placeholder="Ask a question..."
-                multiline={true} // Enable multiline input
+                multiline={false} // Enable multiline input
                 style={{
                   flex: 1,
+                  height: 40,
                   minHeight: 40, // Changed from fixed height to minHeight
-                  maxHeight: 120, // Add a maximum height to prevent too much expansion
+                  maxHeight: 120,
                   backgroundColor: "#F1F3F5",
                   borderRadius: 20,
                   paddingHorizontal: 16,
@@ -1123,6 +1124,7 @@ export default function LearnScreen() {
                   marginRight: 8,
                   fontSize: 16,
                   textAlignVertical: "center", // Center text vertically
+
                 }}
                 placeholderTextColor="#ADB5BD"
               />
@@ -1138,7 +1140,7 @@ export default function LearnScreen() {
                   backgroundColor: inputMessage.trim() ? "#1aea9f" : "#E9ECEF",
                   justifyContent: "center",
                   alignItems: "center",
-                  marginBottom: 5, // Add a small margin at the bottom to align with text
+                  marginBottom: 0, // Add a small margin at the bottom to align with text
                 }}
               >
                 <Ionicons

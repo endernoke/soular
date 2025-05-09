@@ -55,6 +55,24 @@ export default function RootLayoutNav() {
         }}
       />
       <Tabs.Screen
+              name="chats"
+              options={{
+                title: '',
+                tabBarIcon: ({ color, size, focused }) => (
+                  <View style={focused ? styles.iconContainerFocused : null}>
+                    <Ionicons name="chatbubble" size={24} color={color} />
+                  </View>
+                ),
+                tabBarLabelStyle: {
+                  fontSize: 12,
+                  marginBottom: 8,
+                },
+                tabBarStyle: {
+                  display: usePathname().split('/').pop() == 'chats' ? 'flex' : 'none',
+                },
+              }}
+            />
+      <Tabs.Screen
         name="index"
         options={{
           title: '',
@@ -69,24 +87,7 @@ export default function RootLayoutNav() {
           },
         }}
       />
-      <Tabs.Screen
-        name="chats"
-        options={{
-          title: '',
-          tabBarIcon: ({ color, size, focused }) => (
-            <View style={focused ? styles.iconContainerFocused : null}>
-              <Ionicons name="chatbubble" size={24} color={color} />
-            </View>
-          ),
-          tabBarLabelStyle: {
-            fontSize: 12,
-            marginBottom: 8,
-          },
-          tabBarStyle: {
-            display: usePathname().split('/').pop() == 'chats' ? 'flex' : 'none',
-          },
-        }}
-      />
+
       <Tabs.Screen
         name="events"
         options={{
@@ -102,7 +103,10 @@ export default function RootLayoutNav() {
           },
         }}
       />
+
     </Tabs>
+
+
   );
 }
 

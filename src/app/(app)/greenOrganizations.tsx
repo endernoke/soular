@@ -71,10 +71,10 @@ const OrganizationCard = ({ org }: { org: Organization }) => (
       shadowColor: "#4b5563",
       shadowOffset: {
         width: 0,
-        height: 3,
+        height: 10,
       },
-      shadowOpacity: 0.5,
-      shadowRadius: 3.14, // easter egg?
+      shadowOpacity: 0.2,
+      shadowRadius: 20,
     }}
   >
     <View className="flex-row items-center mb-2">
@@ -99,23 +99,33 @@ const OrganizationCard = ({ org }: { org: Organization }) => (
 
 export default function GreenOrganizationsScreen() {
   return (
-    <View className="flex-1 bg-gray-50">
-      <View className="bg-green-200 p-[30px] border-b border-gray-200">
+    <View className="flex-1 bg-white">
 
+<LinearGradient
+        colors={["#1aea9f", "#10d9c7"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
+        style={{
+          padding: 30,
+          borderBottom: 1,
+          borderColor: '#00000020'
+        }}
+      >
 
         <TouchableOpacity
           onPress={() => router.back()}
           className="mb-4 flex-row items-center"
         >
-          <Ionicons name="arrow-back" size={24} color="#1d4ed8" />
-          <Text className="ml-2 text-blue-700">Back to Home</Text>
+          <Ionicons name="arrow-back" size={24} color="white" />
+          <Text className="ml-2 text-white">Back to Home</Text>
         </TouchableOpacity>
 
-        <Text className="text-2xl font-bold">Green Organizations</Text>
-        <Text className="text-gray-600 mt-2">
+        <Text className="text-2xl font-bold text-white">Green Organizations</Text>
+        <Text className="text-gray-600 font-bold mt-2 text-white">
           Join these organizations to make a positive impact on our environment!
         </Text>
-      </View>
+         </LinearGradient>
+
 
       <FlatList
         data={organizations}
@@ -123,6 +133,7 @@ export default function GreenOrganizationsScreen() {
         keyExtractor={(item) => item.id}
         contentContainerStyle={{ padding: 30 }}
       />
+
     </View>
   );
 }

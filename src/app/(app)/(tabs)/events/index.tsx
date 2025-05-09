@@ -40,10 +40,10 @@ const EventCard = ({
       shadowColor: "#4b5563",
       shadowOffset: {
         width: 0,
-        height: 3,
+        height: 10,
       },
-      shadowOpacity: 0.5,
-      shadowRadius: 3.14, // easter egg?
+      shadowOpacity: 0.2,
+      shadowRadius: 20, // easter egg?
     }}
   >
     <Text className="text-black text-xl font-bold mb-2">{event.title}</Text>
