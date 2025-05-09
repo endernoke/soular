@@ -100,7 +100,7 @@ export default function HomeScreen() {
           <View className="flex-row items-center justify-between px-[30px] w-full pt-6 mb-5">
             <View className="flex-col">
               <Text
-                className="text-[30px] font-[Priestacy]"
+                className="text-[40px] font-[Priestacy] mb-[-20px]"
               >
                 Bonjour,
               </Text>
@@ -136,10 +136,13 @@ export default function HomeScreen() {
           <Text className="text-2xl">Our Soular Stories</Text>
           <TouchableOpacity
             onPress={() => setNewPostModalVisible(true)}
-            className="flex-row bg-[black] rounded-full w-20 h-8 items-center justify-center"
+            className="flex-row bg-black rounded-full px-4 py-2 items-center justify-center"
           >
-            <Ionicons name="add" size={15} color="#fff" />
-            <Text className="text-white text-md ml-1">New</Text>
+            <Ionicons name="add" size={20} color="#fff" />
+            <Text className="text-white text-md font-bold ml-1 mr-1">New</Text>
+
+
+
           </TouchableOpacity>
         </View>
 

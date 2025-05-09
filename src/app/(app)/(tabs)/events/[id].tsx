@@ -14,6 +14,8 @@ import { Event, Profile } from "@/types";
 import { Ionicons } from "@expo/vector-icons";
 import { format } from "date-fns";
 
+import { LinearGradient } from "expo-linear-gradient";
+
 export default function EventDetailScreen() {
   const { id } = useLocalSearchParams();
   const { user } = useAuth();
@@ -382,7 +384,7 @@ export default function EventDetailScreen() {
 
           {event.stage === "upcoming" && (
             <TouchableOpacity
-              className={`p-4 rounded-lg mb-3 ${
+              className={`p-4 rounded-[20px] mb-3 ${
                 isParticipant ? "bg-red-500" : "bg-green-500"
               }`}
               onPress={handleJoinEvent}
@@ -400,13 +402,13 @@ export default function EventDetailScreen() {
 
           {event.stage === "in-development" && (
             <TouchableOpacity
-              className={`p-4 rounded-[16px] mb-3 ${
+              className={`p-4 rounded-[20px] mb-3 ${
                 isOrganizer ? "bg-red-500" : "bg-blue-500"
               }`}
               onPress={handleJoinTeam}
               disabled={isJoining}
             >
-              <Text className="text-white text-center text-[16px] font-semibold">
+              <Text className="text-white text-center text-[20px] font-semibold">
                 {isJoining
                   ? "Processing..."
                   : isOrganizer
@@ -419,25 +421,37 @@ export default function EventDetailScreen() {
           {/* Chat buttons */}
           {isOrganizer && chatRooms.organizers && (
             <TouchableOpacity
-              className="bg-purple-500 p-4 rounded-[16px] mb-3"
+//               className="bg-[#1aea9f] p-4 rounded-[20px] mb-3"
               onPress={() => navigateToChat("organizers")}
             >
-              <Text className="text-white text-center text-[16px]  font-semibold">
+            <LinearGradient
+            colors={["#1aea9f", "#10d9c7"]}
+             className="bg-[#1aea9f] p-4 rounded-[20px] mb-3"
+            >
+
+              <Text className="text-white text-center text-[20px]  font-semibold">
                 Organizers Chat
               </Text>
+              </LinearGradient>
             </TouchableOpacity>
           )}
 
           {((event.stage === "upcoming" && isParticipant) || isOrganizer) &&
             chatRooms.participants && (
               <TouchableOpacity
-                className="bg-purple-500 p-4 rounded-[16px] mb-0"
-                onPress={() => navigateToChat("participants")}
-              >
-                <Text className="text-white text-center text-[16px] font-semibold">
-                  Event Chat
-                </Text>
-              </TouchableOpacity>
+              //               className="bg-[#1aea9f] p-4 rounded-[20px] mb-3"
+                            onPress={() => navigateToChat("[participants]")}
+                          >
+                          <LinearGradient
+                          colors={["#1aea9f", "#10d9c7"]}
+                           className="bg-[#1aea9f] p-4 rounded-[20px] mb-3"
+                          >
+
+                            <Text className="text-white text-center text-[20px]  font-semibold">
+                              Participants Chat
+                            </Text>
+                            </LinearGradient>
+                          </TouchableOpacity>
             )}
         </View>
       </View>

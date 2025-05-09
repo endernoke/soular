@@ -337,6 +337,7 @@ const styles = StyleSheet.create({
   email: {
     fontSize: 16,
     color: "#666",
+    marginBottom: 20,
   },
   bio: {
     fontSize: 16,
@@ -379,12 +380,12 @@ const styles = StyleSheet.create({
     padding: 16,
 
     backgroundColor: "#ff3b30",
-    borderRadius: 8,
+    borderRadius: 16,
     alignItems: "center",
   },
   signOutText: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: "600",
   },
   modalContainer: {

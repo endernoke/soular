@@ -12,30 +12,30 @@ export default function RootLayoutNav() {
       initialRouteName="index"
       backBehavior='history'
       screenOptions={{
-        tabBarActiveTintColor: '#007AFF',
+        tabBarActiveTintColor: 'black',
         tabBarInactiveTintColor: '#00000020',
         headerShown: false,
         tabBarStyle: {
           position: 'absolute',
-          borderTopWidth: 0,
+          borderTopWidth: 2, // Added top border width
+          borderTopColor: '#00000010', // Added black border color
           backgroundColor: 'transparent',
           elevation: 0,
-          height: 50, // Increased height
+          height: 60, // Increased height
           paddingBottom: 0, // Extra padding at the bottom
         },
         tabBarBackground: () => (
           <BlurView
-            intensity={50}
-            tint="extraLight"
+            intensity={100}
+            tint="systemThickMaterialLight"
             style={StyleSheet.absoluteFill}
-            experimentalBlurMethod='dimezisBlurView'  // use iOS blur
+            experimentalBlurMethod='dimezisBlurView'
           />
         ),
         tabBarItemStyle: {
-          paddingTop: 7.5,
+          paddingTop: 15,
           borderRadius: 10,
           marginHorizontal: 5,
-
           height: 40, // Increased item height
         },
       }}>
@@ -144,7 +144,6 @@ export default function RootLayoutNav() {
 
 const styles = StyleSheet.create({
   iconContainerFocused: {
-//     backgroundColor: 'rgba(0, 122, 255, 0.1)',
     padding: 5, // Increased padding
     borderRadius: 15,
   },
