@@ -1,79 +1,83 @@
-# Soular: Connect for a Positive Impact
+# Soular
 
-Soular is a mobile application designed to raise awareness about climate change, bring eco-conscious individuals together to take action, and provide users with personalized insights and recommendations. The app integrates features such as carbon footprint calculation, social media sharing, user-driven event participation system, and AI-powered advice.
+![Soular App Preview](/assets/images/banner.png)
 
-## Setup
+A one-stop social media platform for youths to complete the conception, coordination and publicity of environmental initiatives.
 
-1. Clone the repository
+## Project Overview
 
-   ```bash
-   git clone https://github.com/endernoke/soular.git
-   cd soular
-   ```
+### The Problem
 
-2. Install dependencies
+In an era of growing environmental concerns, while many teenagers are passionate about environmental causes, they lack a centralized hub to discover green events, share knowledge, and collaborate on eco-friendly initiatives. It's challenging to find and organize local clean-up drives, workshops, or community gardening projects. Information is scattered, and there's no easy way to connect with others who share the same passion for protecting our planet.
 
-   ```bash
-   npm install
-   ```
+### Our Solution
 
-3. Configure environment variables
+Soular is a mobile application designed to bridge this gap. It serves as a social network for the environmentally conscious, providing a space to connect, learn, and act. Soular empowers users to organize and participate in green events, share their sustainability journey through a social feed, and learn more about their environmental impact.
 
-   Create a `.env` file in the project directory and add your Supabase credentianodels. You can find these in your Supabase project settings.
+## Features
 
-   ```bash
-   EXPO_PUBLIC_SUPABASE_URL=https://your-supabase-url.supabase.co
-   EXPO_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-   ```
+- **Social Feed:** A dynamic feed to share and view posts, stories, and updates.
+- **User Profiles:** Customizable profiles showcasing a user's bio, posts, and event participation.
+- **Events:** Create, discover, and join environmental events like clean-ups, workshops, and seminars.
+- **Real-time Chat:**
+    - **Direct Messaging:** Connect with other users one-on-one.
+    - **Group Chats:** Dedicated chat rooms for event organizers and participants.
+- **Learn Section:**
+    - **AI Copilot:** Get answers to your environmental questions.
+    - **Carbon Footprint Calculator:** Estimate your personal carbon footprint.
+    - **Green Event Suggestions:** Explore eco-friendly events tailored for your needs. Directly integrated with the event creation feature.
+- **Green Organizations:** A directory of environmental organizations to support and follow.
 
-4. Initialize the database
+## Tech Stack
 
-   Run the SQL commands in `supabase-setup.sql` in your Supabase project's SQL editor to set up:
-   - Database tables
-   - Row Level Security (RLS) policies
-   - Storage buckets
-   - Triggers and functions
+- **Frontend:** React Native with Expo
+- **Backend & Database:** Supabase
+- **Routing:** Expo Router
+- **Styling:** Tailwind CSS (NativeWind)
+- **Language:** TypeScript
 
-> [!NOTE]
-> If you are part of the dev team, the database schema is already set up. You can skip this step.
+## Getting Started
 
-5. Start the app
+Because of financial complications, we will not be deploying to the App Store or Google Play Store in the foreseeable future. Feel free to run the project locally on your machine for development and testing.
 
-   ```bash
-    npx expo start
-   ```
+### Prerequisites
 
-   This will start the Expo development server. Follow the instructions in the terminal to run the app on your device or emulator.
+- Node.js (LTS version)
+- npm
+- Expo CLI
+- A mobile simulator (iOS or Android) or a physical device
 
-> [!TIP]
-> NativeWind is configured for the app, so you can directly use TailWindCSS classes in your components. Note that some classes may not work as expected on certain components, in which case you can simply switch back to using React Native styles.
+### Setup
 
-## Project Structure
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/endernoke/soular
+    cd soular
+    ```
 
-> [!IMPORTANT]
-> This project uses [Expo Router](https://docs.expo.dev/router/introduction) for file-based routing.
+2.  **Install dependencies:**
+    ```bash
+    npm install
+    ```
 
-- `src/` - Main source code directory
-  - `app/` - Application screens using file-based routing
-    - `(app)/` - Protected app routes (requires authentication to access)
-      - `(tabs)/` - Bottom tab navigation
-    - `auth/` - Authentication screens
-  - `components/` - Reusable React components
-  - `lib/` - Core functionality and configuration
-    - `auth.tsx` - Authentication context and hooks
-    - `supabase.ts` - Supabase client configuration
-  - `types/` - TypeScript type definitions
-  - `global.css` - Global styles using TailwindCSS/NativeWind
-- `assets/` - Static assets
-  - `images/` - App icons and images
-  - `fonts/` - Custom fonts
-- `docs/` - Documentation and schemas (mainly intended for LLMs)
+3.  **Set up environment variables:**
+    This project uses Supabase for its backend. You will need to create a `.env` file in the root of the project and add your Supabase project URL and anon key. You can get these from your Supabase project settings.
 
-## Database Schema
+    ```
+    EXPO_PUBLIC_SUPABASE_URL=YOUR_SUPABASE_URL
+    EXPO_PUBLIC_SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
+    ```
 
-See `llms/DATABASE.md` for detailed information about:
+4.  **Run the application:**
+    ```bash
+    npm start
+    ```
 
-- Database tables and relationships
-- Row Level Security (RLS) policies
-- Storage configuration
-- Data validation rules
+    This will start the Metro bundler. Follow the instructions in the terminal to open the app in your mobile simulator or on a physical device.
+
+## Feedback
+We value your feedback! If you have any questions, or suggestions, or need support, please reach out to us at endernoke@gmail.com. Please let us know if you want to contribute to the project in any way!
+
+## Credits
+
+[James Zheng](https://github.com/endernoke), [Christopher Wong](https://github.com/christopherwdev), [Linus Chik](https://github.com/slmlaggi), Taco Lau, Samuel Tse, Angus Lam, Chris Wang, [Jimmy Liao](https://youtu.be/dQw4w9WgXcQ)
