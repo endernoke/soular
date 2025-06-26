@@ -1,6 +1,6 @@
 # Soular
 
-![Soular App Preview](/assets/images/banner.png)
+![Soular App Preview](/docs/banner.png)
 
 A one-stop social media platform for youths to complete the conception, coordination and publicity of environmental initiatives.
 
