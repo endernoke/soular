@@ -80,4 +80,4 @@ We value your feedback! If you have any questions, or suggestions, or need suppo
 
 ## Credits
 
-[James Zheng](https://github.com/endernoke), [Christopher Wong](https://github.com/christopherwdev), [Linus Chik](https://github.com/slmlaggi), Taco Lau, Samuel Tse, Angus Lam, Chris Wang, [Jimmy Liao](https://youtu.be/dQw4w9WgXcQ)
+[James Zheng](https://github.com/endernoke), [Christopher Wong](https://github.com/christopherwdev), [Linus Chik](https://github.com/linusc9516), Taco Lau, Samuel Tse, Angus Lam, Chris Wang, [Jimmy Liao](https://youtu.be/dQw4w9WgXcQ)
